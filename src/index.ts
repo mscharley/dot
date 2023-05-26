@@ -1,37 +1,46 @@
-const injectable = () => (target: any, context: any) => target;
+const injectable =
+	() =>
+	<T>(target: new () => T, _context: ClassDecoratorContext<new () => T>): new () => T => {
+		console.log('@injectable', target);
 
-const inject = () => (target: any, context: any) => {
-	return (): string => {
-		console.log('setting data', context);
-		return 'Hello world!';
+		return target;
 	};
-};
+
+const inject =
+	<T>(defaultValue: T) =>
+	(_target: undefined, context: ClassFieldDecoratorContext) =>
+	(originalValue: T | undefined): T => {
+		console.log('setting data', context, originalValue);
+		return defaultValue;
+	};
 
 console.log('Class initialisation');
 @injectable()
 class TestClass {
-	@inject()
-	public foo: string;
+	@inject('Hello world!')
+	readonly #foo!: string;
 
 	public constructor() {
-		console.log('constructor:', this.foo);
+		console.log('constructor:', this.#foo);
 	}
 }
 
+console.log('Class initialisation');
+@injectable()
 class SubClass extends TestClass {
-	@inject()
-	public bar!: string;
+	@inject('Goodbye world!')
+	readonly #bar!: string;
 
 	public constructor() {
 		super();
-		console.log('subclass', this.bar);
+		console.log('subclass:', this.#bar);
 	}
 }
 
 console.log('instantiation');
 const foo = new TestClass();
-console.log('data:', foo.foo);
+console.log('data:', (foo as any).foo);
 
 console.log('instantiation');
 const bar = new SubClass();
-console.log('data:', bar.bar);
+console.log('data:', (bar as any).bar);
