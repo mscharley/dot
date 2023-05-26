@@ -1,46 +1,30 @@
-const injectable =
-	() =>
-	<T>(target: new () => T, _context: ClassDecoratorContext<new () => T>): new () => T => {
-		console.log('@injectable', target);
+import { inject, injectable } from './decorators';
+import { Container } from './Container';
+import { Token } from './Token';
 
-		return target;
-	};
+const weapon = new Token<Katana>('weapon');
+const ninja = new Token<Ninja>('ninja');
 
-const inject =
-	<T>(defaultValue: T) =>
-	(_target: undefined, context: ClassFieldDecoratorContext) =>
-	(originalValue: T | undefined): T => {
-		console.log('setting data', context, originalValue);
-		return defaultValue;
-	};
-
-console.log('Class initialisation');
 @injectable()
-class TestClass {
-	@inject('Hello world!')
-	readonly #foo!: string;
+class Katana {
+	public foo = 'Hello world!';
+}
+
+@injectable()
+class Ninja {
+	@inject(weapon)
+	readonly #left!: Katana;
+	@inject(weapon)
+	readonly #right!: Katana;
 
 	public constructor() {
-		console.log('constructor:', this.#foo);
+		this.#left.foo = 'Left hand';
+		this.#right.foo = 'Right hand';
+		console.log('weapon:', this.#left, this.#right);
 	}
 }
 
-console.log('Class initialisation');
-@injectable()
-class SubClass extends TestClass {
-	@inject('Goodbye world!')
-	readonly #bar!: string;
-
-	public constructor() {
-		super();
-		console.log('subclass:', this.#bar);
-	}
-}
-
-console.log('instantiation');
-const foo = new TestClass();
-console.log('data:', (foo as any).foo);
-
-console.log('instantiation');
-const bar = new SubClass();
-console.log('data:', (bar as any).bar);
+const container = new Container();
+container.bind(weapon).toSelf(Katana);
+container.bind(ninja).toSelf(Ninja);
+console.log('ninja', container.get(ninja));
