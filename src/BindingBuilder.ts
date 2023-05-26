@@ -10,7 +10,7 @@ export class BindingBuilder<T> {
 		this.#token = token;
 	}
 
-	public toSelf(fn: new () => T): void {
+	public to(fn: new () => T): void {
 		this.#container.inject(this.#token, () => new fn());
 	}
 

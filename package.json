@@ -11,11 +11,11 @@
 	"author": "",
 	"license": "MIT",
 	"devDependencies": {
+		"@mscharley/eslint-config": "^2.0.1",
+		"@mscharley/prettier-config": "^2.0.1",
 		"typescript": "^5.0.4"
 	},
 	"dependencies": {
-		"@mscharley/eslint-config": "^2.0.1",
-		"@mscharley/prettier-config": "^2.0.1",
 		"tslib": "^2.5.2"
 	}
 }
