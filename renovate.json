@@ -7,7 +7,7 @@
 		":rebaseStalePrs",
 		":label(dependencies)"
 	],
-	"automergeStrategy": "rebase",
+	"automergeStrategy": "fast-forward",
 	"packageRules": [
 		{
 			"packageNames": ["@types/node"],
