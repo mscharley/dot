@@ -5,6 +5,9 @@ import type { ContainerConfiguration } from './ContainerConfiguration';
 import type { ScopeOptions } from './ScopeOptions';
 import type { Token } from './Token';
 
+/**
+ * @public
+ */
 export class Container {
 	readonly #bindings: Record<
 		symbol,
