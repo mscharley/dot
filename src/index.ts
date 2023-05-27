@@ -1,8 +1,12 @@
-export { inject, injectable } from './decorators';
-export { Container } from './Container';
-export { Token } from './Token';
-export type { Binder } from './Binder';
-export type { BindingScope } from './BindingScope';
-export type { ScopeOptions } from './ScopeOptions';
+import type * as interfaces from './interfaces';
+import { Container } from './Container';
 
-import './demo';
+/**
+ * @public
+ */
+export const createContainer = (config?: interfaces.ContainerConfiguration): interfaces.Container =>
+	new Container(config);
+
+export type { interfaces };
+export { Token } from './Token';
+export { inject, injectable } from './decorators';

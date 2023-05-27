@@ -8,7 +8,7 @@
 		"build:tsc": "tsc",
 		"build:api": "api-extractor run --local",
 		"clean": "rm -rf dist/ temp/",
-		"start": "node ./dist/index.js",
+		"start": "node ./dist/demo/index.js",
 		"test": "npm run test:eslint && npm run test:api && npm run test:jest",
 		"test:api": "api-extractor run",
 		"test:eslint": "eslint .",

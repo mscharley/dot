@@ -1,17 +1,11 @@
-import type { Binder } from './Binder';
-import type { BindingScope } from './BindingScope';
 import type { Container } from './Container';
-import type { ScopeOptions } from './ScopeOptions';
+import type { interfaces } from './';
 import type { Token } from './Token';
 
-export interface Context {
-	container: Container;
-}
-
-export class BindingBuilder<T> implements Binder<T>, BindingScope<T> {
+export class BindingBuilder<T> implements interfaces.Binder<T>, interfaces.BindingScope<T> {
 	readonly #container: Container;
 	readonly #token: Token<T>;
-	#scope: ScopeOptions;
+	#scope: interfaces.ScopeOptions;
 
 	public constructor(container: Container, private readonly token: Token<T>) {
 		this.#container = container;
@@ -33,7 +27,7 @@ export class BindingBuilder<T> implements Binder<T>, BindingScope<T> {
 		}
 	}
 
-	public toDynamicValue(fn: (context: Context) => T): void {
+	public toDynamicValue(fn: (context: interfaces.BindingContext) => T): void {
 		this.#container.inject(this.#token, this.#scope, () => fn({ container: this.#container }));
 	}
 

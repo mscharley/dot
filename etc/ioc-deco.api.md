@@ -5,19 +5,23 @@
 ```ts
 
 // @public (undocumented)
-export interface Binder<T> {
+interface Binder<T> {
     // (undocumented)
     to: (fn: new () => T) => void;
     // (undocumented)
     toConstantValue: ((v: T) => void) & ((v: Promise<T>) => Promise<void>);
-    // Warning: (ae-forgotten-export) The symbol "Context" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
-    toDynamicValue: (fn: (context: Context) => T) => void;
+    toDynamicValue: (fn: (context: BindingContext) => T) => void;
 }
 
 // @public (undocumented)
-export interface BindingScope<T> {
+interface BindingContext {
+    // (undocumented)
+    container: Container;
+}
+
+// @public (undocumented)
+interface BindingScope<T> {
     // (undocumented)
     inRequestScope: () => Binder<T>;
     // (undocumented)
@@ -27,23 +31,23 @@ export interface BindingScope<T> {
 }
 
 // @public (undocumented)
-export class Container {
-    constructor(config?: Partial<ContainerConfiguration>);
+interface Container {
     // (undocumented)
-    bind<T>(token: Token<T>): Binder<T> & BindingScope<T>;
-    // Warning: (ae-forgotten-export) The symbol "ContainerConfiguration" needs to be exported by the entry point index.d.ts
-    //
+    bind: <T>(token: Token<T>) => Binder<T> & BindingScope<T>;
     // (undocumented)
-    readonly config: ContainerConfiguration;
-    // (undocumented)
-    get<T>(token: Token<T>): T;
-    // (undocumented)
-    has(token: Token<unknown>): boolean;
-    // @internal (undocumented)
-    inject<T>(token: Token<T>, scope: ScopeOptions, fn: () => T): void;
-    // (undocumented)
-    static resolve<T>(token: Token<T>): T;
+    get: <T>(token: Token<T>) => T;
 }
+
+// @public (undocumented)
+interface ContainerConfiguration {
+    // (undocumented)
+    defaultScope: ScopeOptions;
+}
+
+// Warning: (ae-missing-release-tag) "createContainer" is part of the package's API, but it is missing a release tag (@alpha, @beta, @public, or @internal)
+//
+// @public (undocumented)
+export const createContainer: (config?: interfaces.ContainerConfiguration) => interfaces.Container;
 
 // @public (undocumented)
 export const inject: <T>(token: Token<T>) => (_target: undefined, _context?: ClassFieldDecoratorContext) => (_originalValue: T | undefined) => T;
@@ -51,8 +55,20 @@ export const inject: <T>(token: Token<T>) => (_target: undefined, _context?: Cla
 // @public (undocumented)
 export const injectable: () => <T>(_target: new () => T, _context?: ClassDecoratorContext<new () => T> | undefined) => void;
 
+declare namespace interfaces {
+    export {
+        Binder,
+        BindingContext,
+        BindingScope,
+        Container,
+        ContainerConfiguration,
+        ScopeOptions
+    }
+}
+export { interfaces }
+
 // @public (undocumented)
-export type ScopeOptions = 'transient' | 'request' | 'singleton';
+type ScopeOptions = 'transient' | 'request' | 'singleton';
 
 // @public (undocumented)
 export class Token<T> {

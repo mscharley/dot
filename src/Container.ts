@@ -1,14 +1,9 @@
-import type { Binder } from './Binder';
 import { BindingBuilder } from './BindingBuilder';
-import type { BindingScope } from './BindingScope';
-import type { ContainerConfiguration } from './ContainerConfiguration';
-import type { ScopeOptions } from './ScopeOptions';
+import type { interfaces } from '.';
+import type { ScopeOptions } from './interfaces/ScopeOptions';
 import type { Token } from './Token';
 
-/**
- * @public
- */
-export class Container {
+export class Container implements interfaces.Container {
 	readonly #bindings: Record<
 		symbol,
 		{
@@ -17,10 +12,10 @@ export class Container {
 		}
 	> = {};
 	static #currentRequest: Container | undefined;
-	public readonly config: ContainerConfiguration;
+	public readonly config: interfaces.ContainerConfiguration;
 	readonly #singletonCache: Record<symbol, unknown> = {};
 
-	public constructor(config?: Partial<ContainerConfiguration>) {
+	public constructor(config?: Partial<interfaces.ContainerConfiguration>) {
 		this.config = {
 			...config,
 			defaultScope: 'transient',
@@ -36,11 +31,10 @@ export class Container {
 		return this.#currentRequest.get(token);
 	}
 
-	public bind<T>(token: Token<T>): Binder<T> & BindingScope<T> {
+	public bind<T>(token: Token<T>): interfaces.Binder<T> & interfaces.BindingScope<T> {
 		return new BindingBuilder(this, token);
 	}
 
-	/** @internal */
 	public inject<T>(token: Token<T>, scope: ScopeOptions, fn: () => T): void {
 		this.#bindings[token.identifier] = {
 			scope,
