@@ -3,6 +3,7 @@
 	"version": "1.0.0",
 	"description": "",
 	"main": "./dist/index.js",
+	"types": "./dist/ioc-deco.d.ts",
 	"scripts": {
 		"build": "npm run build:tsc && npm run build:api",
 		"build:tsc": "tsc",
@@ -25,6 +26,7 @@
 		"@mscharley/eslint-config": "2.0.1",
 		"@mscharley/prettier-config": "2.0.1",
 		"jest": "29.5.0",
+		"reflect-metadata": "0.1.13",
 		"ts-jest": "29.1.0",
 		"ts-node": "10.9.1",
 		"typescript": "5.0.4"

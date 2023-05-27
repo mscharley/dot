@@ -2,4 +2,6 @@ dist/demo
 dist/**/__tests__
 dist/**/*.d.ts*
 !dist/ioc-deco.d.ts
+
+src/demo
 src/**/__tests__

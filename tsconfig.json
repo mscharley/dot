@@ -3,7 +3,7 @@
 		/* Visit https://aka.ms/tsconfig to read more about this file */
 
 		/* Projects */
-		// "incremental": true,                              /* Save .tsbuildinfo files to allow for incremental compilation of projects. */
+		"incremental": true /* Save .tsbuildinfo files to allow for incremental compilation of projects. */,
 		// "composite": true,                                /* Enable constraints that allow a TypeScript project to be used with project references. */
 		// "tsBuildInfoFile": "./.tsbuildinfo",              /* Specify the path to .tsbuildinfo incremental compilation file. */
 		// "disableSourceOfProjectReferenceRedirect": true,  /* Disable preferring source files instead of declaration files when referencing composite projects. */
@@ -32,7 +32,9 @@
 		// "paths": {},                                      /* Specify a set of entries that re-map imports to additional lookup locations. */
 		// "rootDirs": [],                                   /* Allow multiple folders to be treated as one when resolving modules. */
 		// "typeRoots": [],                                  /* Specify multiple folders that act like './node_modules/@types'. */
-		"types": [] /* Specify type package names to be included without being referenced in a source file. */,
+		"types": [
+			"reflect-metadata"
+		] /* Specify type package names to be included without being referenced in a source file. */,
 		// "allowUmdGlobalAccess": true,                     /* Allow accessing UMD globals from modules. */
 		// "moduleSuffixes": [],                             /* List of file name suffixes to search when resolving a module. */
 		// "allowImportingTsExtensions": true,               /* Allow imports to include TypeScript file extensions. Requires '--moduleResolution bundler' and either '--noEmit' or '--emitDeclarationOnly' to be set. */

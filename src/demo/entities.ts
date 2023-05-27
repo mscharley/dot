@@ -19,15 +19,15 @@ class Shuriken implements ThrowableWeapon {
 @injectable()
 class Ninja implements Warrior {
 	@inject(TYPES.Weapon)
-	readonly #katana!: Weapon;
+	private readonly katana!: Weapon;
 	@inject(TYPES.ThrowableWeapon)
-	readonly #shuriken!: ThrowableWeapon;
+	private readonly shuriken!: ThrowableWeapon;
 
 	public fight(): string {
-		return this.#katana.hit();
+		return this.katana.hit();
 	}
 	public sneak(): string {
-		return this.#shuriken.throw();
+		return this.shuriken.throw();
 	}
 }
 

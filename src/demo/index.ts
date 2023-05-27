@@ -1,3 +1,6 @@
+// Only necessary for typescript experimental decorators
+import 'reflect-metadata';
+
 import { myContainer } from './ioc.config';
 import { TYPES } from './types';
 

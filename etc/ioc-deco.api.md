@@ -44,16 +44,16 @@ interface ContainerConfiguration {
     defaultScope: ScopeOptions;
 }
 
-// Warning: (ae-missing-release-tag) "createContainer" is part of the package's API, but it is missing a release tag (@alpha, @beta, @public, or @internal)
-//
 // @public (undocumented)
 export const createContainer: (config?: interfaces.ContainerConfiguration) => interfaces.Container;
 
+// Warning: (ae-forgotten-export) The symbol "InjectDecorator" needs to be exported by the entry point index.d.ts
+//
 // @public (undocumented)
-export const inject: <T>(token: Token<T>) => (_target: undefined, _context?: ClassFieldDecoratorContext) => (_originalValue: T | undefined) => T;
+export const inject: <T>(token: Token<T>) => InjectDecorator<T>;
 
 // @public (undocumented)
-export const injectable: () => <T>(_target: new () => T, _context?: ClassDecoratorContext<new () => T> | undefined) => void;
+export const injectable: () => <T>(_target: new () => T, context?: ClassDecoratorContext<new () => T> | undefined) => void;
 
 declare namespace interfaces {
     export {
@@ -76,6 +76,11 @@ export class Token<T> {
     // @internal (undocumented)
     readonly identifier: symbol;
 }
+
+// Warning: (ae-missing-release-tag) "TokenType" is part of the package's API, but it is missing a release tag (@alpha, @beta, @public, or @internal)
+//
+// @public (undocumented)
+export type TokenType<T extends Token<unknown>> = T extends Token<infer U> ? U : never;
 
 // (No @packageDocumentation comment for this package)
 
