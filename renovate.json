@@ -1,5 +1,12 @@
 {
-	"extends": ["config:js-lib", "schedule:weekends", ":automergeMinor", ":semanticCommits", ":rebaseStalePrs"],
+	"extends": [
+		"config:js-lib",
+		"schedule:weekends",
+		":automergeMinor",
+		":semanticCommits",
+		":rebaseStalePrs",
+		":label(dependencies)"
+	],
 	"automergeStrategy": "rebase",
 	"packageRules": [
 		{
