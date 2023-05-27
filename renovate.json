@@ -1,0 +1,16 @@
+{
+	"extends": ["config:js-lib", "schedule:weekends", ":automergeMinor", ":semanticCommits", ":rebaseStalePrs"],
+	"automergeStrategy": "rebase",
+	"packageRules": [
+		{
+			"packageNames": ["@types/node"],
+			"allowedVersions": "^18.0.0",
+			"major": { "enabled": true }
+		},
+		{
+			"matchPackageNames": ["@mscharley/eslint-config", "@mscharley/prettier-config"],
+			"groupName": "eslint packages",
+			"additionalBranchPrefix": ""
+		}
+	]
+}
