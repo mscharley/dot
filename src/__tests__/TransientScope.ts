@@ -21,7 +21,7 @@ describe('singleton scope', () => {
 
 	beforeEach(() => {
 		c = new Container({ defaultScope: 'transient' });
-		c.bind(LeafToken).to(Leaf);
+		c.bind(LeafToken).inTransientScope().to(Leaf);
 		c.bind(NodeToken).to(Node);
 	});
 
