@@ -47,13 +47,29 @@ interface ContainerConfiguration {
 // @public (undocumented)
 export const createContainer: (config?: interfaces.ContainerConfiguration) => interfaces.Container;
 
-// Warning: (ae-forgotten-export) The symbol "InjectDecorator" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
 export const inject: <T>(token: Token<T>) => InjectDecorator<T>;
 
 // @public (undocumented)
-export const injectable: () => <T>(_target: new () => T, context?: ClassDecoratorContext<new () => T> | undefined) => void;
+export const injectable: <T>() => InjectableDecorator<T>;
+
+// @public (undocumented)
+export interface InjectableDecorator<T> {
+    // (undocumented)
+    (target: new () => T, context: ClassDecoratorContext<new () => T>): undefined;
+    // (undocumented)
+    (target: new () => T): undefined | (new () => T);
+}
+
+// @public (undocumented)
+export interface InjectDecorator<T> {
+    // (undocumented)
+    (target: undefined, context: ClassFieldDecoratorContext<unknown, T>): (originalValue: T | undefined) => T;
+    // (undocumented)
+    (target: {
+        constructor: Function;
+    }, propertyName: string | symbol): undefined;
+}
 
 declare namespace interfaces {
     export {
@@ -71,7 +87,7 @@ export { interfaces }
 type ScopeOptions = 'transient' | 'request' | 'singleton';
 
 // @public (undocumented)
-export class Token<T> {
+export class Token<out T> {
     constructor(name: string);
     // @internal (undocumented)
     readonly identifier: symbol;

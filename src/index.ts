@@ -11,3 +11,4 @@ export type { interfaces };
 export { Token } from './Token';
 export type { TokenType } from './Token';
 export { inject, injectable } from './decorators';
+export type { InjectDecorator, InjectableDecorator } from './decorators';

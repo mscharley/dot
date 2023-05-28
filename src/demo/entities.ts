@@ -23,6 +23,10 @@ class Ninja implements Warrior {
 	@inject(TYPES.ThrowableWeapon)
 	private readonly shuriken!: ThrowableWeapon;
 
+	public constructor() {
+		console.log('constructing:', this.katana, this.shuriken);
+	}
+
 	public fight(): string {
 		return this.katana.hit();
 	}

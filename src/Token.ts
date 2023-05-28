@@ -2,7 +2,7 @@
  * @public
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export class Token<T> {
+export class Token<out T> {
 	/** @internal */
 	public readonly identifier: symbol;
 
@@ -11,4 +11,7 @@ export class Token<T> {
 	}
 }
 
+/**
+ * @public
+ */
 export type TokenType<T extends Token<unknown>> = T extends Token<infer U> ? U : never;
