@@ -21,20 +21,20 @@ describe('singleton scope', () => {
 
 	beforeEach(() => {
 		c = new Container({ defaultScope: 'transient' });
-		c.bind(LeafToken).inSingletonScope().to(Leaf);
+		c.bind(LeafToken).to(Leaf);
 		c.bind(NodeToken).to(Node);
 	});
 
-	it('returns the same thing in two requests', () => {
+	it('returns the different things in two requests', () => {
 		const first = c.get(LeafToken);
 		const second = c.get(LeafToken);
 
-		expect(first).toBe(second);
+		expect(first).not.toBe(second);
 	});
 
 	it('returns the same thing in the same request', () => {
 		const node = c.get(NodeToken);
 
-		expect(node.left).toBe(node.right);
+		expect(node.left).not.toBe(node.right);
 	});
 });

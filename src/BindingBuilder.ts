@@ -1,5 +1,5 @@
+import type * as interfaces from './interfaces';
 import type { Container } from './Container';
-import type { interfaces } from './';
 import type { Token } from './Token';
 
 export class BindingBuilder<T> implements interfaces.Binder<T>, interfaces.BindingScope<T> {

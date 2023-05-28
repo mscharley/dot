@@ -1,5 +1,5 @@
+import type * as interfaces from './interfaces';
 import { BindingBuilder } from './BindingBuilder';
-import type { interfaces } from '.';
 import type { ScopeOptions } from './interfaces/ScopeOptions';
 import type { Token } from './Token';
 
@@ -14,6 +14,7 @@ export class Container implements interfaces.Container {
 	static #currentRequest: Container | undefined;
 	public readonly config: interfaces.ContainerConfiguration;
 	readonly #singletonCache: Record<symbol, unknown> = {};
+	#requestCache: Record<symbol, unknown> = {};
 
 	public constructor(config?: Partial<interfaces.ContainerConfiguration>) {
 		this.config = {
@@ -28,7 +29,7 @@ export class Container implements interfaces.Container {
 				`Unable to resolve token as no container is currently making a request: ${token.identifier.toString()}`,
 			);
 		}
-		return this.#currentRequest.get(token);
+		return this.#currentRequest._resolve(token);
 	}
 
 	public bind<T>(token: Token<T>): interfaces.Binder<T> & interfaces.BindingScope<T> {
@@ -43,6 +44,12 @@ export class Container implements interfaces.Container {
 	}
 
 	private _resolve<T>(token: Token<T>): T {
+		if (this.#singletonCache[token.identifier] != null) {
+			return this.#singletonCache[token.identifier] as T;
+		} else if (this.#requestCache[token.identifier] != null) {
+			return this.#requestCache[token.identifier] as T;
+		}
+
 		const binding = this.#bindings[token.identifier];
 		if (binding == null) {
 			throw new Error(`Unable to resolve token as no bindings exist: ${token.identifier.toString()}`);
@@ -50,15 +57,15 @@ export class Container implements interfaces.Container {
 		const value = binding.generator() as T;
 		if (binding.scope === 'singleton') {
 			this.#singletonCache[token.identifier] = value;
+		} else if (binding.scope === 'request') {
+			this.#requestCache[token.identifier] = value;
 		}
 
 		return value;
 	}
 
 	public get<T>(token: Token<T>): T {
-		if (this.#singletonCache[token.identifier] != null) {
-			return this.#singletonCache[token.identifier] as T;
-		}
+		this.#requestCache = {};
 
 		const lastRequest = Container.#currentRequest;
 		Container.#currentRequest = this;

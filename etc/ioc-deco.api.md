@@ -93,8 +93,6 @@ export class Token<out T> {
     readonly identifier: symbol;
 }
 
-// Warning: (ae-missing-release-tag) "TokenType" is part of the package's API, but it is missing a release tag (@alpha, @beta, @public, or @internal)
-//
 // @public (undocumented)
 export type TokenType<T extends Token<unknown>> = T extends Token<infer U> ? U : never;
 
