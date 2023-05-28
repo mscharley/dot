@@ -1,4 +1,5 @@
-import type { Binder, BindingScope } from '.';
+import type { Binder } from './Binder';
+import type { BindingScope } from './BindingScope';
 import type { Token } from '../Token';
 
 /**
