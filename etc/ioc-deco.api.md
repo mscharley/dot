@@ -5,6 +5,9 @@
 ```ts
 
 // @public (undocumented)
+type AsyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound: IsBoundFunction, rebind: RebindFunction) => Promise<void>;
+
+// @public (undocumented)
 interface Binder<T> {
     // (undocumented)
     to: (fn: new () => T) => void;
@@ -14,8 +17,9 @@ interface Binder<T> {
     toDynamicValue: (fn: (context: BindingContext) => T) => void;
 }
 
-// Warning: (ae-missing-release-tag) "BindingBuilder" is part of the package's API, but it is missing a release tag (@alpha, @beta, @public, or @internal)
-//
+// @public (undocumented)
+type BindFunction = <T>(token: Token<T>) => BindingBuilder<T>;
+
 // @public (undocumented)
 type BindingBuilder<T> = Binder<T> & BindingScope<T, BindingBuilder<T>>;
 
@@ -38,11 +42,20 @@ interface BindingScope<T, Builder> {
 // @public (undocumented)
 interface Container {
     // (undocumented)
-    bind: <T>(token: Token<T>) => BindingBuilder<T>;
+    bind: BindFunction;
     // (undocumented)
     get: <T>(token: Token<T>) => T;
     // (undocumented)
-    has: (token: Token<unknown>) => boolean;
+    has: IsBoundFunction;
+    // (undocumented)
+    load: {
+        (module: SyncContainerModule): void;
+        (module: AsyncContainerModule): Promise<void>;
+    };
+    // (undocumented)
+    rebind: RebindFunction;
+    // (undocumented)
+    unbind: UnbindFunction;
 }
 
 // @public (undocumented)
@@ -52,10 +65,11 @@ interface ContainerConfiguration {
 }
 
 // @public (undocumented)
+type ContainerModule = AsyncContainerModule | SyncContainerModule;
+
+// @public (undocumented)
 export const createContainer: (config?: interfaces.ContainerConfiguration) => interfaces.Container;
 
-// Warning: (ae-missing-release-tag) "FixedScopeBindingOptions" is part of the package's API, but it is missing a release tag (@alpha, @beta, @public, or @internal)
-//
 // @public (undocumented)
 type FixedScopeBindingOptions = 'toConstantValue';
 
@@ -92,13 +106,29 @@ declare namespace interfaces {
         BindingScope,
         Container,
         ContainerConfiguration,
+        AsyncContainerModule,
+        ContainerModule,
+        SyncContainerModule,
+        BindFunction,
+        IsBoundFunction,
+        RebindFunction,
+        UnbindFunction,
         ScopeOptions
     }
 }
 export { interfaces }
 
 // @public (undocumented)
+type IsBoundFunction = (token: Token<unknown>) => boolean;
+
+// @public (undocumented)
+type RebindFunction = <T>(token: Token<T>) => BindingBuilder<T>;
+
+// @public (undocumented)
 type ScopeOptions = 'transient' | 'request' | 'singleton';
+
+// @public (undocumented)
+type SyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound: IsBoundFunction, rebind: RebindFunction) => void;
 
 // @public (undocumented)
 export class Token<out T> {
@@ -109,6 +139,9 @@ export class Token<out T> {
 
 // @public (undocumented)
 export type TokenType<T extends Token<unknown>> = T extends Token<infer U> ? U : never;
+
+// @public (undocumented)
+type UnbindFunction = (token: Token<unknown>) => void;
 
 // (No @packageDocumentation comment for this package)
 

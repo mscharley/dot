@@ -32,8 +32,27 @@ export class Container implements interfaces.Container {
 		return this.#currentRequest._resolve(token);
 	}
 
-	public bind<T>(token: Token<T>): interfaces.BindingBuilder<T> {
+	public bind: interfaces.BindFunction = <T>(token: Token<T>): interfaces.BindingBuilder<T> => {
 		return new BindingBuilder(this, token);
+	};
+
+	public unbind: interfaces.UnbindFunction = (token: Token<unknown>): void => {
+		if (this.#bindings[token.identifier] != null) {
+			throw new Error(`Unable to unbind token because it is not bound: ${token.identifier.toString()}`);
+		}
+
+		delete this.#bindings[token.identifier];
+	};
+
+	public rebind: interfaces.RebindFunction = <T>(token: Token<T>): interfaces.BindingBuilder<T> => {
+		this.unbind(token);
+		return this.bind(token);
+	};
+
+	public load(module: interfaces.SyncContainerModule): void;
+	public load(module: interfaces.AsyncContainerModule): Promise<void>;
+	public load(module: interfaces.ContainerModule): void | Promise<void> {
+		return module(this.bind, this.unbind, this.has, this.rebind);
 	}
 
 	public inject<T>(token: Token<T>, scope: ScopeOptions, fn: () => T): void {
@@ -76,7 +95,7 @@ export class Container implements interfaces.Container {
 		return value;
 	}
 
-	public has(token: Token<unknown>): boolean {
+	public has: interfaces.IsBoundFunction = (token) => {
 		return token.identifier in this.#bindings;
-	}
+	};
 }
