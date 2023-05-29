@@ -1,11 +1,11 @@
-import type { Binder } from './Binder';
-import type { BindingScope } from './BindingScope';
+import type { BindingBuilder } from './BindingBuilder';
 import type { Token } from '../Token';
 
 /**
  * @public
  */
 export interface Container {
-	bind: <T>(token: Token<T>) => Binder<T> & BindingScope<T>;
+	bind: <T>(token: Token<T>) => BindingBuilder<T>;
 	get: <T>(token: Token<T>) => T;
+	has: (token: Token<unknown>) => boolean;
 }

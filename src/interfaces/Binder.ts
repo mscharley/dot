@@ -1,5 +1,8 @@
 import type { BindingContext } from './BindingContext';
 
+// eslint-disable-next-line @typescript-eslint/no-type-alias
+export type FixedScopeBindingOptions = 'toConstantValue';
+
 /**
  * @public
  */

@@ -32,7 +32,7 @@ export class Container implements interfaces.Container {
 		return this.#currentRequest._resolve(token);
 	}
 
-	public bind<T>(token: Token<T>): interfaces.Binder<T> & interfaces.BindingScope<T> {
+	public bind<T>(token: Token<T>): interfaces.BindingBuilder<T> {
 		return new BindingBuilder(this, token);
 	}
 
@@ -65,6 +65,7 @@ export class Container implements interfaces.Container {
 	}
 
 	public get<T>(token: Token<T>): T {
+		BindingBuilder.validateBindings(this);
 		this.#requestCache = {};
 
 		const lastRequest = Container.#currentRequest;

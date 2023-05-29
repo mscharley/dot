@@ -14,6 +14,11 @@ interface Binder<T> {
     toDynamicValue: (fn: (context: BindingContext) => T) => void;
 }
 
+// Warning: (ae-missing-release-tag) "BindingBuilder" is part of the package's API, but it is missing a release tag (@alpha, @beta, @public, or @internal)
+//
+// @public (undocumented)
+type BindingBuilder<T> = Binder<T> & BindingScope<T, BindingBuilder<T>>;
+
 // @public (undocumented)
 interface BindingContext {
     // (undocumented)
@@ -21,21 +26,23 @@ interface BindingContext {
 }
 
 // @public (undocumented)
-interface BindingScope<T> {
+interface BindingScope<T, Builder> {
     // (undocumented)
-    inRequestScope: () => Binder<T>;
+    inRequestScope: () => Omit<Builder, FixedScopeBindingOptions | keyof BindingScope<T, unknown>>;
     // (undocumented)
-    inSingletonScope: () => Binder<T>;
+    inSingletonScope: () => Omit<Builder, FixedScopeBindingOptions | keyof BindingScope<T, unknown>>;
     // (undocumented)
-    inTransientScope: () => Binder<T>;
+    inTransientScope: () => Omit<Builder, FixedScopeBindingOptions | keyof BindingScope<T, unknown>>;
 }
 
 // @public (undocumented)
 interface Container {
     // (undocumented)
-    bind: <T>(token: Token<T>) => Binder<T> & BindingScope<T>;
+    bind: <T>(token: Token<T>) => BindingBuilder<T>;
     // (undocumented)
     get: <T>(token: Token<T>) => T;
+    // (undocumented)
+    has: (token: Token<unknown>) => boolean;
 }
 
 // @public (undocumented)
@@ -46,6 +53,11 @@ interface ContainerConfiguration {
 
 // @public (undocumented)
 export const createContainer: (config?: interfaces.ContainerConfiguration) => interfaces.Container;
+
+// Warning: (ae-missing-release-tag) "FixedScopeBindingOptions" is part of the package's API, but it is missing a release tag (@alpha, @beta, @public, or @internal)
+//
+// @public (undocumented)
+type FixedScopeBindingOptions = 'toConstantValue';
 
 // @public (undocumented)
 export const inject: <T>(token: Token<T>) => InjectDecorator<T>;
@@ -74,6 +86,8 @@ export interface InjectDecorator<T> {
 declare namespace interfaces {
     export {
         Binder,
+        FixedScopeBindingOptions,
+        BindingBuilder,
         BindingContext,
         BindingScope,
         Container,
