@@ -6,5 +6,10 @@
 	"testRunner": "jest",
 	"testRunner_comment": "Take a look at https://stryker-mutator.io/docs/stryker-js/jest-runner for information about the jest plugin.",
 	"coverageAnalysis": "perTest",
-	"ignorePatterns": ["/src/demo", "/src/index.ts"]
+	"ignorePatterns": ["/src/demo", "/src/index.ts"],
+	"thresholds": {
+		"high": 90,
+		"low": 75,
+		"break": 50
+	}
 }
