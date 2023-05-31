@@ -22,7 +22,7 @@ export default {
 	clearMocks: true,
 
 	// Indicates whether the coverage information should be collected while executing the test
-	collectCoverage: process.env.JEST_PROJECT == null,
+	collectCoverage: process.env.DECORATOR_TYPE === 'tc39',
 
 	// An array of glob patterns indicating a set of files for which coverage information should be collected
 	collectCoverageFrom: ['src/**/*.ts'],
@@ -173,7 +173,7 @@ export default {
 			'ts-jest',
 			{
 				isolatedModules: true,
-				tsconfig: process.env.JEST_PROJECT ?? './tsconfig.json',
+				tsconfig: process.env.DECORATOR_TYPE === 'tc39' ? './tsconfig.tc39.json' : './tsconfig.experimental.json',
 			},
 		],
 	},

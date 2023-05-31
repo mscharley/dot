@@ -13,9 +13,9 @@
 		"test": "npm run test:eslint && npm run test:api && npm run test:jest:tc39 && npm run test:jest:experimental",
 		"test:api": "api-extractor run",
 		"test:eslint": "eslint .",
-		"test:jest:tc39": "jest",
-		"test:jest:experimental": "JEST_PROJECT='./tsconfig.experimental.json' jest",
-		"stryker": "stryker run"
+		"test:jest:tc39": "DECORATOR_TYPE=tc39 jest",
+		"test:jest:experimental": "DECORATOR_TYPE=experimental jest",
+		"stryker": "DECORATOR_TYPE=tc39 stryker run"
 	},
 	"author": "",
 	"license": "MIT",
