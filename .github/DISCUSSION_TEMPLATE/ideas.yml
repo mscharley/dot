@@ -1,5 +1,5 @@
 title: '[Request] '
-labels: ['ideas']
+labels: []
 body:
   - type: textarea
     attributes:
