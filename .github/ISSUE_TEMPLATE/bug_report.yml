@@ -1,0 +1,60 @@
+name: Bug report
+description: If you're having an issue then this is where to start.
+labels: ['bug']
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: '## Bug description'
+  - type: textarea
+    attributes:
+      label: Describe the bug.
+      placeholder: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Steps to reproduce
+      value: |-
+        Steps to reproduce the behavior:
+
+        1. Go to '...'
+        2. Click on '...'
+        3. Scroll down to '...'
+        4. See error
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behaviour
+      placeholder: A clear and concise description of what you expected to happen.
+  - type: markdown
+    attributes:
+      value: '## Versions'
+  - type: input
+    attributes:
+      label: IOC-Deco
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: TypeScript
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Decorator type
+      options:
+        - TC39
+        - Typescript Experimental
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Node
+  - type: markdown
+    attributes:
+      value: '## Additional context'
+  - type: textarea
+    attributes:
+      label: Add any other context about the problem here.
