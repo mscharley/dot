@@ -25,6 +25,15 @@ describe('singleton scope', () => {
 		c.bind(NodeToken).to(Node);
 	});
 
+	it('default scope is transient', () => {
+		const c2 = new Container();
+		c2.bind(LeafToken).to(Leaf);
+		c2.bind(NodeToken).to(Node);
+
+		const node = c2.get(NodeToken);
+		expect(node.left).not.toBe(node.right);
+	});
+
 	it('returns the different things in two requests', () => {
 		const first = c.get(LeafToken);
 		const second = c.get(LeafToken);

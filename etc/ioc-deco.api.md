@@ -49,8 +49,8 @@ interface Container {
     has: IsBoundFunction;
     // (undocumented)
     load: {
-        (module: SyncContainerModule): void;
         (module: AsyncContainerModule): Promise<void>;
+        (module: SyncContainerModule): void;
     };
     // (undocumented)
     rebind: RebindFunction;
@@ -68,7 +68,9 @@ interface ContainerConfiguration {
 type ContainerModule = AsyncContainerModule | SyncContainerModule;
 
 // @public (undocumented)
-export const createContainer: (config?: interfaces.ContainerConfiguration) => interfaces.Container;
+const createContainer: (config?: interfaces.ContainerConfiguration) => interfaces.Container;
+export { createContainer }
+export default createContainer;
 
 // @public (undocumented)
 type FixedScopeBindingOptions = 'toConstantValue';

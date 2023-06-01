@@ -11,8 +11,8 @@ export interface Container {
 	rebind: RebindFunction;
 	has: IsBoundFunction;
 	load: {
-		(module: SyncContainerModule): void;
 		(module: AsyncContainerModule): Promise<void>;
+		(module: SyncContainerModule): void;
 	};
 	get: <T>(token: Token<T>) => T;
 }

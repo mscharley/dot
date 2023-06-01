@@ -7,7 +7,10 @@ import { Container } from './Container';
 export const createContainer = (config?: interfaces.ContainerConfiguration): interfaces.Container =>
 	new Container(config);
 
+export default createContainer;
+
 export type { interfaces };
-export { Token } from './Token';
+export type { InjectDecorator, InjectableDecorator } from './decorators';
 export type { TokenType } from './Token';
-export * from './decorators';
+export { inject, injectable } from './decorators';
+export { Token } from './Token';
