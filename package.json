@@ -21,7 +21,7 @@
 	"author": "",
 	"license": "MIT",
 	"dependencies": {
-		"tslib": "^2.5.2"
+		"tslib": "*"
 	},
 	"devDependencies": {
 		"@jest/globals": "29.5.0",
