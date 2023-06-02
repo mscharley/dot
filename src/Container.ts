@@ -24,18 +24,18 @@ export class Container implements interfaces.Container {
 
 	public constructor(config?: Partial<interfaces.ContainerConfiguration>) {
 		this.config = {
-			...config,
 			defaultScope: 'transient',
+			...config,
 		};
 	}
 
-	public static resolve<T>(token: Token<T>): T {
+	public static resolve<T>(token: Token<T>, options: interfaces.InjectOptions): T {
 		if (this.#currentRequest == null) {
 			throw new Error(
 				`Unable to resolve token as no container is currently making a request: ${token.identifier.toString()}`,
 			);
 		}
-		return this.#currentRequest._resolve(token);
+		return this.#currentRequest._resolve(token, options);
 	}
 
 	private validateBindings(): void {
@@ -87,7 +87,7 @@ export class Container implements interfaces.Container {
 		};
 	};
 
-	private _resolve<T>(token: Token<T>): T {
+	private _resolve<T>(token: Token<T>, options: interfaces.InjectOptions): T {
 		if (this.#singletonCache[token.identifier] != null) {
 			return this.#singletonCache[token.identifier] as T;
 		} else if (this.#requestCache[token.identifier] != null) {
@@ -96,7 +96,11 @@ export class Container implements interfaces.Container {
 
 		const binding = this.#bindings[token.identifier];
 		if (binding == null) {
-			throw new Error(`Unable to resolve token as no bindings exist: ${token.identifier.toString()}`);
+			if (options.optional) {
+				return undefined as T;
+			} else {
+				throw new Error(`Unable to resolve token as no bindings exist: ${token.identifier.toString()}`);
+			}
 		}
 		const value = binding.generator({ container: this }) as T;
 		switch (binding.scope) {
@@ -122,7 +126,7 @@ export class Container implements interfaces.Container {
 		const lastRequest = Container.#currentRequest;
 		try {
 			Container.#currentRequest = this;
-			return this._resolve(token);
+			return this._resolve(token, { optional: false });
 		} finally {
 			Container.#currentRequest = lastRequest;
 		}

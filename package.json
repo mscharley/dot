@@ -10,12 +10,13 @@
 		"build:api": "api-extractor run --local",
 		"clean": "rm -rf dist/ coverage/ temp/ .stryker-tmp/",
 		"start": "node ./dist/demo/index.js",
-		"test": "npm run test:eslint && npm run test:api && npm run test:jest:tc39 && npm run test:jest:experimental",
+		"test": "npm run test:eslint && npm run test:api && npm run test:jest:experimental && npm run test:jest:tc39",
 		"test:api": "api-extractor run",
 		"test:eslint": "eslint .",
 		"test:jest:tc39": "DECORATOR_TYPE=tc39 jest",
 		"test:jest:experimental": "DECORATOR_TYPE=experimental jest",
-		"stryker": "DECORATOR_TYPE=tc39 stryker run"
+		"stryker": "DECORATOR_TYPE=tc39 stryker run",
+		"rebuild-test": "npm run clean && npm run build && npm test && npm run stryker"
 	},
 	"author": "",
 	"license": "MIT",

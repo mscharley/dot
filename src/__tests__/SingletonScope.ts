@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { inject, injectable } from '../decorators';
 import { Container } from '../Container';
+import { inject } from '../decorators/inject';
+import { injectable } from '../decorators/injectable';
 import { Token } from '../Token';
 
 const LeafToken = new Token<Leaf>('leaf');

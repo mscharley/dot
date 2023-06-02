@@ -6,4 +6,5 @@ export type { Container } from './Container';
 export type { ContainerConfiguration } from './ContainerConfiguration';
 export type { AsyncContainerModule, ContainerModule, SyncContainerModule } from './ContainerModule';
 export type { BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions';
+export type { InjectOptions } from './InjectOptions';
 export type { ScopeOptions } from './ScopeOptions';

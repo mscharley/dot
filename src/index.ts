@@ -10,7 +10,9 @@ export const createContainer = (config?: interfaces.ContainerConfiguration): int
 export default createContainer;
 
 export type { interfaces };
-export type { InjectDecorator, InjectableDecorator } from './decorators';
+export type { InjectDecorator, InjectDecoratorFactory } from './decorators/inject';
+export type { InjectableDecorator } from './decorators/injectable';
 export type { TokenType } from './Token';
-export { inject, injectable } from './decorators';
+export { inject } from './decorators/inject';
+export { injectable } from './decorators/injectable';
 export { Token } from './Token';

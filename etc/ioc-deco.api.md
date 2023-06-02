@@ -77,7 +77,7 @@ export default createContainer;
 type FixedScopeBindingOptions = 'toConstantValue';
 
 // @public (undocumented)
-export const inject: <T>(token: Token<T>) => InjectDecorator<T>;
+export const inject: InjectDecoratorFactory;
 
 // @public (undocumented)
 export const injectable: <T>() => InjectableDecorator<T>;
@@ -100,6 +100,22 @@ export interface InjectDecorator<T> {
     }, propertyName: string | symbol): undefined;
 }
 
+// @public (undocumented)
+export interface InjectDecoratorFactory {
+    // (undocumented)
+    <T>(token: Token<T>, options: interfaces.InjectOptions & {
+        optional: true;
+    }): InjectDecorator<T | undefined>;
+    // (undocumented)
+    <T>(token: Token<T>, options?: interfaces.InjectOptions): InjectDecorator<T>;
+}
+
+// @public (undocumented)
+interface InjectOptions {
+    // (undocumented)
+    optional: boolean;
+}
+
 declare namespace interfaces {
     export {
         Binder,
@@ -116,6 +132,7 @@ declare namespace interfaces {
         IsBoundFunction,
         RebindFunction,
         UnbindFunction,
+        InjectOptions,
         ScopeOptions
     }
 }

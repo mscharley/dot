@@ -35,7 +35,7 @@ describe('Bindings', () => {
 	});
 
 	it('fails if attempting a resolution outside a request', () => {
-		expect(() => Container.resolve(token)).toThrowErrorMatchingInlineSnapshot(
+		expect(() => Container.resolve(token, { optional: false })).toThrowErrorMatchingInlineSnapshot(
 			'"Unable to resolve token as no container is currently making a request: Symbol(test)"',
 		);
 	});

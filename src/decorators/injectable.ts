@@ -1,3 +1,4 @@
+import type * as interfaces from '../interfaces';
 import { Container } from '../Container';
 import type { Token } from '../Token';
 
@@ -7,7 +8,10 @@ export interface InjectableDecorator<T> {
 	(target: new () => T): undefined | (new () => T);
 }
 
-export const mappings = new WeakMap<new () => unknown, Record<string | symbol, Token<unknown>>>();
+export const mappings = new WeakMap<
+	new () => unknown,
+	Record<string | symbol, { token: Token<unknown>; options: interfaces.InjectOptions }>
+>();
 
 /**
  * @public
@@ -22,9 +26,9 @@ export const injectable = <T>(): InjectableDecorator<T> =>
 				public constructor() {
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 					super();
-					map.forEach(([prop, token]) => {
+					map.forEach(([prop, { token, options }]) => {
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-						(this as any)[prop] = Container.resolve(token);
+						(this as any)[prop] = Container.resolve(token, options);
 					});
 				}
 			};
