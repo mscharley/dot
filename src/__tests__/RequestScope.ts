@@ -16,7 +16,7 @@ class Node {
 	public right!: Leaf;
 }
 
-describe('singleton scope', () => {
+describe('request scope', () => {
 	let c: Container;
 
 	beforeEach(() => {
