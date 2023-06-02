@@ -8,7 +8,7 @@
 type AsyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound: IsBoundFunction, rebind: RebindFunction) => Promise<void>;
 
 // @public (undocumented)
-interface Binder<T> {
+interface Binder<in T> {
     // (undocumented)
     to: (fn: new () => T) => void;
     // (undocumented)
@@ -21,7 +21,8 @@ interface Binder<T> {
 type BindFunction = <T>(token: Token<T>) => BindingBuilder<T>;
 
 // @public (undocumented)
-type BindingBuilder<T> = Binder<T> & BindingScope<T, BindingBuilder<T>>;
+interface BindingBuilder<in T> extends Binder<T>, BindingScope<T, BindingBuilder<T>> {
+}
 
 // @public (undocumented)
 interface BindingContext {
@@ -30,7 +31,7 @@ interface BindingContext {
 }
 
 // @public (undocumented)
-interface BindingScope<T, Builder> {
+interface BindingScope<in T, Builder> {
     // (undocumented)
     inRequestScope: () => Omit<Builder, FixedScopeBindingOptions | keyof BindingScope<T, unknown>>;
     // (undocumented)

@@ -5,7 +5,7 @@ import type { Token } from './Token';
 
 interface Binding {
 	scope: ScopeOptions;
-	generator: () => unknown;
+	generator: (context: interfaces.BindingContext) => unknown;
 }
 
 export class Container implements interfaces.Container {
@@ -15,6 +15,8 @@ export class Container implements interfaces.Container {
 		return this.#currentRequest != null;
 	}
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	readonly #incompleteBindings = new Set<BindingBuilder<any>>();
 	readonly #bindings: Record<symbol, Binding> = {};
 	readonly #singletonCache: Record<symbol, unknown> = {};
 	#requestCache: Record<symbol, unknown> = {};
@@ -36,8 +38,20 @@ export class Container implements interfaces.Container {
 		return this.#currentRequest._resolve(token);
 	}
 
+	private validateBindings(): void {
+		const values = [...this.#incompleteBindings.values()];
+		if (values.length > 0) {
+			throw new Error(
+				`Some bindings were started but not completed: ${values.map((v) => v.token.identifier.toString()).join(', ')}`,
+			);
+		}
+	}
+
 	public bind: interfaces.BindFunction = <T>(token: Token<T>): interfaces.BindingBuilder<T> => {
-		return new BindingBuilder(this, token);
+		const binding = new BindingBuilder(token, this.addBinding);
+		this.#incompleteBindings.add(binding);
+
+		return binding;
 	};
 
 	public unbind: interfaces.UnbindFunction = (token: Token<unknown>): void => {
@@ -60,12 +74,18 @@ export class Container implements interfaces.Container {
 		return module(this.bind, this.unbind, this.has, this.rebind);
 	}
 
-	public addBinding<T>(token: Token<T>, scope: ScopeOptions, fn: () => T): void {
+	public addBinding = <T>(
+		token: Token<T>,
+		scope: undefined | ScopeOptions,
+		binding: BindingBuilder<T>,
+		fn: (context: interfaces.BindingContext) => T,
+	): void => {
+		this.#incompleteBindings.delete(binding);
 		this.#bindings[token.identifier] = {
-			scope,
+			scope: scope ?? this.config.defaultScope,
 			generator: fn,
 		};
-	}
+	};
 
 	private _resolve<T>(token: Token<T>): T {
 		if (this.#singletonCache[token.identifier] != null) {
@@ -78,7 +98,7 @@ export class Container implements interfaces.Container {
 		if (binding == null) {
 			throw new Error(`Unable to resolve token as no bindings exist: ${token.identifier.toString()}`);
 		}
-		const value = binding.generator() as T;
+		const value = binding.generator({ container: this }) as T;
 		switch (binding.scope) {
 			case 'singleton':
 				this.#singletonCache[token.identifier] = value;
@@ -96,7 +116,7 @@ export class Container implements interfaces.Container {
 	}
 
 	public get<T>(token: Token<T>): T {
-		BindingBuilder.validateBindings(this);
+		this.validateBindings();
 		this.#requestCache = {};
 
 		const lastRequest = Container.#currentRequest;

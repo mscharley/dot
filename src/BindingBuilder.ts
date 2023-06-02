@@ -1,67 +1,51 @@
 import type * as interfaces from './interfaces';
-import type { Container } from './Container';
 import type { Token } from './Token';
 
 const isPromise = <T>(v: T | Promise<T>): v is Promise<T> => v != null && typeof (v as Promise<T>).then === 'function';
 
-export class BindingBuilder<T> implements interfaces.BindingBuilder<T> {
-	readonly #container: Container;
-	readonly #token: Token<T>;
-	#scope: interfaces.ScopeOptions;
-	static readonly #incompleteBindings = new Set<BindingBuilder<unknown>>();
+export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
+	#scope?: interfaces.ScopeOptions;
 
-	public constructor(container: Container, token: Token<T>) {
-		this.#container = container;
-		this.#token = token;
-		this.#scope = container.config.defaultScope;
-		BindingBuilder.#incompleteBindings.add(this);
-	}
-
-	public static validateBindings(container: Container): void {
-		const invalidBindings = [...BindingBuilder.#incompleteBindings.values()].filter((v) => v.#container === container);
-
-		if (invalidBindings.length > 0) {
-			throw new Error(
-				`Some bindings were started but not completed: ${invalidBindings
-					.map((v) => v.#token.identifier.toString())
-					.join(', ')}`,
-			);
-		}
-	}
+	public constructor(
+		public readonly token: Token<T>,
+		private readonly addBinding: (
+			token: Token<T>,
+			scope: undefined | interfaces.ScopeOptions,
+			builder: BindingBuilder<T>,
+			fn: (context: interfaces.BindingContext) => T,
+		) => void,
+	) {}
 
 	public to(fn: new () => T): void {
-		BindingBuilder.#incompleteBindings.delete(this);
-		this.#container.addBinding(this.#token, this.#scope, () => new fn());
+		this.addBinding(this.token, this.#scope, this, () => new fn());
 	}
 
 	public toConstantValue(v: T): void;
 	public toConstantValue(v: Promise<T>): Promise<void>;
 	public toConstantValue(v: T | Promise<T>): void | Promise<void> {
-		BindingBuilder.#incompleteBindings.delete(this);
 		if (isPromise(v)) {
-			return v.then((value) => this.#container.addBinding(this.#token, this.#scope, () => value));
+			return v.then((value) => this.addBinding(this.token, this.#scope, this, () => value));
 		} else {
-			return this.#container.addBinding(this.#token, this.#scope, () => v);
+			return this.addBinding(this.token, this.#scope, this, () => v);
 		}
 	}
 
 	public toDynamicValue(fn: (context: interfaces.BindingContext) => T): void {
-		BindingBuilder.#incompleteBindings.delete(this);
-		this.#container.addBinding(this.#token, this.#scope, () => fn({ container: this.#container }));
+		this.addBinding(this.token, this.#scope, this, fn);
 	}
 
-	public inSingletonScope(): this {
+	public inSingletonScope: interfaces.BindingBuilder<T>['inSingletonScope'] = () => {
 		this.#scope = 'singleton';
 		return this;
-	}
+	};
 
-	public inTransientScope(): this {
+	public inTransientScope: interfaces.BindingBuilder<T>['inTransientScope'] = () => {
 		this.#scope = 'transient';
 		return this;
-	}
+	};
 
-	public inRequestScope(): this {
+	public inRequestScope: interfaces.BindingBuilder<T>['inRequestScope'] = () => {
 		this.#scope = 'request';
 		return this;
-	}
+	};
 }
