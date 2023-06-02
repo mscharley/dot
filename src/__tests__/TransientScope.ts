@@ -16,7 +16,7 @@ class Node {
 	public right!: Leaf;
 }
 
-describe('singleton scope', () => {
+describe('transient scope', () => {
 	let c: Container;
 
 	beforeEach(() => {
@@ -34,14 +34,14 @@ describe('singleton scope', () => {
 		expect(node.left).not.toBe(node.right);
 	});
 
-	it('returns the different things in two requests', () => {
+	it('returns different things in two requests', () => {
 		const first = c.get(LeafToken);
 		const second = c.get(LeafToken);
 
 		expect(first).not.toBe(second);
 	});
 
-	it('returns the same thing in the same request', () => {
+	it('returns a different thing in the same request', () => {
 		const node = c.get(NodeToken);
 
 		expect(node.left).not.toBe(node.right);

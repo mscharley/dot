@@ -16,7 +16,7 @@ class Node {
 	public right!: Leaf;
 }
 
-describe('singleton scope', () => {
+describe('request scope', () => {
 	let c: Container;
 
 	beforeEach(() => {
@@ -25,7 +25,7 @@ describe('singleton scope', () => {
 		c.bind(NodeToken).to(Node);
 	});
 
-	it('returns the different things in two requests', () => {
+	it('returns different things in two requests', () => {
 		const first = c.get(LeafToken);
 		const second = c.get(LeafToken);
 
