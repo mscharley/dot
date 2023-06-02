@@ -4,6 +4,7 @@
 dist/
 node_modules/
 reports/
+temp/
 
 # stryker temp files
 .stryker-tmp
