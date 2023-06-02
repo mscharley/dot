@@ -2,6 +2,8 @@ import type * as interfaces from './interfaces';
 import type { Container } from './Container';
 import type { Token } from './Token';
 
+const isPromise = <T>(v: T | Promise<T>): v is Promise<T> => v != null && typeof (v as Promise<T>).then === 'function';
+
 export class BindingBuilder<T> implements interfaces.BindingBuilder<T> {
 	readonly #container: Container;
 	readonly #token: Token<T>;
@@ -36,7 +38,7 @@ export class BindingBuilder<T> implements interfaces.BindingBuilder<T> {
 	public toConstantValue(v: Promise<T>): Promise<void>;
 	public toConstantValue(v: T | Promise<T>): void | Promise<void> {
 		BindingBuilder.#registry.delete(this);
-		if (v instanceof Promise) {
+		if (isPromise(v)) {
 			return v.then((value) => this.#container.addBinding(this.#token, this.#scope, () => value));
 		} else {
 			return this.#container.addBinding(this.#token, this.#scope, () => v);
