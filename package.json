@@ -1,7 +1,15 @@
 {
 	"name": "@mscharley/ioc-deco",
 	"version": "1.0.0",
-	"description": "",
+	"description": "A lightweight inversion of control framework for JavaScript and TypeScript",
+	"keywords": [
+		"node",
+		"javascript",
+		"typescript",
+		"dependency injection",
+		"di",
+		"ioc"
+	],
 	"main": "./dist/index.js",
 	"types": "./dist/ioc-deco.d.ts",
 	"scripts": {
@@ -19,8 +27,16 @@
 		"stryker": "DECORATOR_TYPE=tc39 stryker run",
 		"rebuild-test": "npm run clean && npm run build && npm test && npm run stryker"
 	},
-	"author": "",
+	"author": "Matthew Scharley <matt@scharley.me>",
 	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/mscharley/ioc-deco/issues"
+	},
+	"homepage": "https://github.com/mscharley/ioc-deco#readme",
+	"funding": {
+		"type": "individual",
+		"url": "https://github.com/sponsors/mscharley"
+	},
 	"dependencies": {
 		"tslib": "*"
 	},
