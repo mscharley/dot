@@ -3,7 +3,6 @@
 !.vscode/extensions.json
 dist/
 node_modules/
-temp/
 reports/
 
 # stryker temp files
