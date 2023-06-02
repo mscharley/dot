@@ -5,3 +5,7 @@ dist/**/*.d.ts*
 
 src/demo
 src/**/__tests__
+
+reports/
+docs/
+temp/

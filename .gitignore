@@ -3,6 +3,7 @@
 !.vscode/extensions.json
 dist/
 node_modules/
+docs/
 reports/
 temp/
 

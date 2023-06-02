@@ -8,7 +8,8 @@
 		"build": "npm run build:tsc && npm run build:api",
 		"build:tsc": "tsc",
 		"build:api": "api-extractor run --local",
-		"clean": "rm -rf dist/ coverage/ temp/ .stryker-tmp/",
+		"build:docs": "api-documenter markdown -i ./reports/docs -o ./docs",
+		"clean": "rm -rf dist/ coverage/ docs/ reports/ temp/ .stryker-tmp/",
 		"start": "node ./dist/demo/index.js",
 		"test": "npm run test:eslint && npm run test:api && npm run test:jest:experimental && npm run test:jest:tc39",
 		"test:api": "api-extractor run",
@@ -25,6 +26,7 @@
 	},
 	"devDependencies": {
 		"@jest/globals": "29.5.0",
+		"@microsoft/api-documenter": "7.22.8",
 		"@microsoft/api-extractor": "7.35.0",
 		"@mscharley/eslint-config": "2.0.1",
 		"@mscharley/prettier-config": "2.0.1",
