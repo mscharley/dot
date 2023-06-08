@@ -11,4 +11,4 @@ console.log('sneak', ninja.sneak());
 
 const ninja2 = myContainer.get(TYPES.Warrior);
 
-console.log('ninja == ninja2:', ninja === ninja2);
+console.log('ninja === ninja2:', ninja === ninja2);

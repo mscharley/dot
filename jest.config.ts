@@ -2,6 +2,7 @@
  * For a detailed explanation regarding each configuration property and type check, visit:
  * https://jestjs.io/docs/configuration
  */
+import type { Config } from 'jest';
 
 declare const process: { env: Record<string, string> };
 
@@ -41,7 +42,7 @@ export default {
 
 	// An object that configures minimum threshold enforcement for coverage results
 	coverageThreshold: {
-		global: { branches: 80, functions: 80, lines: 80, statements: 80 },
+		global: { branches: 75, functions: 95, lines: 95, statements: 95 },
 	},
 
 	// A path to a custom dependency extractor
@@ -106,7 +107,7 @@ export default {
 	// reporters: undefined,
 
 	// Automatically reset mock state before every test
-	// resetMocks: false,
+	resetMocks: true,
 
 	// Reset the module registry before running each individual test
 	// resetModules: false,
@@ -195,4 +196,4 @@ export default {
 
 	// Whether to use watchman for file crawling
 	// watchman: true,
-};
+} satisfies Config;
