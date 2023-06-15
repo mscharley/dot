@@ -16,8 +16,6 @@ body:
     attributes:
       label: Steps to reproduce
       value: |-
-        Steps to reproduce the behavior:
-
         1. Go to '...'
         2. Click on '...'
         3. Scroll down to '...'

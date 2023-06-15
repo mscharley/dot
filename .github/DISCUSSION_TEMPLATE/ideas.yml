@@ -14,4 +14,4 @@ body:
       label: Describe alternatives you've considered.
   - type: textarea
     attributes:
-      label: Additional additional context you'd like to provide?
+      label: Any additional context you'd like to provide?
