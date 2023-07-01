@@ -1,6 +1,7 @@
 import type * as interfaces from '../interfaces';
+import { addTc39Injection } from './injectable';
 import { Container } from '../Container';
-import { mappings } from './injectable';
+import { registerInjection } from './registry';
 import type { Token } from '../Token';
 
 /** @public */
@@ -34,14 +35,24 @@ export const inject: InjectDecoratorFactory = <T>(
 		if (target != null) {
 			// experimental
 			const ctr = target.constructor as new () => T;
-			const map = mappings.get(ctr) ?? {};
-			map[context as Exclude<typeof context, ClassFieldDecoratorContext<unknown, T>>] = { token, options: opts };
-			mappings.set(ctr, map);
+			registerInjection(ctr, {
+				type: 'property',
+				name: context as Exclude<typeof context, ClassFieldDecoratorContext<unknown, T>>,
+				token,
+				options: opts,
+			});
 
 			return undefined;
 			/* c8 ignore end */
 		} else {
 			// tc39
+			addTc39Injection({
+				type: 'property',
+				name: (context as ClassFieldDecoratorContext<unknown, T>).name,
+				token,
+				options: opts,
+			});
+
 			return (_originalValue: T | undefined): T => {
 				const value = Container.resolve<T>(token, opts);
 

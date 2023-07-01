@@ -1,37 +1,60 @@
 import type * as interfaces from './interfaces';
+import type { Binding } from './models/Binding';
 import type { Token } from './Token';
 
 const isPromise = <T>(v: T | Promise<T>): v is Promise<T> => v != null && typeof (v as Promise<T>).then === 'function';
 
 export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
-	#scope?: interfaces.ScopeOptions;
+	#scope: interfaces.ScopeOptions;
+	readonly #addBinding: (builder: BindingBuilder<T>, binding: Binding<T>) => void;
 
 	public constructor(
 		public readonly token: Token<T>,
-		private readonly addBinding: (
-			token: Token<T>,
-			scope: undefined | interfaces.ScopeOptions,
-			builder: BindingBuilder<T>,
-			fn: (context: interfaces.BindingContext) => T,
-		) => void,
-	) {}
-
-	public to(fn: new () => T): void {
-		this.addBinding(this.token, this.#scope, this, () => new fn());
+		containerConfiguration: interfaces.ContainerConfiguration,
+		addBinding: (builder: BindingBuilder<T>, binding: Binding<T>) => void,
+	) {
+		this.#scope = containerConfiguration.defaultScope;
+		this.#addBinding = addBinding;
 	}
 
-	public toConstantValue(v: T): void;
-	public toConstantValue(v: Promise<T>): Promise<void>;
-	public toConstantValue(v: T | Promise<T>): void | Promise<void> {
-		if (isPromise(v)) {
-			return v.then((value) => this.addBinding(this.token, this.#scope, this, () => value));
+	public to(ctr: new () => T): void {
+		this.#addBinding(this, {
+			type: 'constructor',
+			token: this.token,
+			scope: this.#scope,
+			ctr,
+		});
+	}
+
+	public toConstantValue(value: T): void;
+	public toConstantValue(value: Promise<T>): Promise<void>;
+	public toConstantValue(value: T | Promise<T>): void | Promise<void> {
+		if (isPromise(value)) {
+			return value.then((v) =>
+				this.#addBinding(this, {
+					type: 'static',
+					token: this.token,
+					scope: this.#scope,
+					value: v,
+				}),
+			);
 		} else {
-			return this.addBinding(this.token, this.#scope, this, () => v);
+			return this.#addBinding(this, {
+				type: 'static',
+				token: this.token,
+				scope: this.#scope,
+				value,
+			});
 		}
 	}
 
-	public toDynamicValue(fn: (context: interfaces.BindingContext) => T): void {
-		this.addBinding(this.token, this.#scope, this, fn);
+	public toDynamicValue(factory: (context: interfaces.BindingContext<T>) => T): void {
+		this.#addBinding(this, {
+			type: 'dynamic',
+			token: this.token,
+			scope: this.#scope,
+			generator: factory,
+		});
 	}
 
 	public inSingletonScope: interfaces.BindingBuilder<T>['inSingletonScope'] = () => {

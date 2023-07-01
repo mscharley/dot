@@ -8,30 +8,32 @@
 type AsyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound: IsBoundFunction, rebind: RebindFunction) => Promise<void>;
 
 // @public (undocumented)
-interface Binder<in T> {
+interface Binder<in out T> {
     // (undocumented)
     to: (fn: new () => T) => void;
     // (undocumented)
     toConstantValue: ((v: T) => void) & ((v: Promise<T>) => Promise<void>);
     // (undocumented)
-    toDynamicValue: (fn: (context: BindingContext) => T) => void;
+    toDynamicValue: (fn: (context: BindingContext<T>) => T) => void;
 }
 
 // @public (undocumented)
 type BindFunction = <T>(token: Token<T>) => BindingBuilder<T>;
 
 // @public (undocumented)
-interface BindingBuilder<in T> extends Binder<T>, BindingScope<T, BindingBuilder<T>> {
+interface BindingBuilder<in out T> extends Binder<T>, BindingScope<T, BindingBuilder<T>> {
 }
 
 // @public (undocumented)
-interface BindingContext {
+interface BindingContext<out T> {
     // (undocumented)
     container: Container;
+    // (undocumented)
+    token: Token<T>;
 }
 
 // @public (undocumented)
-interface BindingScope<in T, Builder> {
+interface BindingScope<in T, out Builder> {
     // (undocumented)
     inRequestScope: () => Omit<Builder, FixedScopeBindingOptions | keyof BindingScope<T, unknown>>;
     // (undocumented)
@@ -87,7 +89,7 @@ export interface InjectableDecorator<T> {
     // (undocumented)
     (target: new () => T, context: ClassDecoratorContext<new () => T>): undefined;
     // (undocumented)
-    (target: new () => T): undefined | (new () => T);
+    (target: new () => T, context?: undefined): undefined | (new () => T);
 }
 
 // @public (undocumented)

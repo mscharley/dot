@@ -4,6 +4,7 @@ import 'reflect-metadata';
 import { myContainer } from './ioc.config';
 import { TYPES } from './types';
 
+console.log('Fetching...');
 const ninja = myContainer.get(TYPES.Warrior);
 
 console.log('fight', ninja.fight());

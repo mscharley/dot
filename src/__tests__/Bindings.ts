@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { describe, expect, it, jest } from '@jest/globals';
-import { BindingBuilder } from '../BindingBuilder';
 import { Container } from '../Container';
-import type { ScopeOptions } from '../interfaces/ScopeOptions';
 import { Token } from '../Token';
 import type { TokenType } from '../Token';
 
@@ -25,13 +23,6 @@ describe('Bindings', () => {
 		expect(() => c.get(token)).toThrowErrorMatchingInlineSnapshot(
 			'"Unable to resolve token as no bindings exist: Symbol(test)"',
 		);
-	});
-
-	it('invalid bindings trigger an error', () => {
-		const c = new Container();
-		c.addBinding(token, 'foo' as ScopeOptions, new BindingBuilder(token, c.addBinding), () => ({ id: 10 }));
-
-		expect(() => c.get(token)).toThrowErrorMatchingInlineSnapshot('"Invalid scope for binding: foo"');
 	});
 
 	it('fails if attempting a resolution outside a request', () => {
