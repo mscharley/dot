@@ -1,5 +1,5 @@
-import type { Container } from './Container';
-import type { Token } from '../Token';
+import type { Container } from './Container.js';
+import type { Token } from '../Token.js';
 
 /**
  * @public

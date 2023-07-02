@@ -1,4 +1,4 @@
-import type { FixedScopeBindingOptions } from './Binder';
+import type { FixedScopeBindingOptions } from './Binder.js';
 
 /**
  * @public

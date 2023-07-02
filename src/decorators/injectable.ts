@@ -1,6 +1,6 @@
-import { getPropertyInjections, registerInjection } from './registry';
-import { Container } from '../Container';
-import type { Injection } from './registry';
+import { getPropertyInjections, registerInjection } from './registry.js';
+import { Container } from '../Container.js';
+import type { Injection } from './registry.js';
 
 /** @public */
 export interface InjectableDecorator<T> {

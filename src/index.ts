@@ -1,5 +1,5 @@
-import type * as interfaces from './interfaces';
-import { Container } from './Container';
+import type * as interfaces from './interfaces/index.js';
+import { Container } from './Container.js';
 
 /**
  * @public
@@ -7,12 +7,10 @@ import { Container } from './Container';
 export const createContainer = (config?: interfaces.ContainerConfiguration): interfaces.Container =>
 	new Container(config);
 
-export default createContainer;
-
 export type { interfaces };
-export type { InjectDecorator, InjectDecoratorFactory } from './decorators/inject';
-export type { InjectableDecorator } from './decorators/injectable';
-export type { TokenType } from './Token';
-export { inject } from './decorators/inject';
-export { injectable } from './decorators/injectable';
-export { Token } from './Token';
+export type { InjectDecorator, InjectDecoratorFactory } from './decorators/inject.js';
+export type { InjectableDecorator } from './decorators/injectable.js';
+export type { TokenType } from './Token.js';
+export { inject } from './decorators/inject.js';
+export { injectable } from './decorators/injectable.js';
+export { Token } from './Token.js';

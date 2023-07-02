@@ -1,8 +1,8 @@
-import type * as interfaces from './interfaces';
-import type { Binding } from './models/Binding';
-import { BindingBuilder } from './BindingBuilder';
-import { isNever } from './util/isNever';
-import type { Token } from './Token';
+import type * as interfaces from './interfaces/index.js';
+import type { Binding } from './models/Binding.js';
+import { BindingBuilder } from './BindingBuilder.js';
+import { isNever } from './util/isNever.js';
+import type { Token } from './Token.js';
 
 export class Container implements interfaces.Container {
 	static #currentRequest: Container | undefined;
@@ -99,7 +99,7 @@ export class Container implements interfaces.Container {
 			}
 		}
 
-		const value = this.#resolveBinding(binding);
+		const value = this.#resolveBinding(binding) as T;
 		this.#cacheBinding(binding, value);
 
 		return value;
@@ -120,7 +120,7 @@ export class Container implements interfaces.Container {
 		}
 	};
 
-	#resolveBinding = <T>(binding: Binding<T>): T => {
+	#resolveBinding = <T>(binding: Binding<T>): T | Promise<T> => {
 		switch (binding.type) {
 			case 'static':
 				return binding.value;
@@ -133,7 +133,8 @@ export class Container implements interfaces.Container {
 		}
 	};
 
-	public get<T>(token: Token<T>): T {
+	// eslint-disable-next-line @typescript-eslint/require-await
+	public get = async <T>(token: Token<T>): Promise<T> => {
 		this.#validateBindings();
 		this.#requestCache = {};
 
@@ -144,7 +145,7 @@ export class Container implements interfaces.Container {
 		} finally {
 			Container.#currentRequest = lastRequest;
 		}
-	}
+	};
 
 	public has: interfaces.IsBoundFunction = (token) => {
 		return this.#bindings.find((b) => b.token.identifier === token.identifier) != null;

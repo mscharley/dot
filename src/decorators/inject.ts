@@ -1,8 +1,8 @@
-import type * as interfaces from '../interfaces';
-import { addTc39Injection } from './injectable';
-import { Container } from '../Container';
-import { registerInjection } from './registry';
-import type { Token } from '../Token';
+import type * as interfaces from '../interfaces/index.js';
+import { addTc39Injection } from './injectable.js';
+import { Container } from '../Container.js';
+import { registerInjection } from './registry.js';
+import type { Token } from '../Token.js';
 
 /** @public */
 export interface InjectDecoratorFactory {

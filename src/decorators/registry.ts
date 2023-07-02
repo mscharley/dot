@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-type-alias */
-import type * as interfaces from '../interfaces';
-import type { Token } from '../Token';
+import type * as interfaces from '../interfaces/index.js';
+import type { Token } from '../Token.js';
 
 export interface PropertyInjection<T = unknown> {
 	type: 'property';

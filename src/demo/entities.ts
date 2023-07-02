@@ -1,6 +1,6 @@
-import { inject, injectable } from '../';
-import type { ThrowableWeapon, Warrior, Weapon } from './interfaces';
-import { TYPES } from './types';
+import { inject, injectable } from '../index.js';
+import type { ThrowableWeapon, Warrior, Weapon } from './interfaces.js';
+import { TYPES } from './types.js';
 
 @injectable()
 class Katana implements Weapon {

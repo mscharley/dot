@@ -1,6 +1,6 @@
-import type * as interfaces from './interfaces';
-import type { Binding } from './models/Binding';
-import type { Token } from './Token';
+import type * as interfaces from './interfaces/index.js';
+import type { Binding } from './models/Binding.js';
+import type { Token } from './Token.js';
 
 const isPromise = <T>(v: T | Promise<T>): v is Promise<T> => v != null && typeof (v as Promise<T>).then === 'function';
 
@@ -48,7 +48,7 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 		}
 	}
 
-	public toDynamicValue(factory: (context: interfaces.BindingContext<T>) => T): void {
+	public toDynamicValue(factory: (context: interfaces.BindingContext<T>) => T | Promise<T>): void {
 		this.#addBinding(this, {
 			type: 'dynamic',
 			token: this.token,

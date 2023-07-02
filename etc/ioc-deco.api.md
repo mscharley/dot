@@ -14,7 +14,7 @@ interface Binder<in out T> {
     // (undocumented)
     toConstantValue: ((v: T) => void) & ((v: Promise<T>) => Promise<void>);
     // (undocumented)
-    toDynamicValue: (fn: (context: BindingContext<T>) => T) => void;
+    toDynamicValue: (fn: (context: BindingContext<T>) => T | Promise<T>) => void;
 }
 
 // @public (undocumented)
@@ -47,7 +47,7 @@ interface Container {
     // (undocumented)
     bind: BindFunction;
     // (undocumented)
-    get: <T>(token: Token<T>) => T;
+    get: <T>(token: Token<T>) => Promise<T>;
     // (undocumented)
     has: IsBoundFunction;
     // (undocumented)
@@ -71,9 +71,7 @@ interface ContainerConfiguration {
 type ContainerModule = AsyncContainerModule | SyncContainerModule;
 
 // @public (undocumented)
-const createContainer: (config?: interfaces.ContainerConfiguration) => interfaces.Container;
-export { createContainer }
-export default createContainer;
+export const createContainer: (config?: interfaces.ContainerConfiguration) => interfaces.Container;
 
 // @public (undocumented)
 type FixedScopeBindingOptions = 'toConstantValue';

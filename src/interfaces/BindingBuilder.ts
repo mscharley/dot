@@ -1,5 +1,5 @@
-import type { Binder } from './Binder';
-import type { BindingScope } from './BindingScope';
+import type { Binder } from './Binder.js';
+import type { BindingScope } from './BindingScope.js';
 
 /**
  * @public

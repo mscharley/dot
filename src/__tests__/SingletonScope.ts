@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { Container } from '../Container';
-import { inject } from '../decorators/inject';
-import { injectable } from '../decorators/injectable';
-import { Token } from '../Token';
+import { Container } from '../Container.js';
+import { inject } from '../decorators/inject.js';
+import { injectable } from '../decorators/injectable.js';
+import { Token } from '../Token.js';
 
 const LeafToken = new Token<Leaf>('leaf');
 @injectable()
@@ -26,15 +26,15 @@ describe('singleton scope', () => {
 		c.bind(NodeToken).to(Node);
 	});
 
-	it('returns the same thing in two requests', () => {
-		const first = c.get(LeafToken);
-		const second = c.get(LeafToken);
+	it('returns the same thing in two requests', async () => {
+		const first = await c.get(LeafToken);
+		const second = await c.get(LeafToken);
 
 		expect(first).toBe(second);
 	});
 
-	it('returns the same thing in the same request', () => {
-		const node = c.get(NodeToken);
+	it('returns the same thing in the same request', async () => {
+		const node = await c.get(NodeToken);
 
 		expect(node.left).toBe(node.right);
 	});
