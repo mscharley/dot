@@ -16,6 +16,11 @@
 			"major": { "enabled": true }
 		},
 		{
+			"matchPackageNames": ["@microsoft/api-documenter", "@microsoft/api-extractor"],
+			"groupName": "api-extractor",
+			"additionalBranchPrefix": ""
+		},
+		{
 			"matchPackageNames": ["@mscharley/eslint-config", "@mscharley/prettier-config"],
 			"groupName": "eslint packages",
 			"additionalBranchPrefix": ""
