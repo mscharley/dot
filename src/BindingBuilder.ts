@@ -1,8 +1,7 @@
 import type * as interfaces from './interfaces/index.js';
 import type { Binding } from './models/Binding.js';
+import { isPromise } from './util/isPromise.js';
 import type { Token } from './Token.js';
-
-const isPromise = <T>(v: T | Promise<T>): v is Promise<T> => v != null && typeof (v as Promise<T>).then === 'function';
 
 export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 	#scope: interfaces.ScopeOptions;
@@ -17,18 +16,16 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 		this.#addBinding = addBinding;
 	}
 
-	public to(ctr: new () => T): void {
+	public to: interfaces.BindingBuilder<T>['to'] = (ctr) => {
 		this.#addBinding(this, {
 			type: 'constructor',
 			token: this.token,
 			scope: this.#scope,
 			ctr,
 		});
-	}
+	};
 
-	public toConstantValue(value: T): void;
-	public toConstantValue(value: Promise<T>): Promise<void>;
-	public toConstantValue(value: T | Promise<T>): void | Promise<void> {
+	public toConstantValue = ((value): void | Promise<void> => {
 		if (isPromise(value)) {
 			return value.then((v) =>
 				this.#addBinding(this, {
@@ -46,16 +43,16 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 				value,
 			});
 		}
-	}
+	}) as interfaces.BindingBuilder<T>['toConstantValue'];
 
-	public toDynamicValue(factory: (context: interfaces.BindingContext<T>) => T | Promise<T>): void {
+	public toDynamicValue: interfaces.BindingBuilder<T>['toDynamicValue'] = (factory) => {
 		this.#addBinding(this, {
 			type: 'dynamic',
 			token: this.token,
 			scope: this.#scope,
 			generator: factory,
 		});
-	}
+	};
 
 	public inSingletonScope: interfaces.BindingBuilder<T>['inSingletonScope'] = () => {
 		this.#scope = 'singleton';

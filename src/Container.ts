@@ -1,6 +1,7 @@
 import type * as interfaces from './interfaces/index.js';
 import type { Binding } from './models/Binding.js';
 import { BindingBuilder } from './BindingBuilder.js';
+import { calculatePlan } from './planner/calculatePlan.js';
 import { isNever } from './util/isNever.js';
 import type { Token } from './Token.js';
 
@@ -32,6 +33,7 @@ export class Container implements interfaces.Container {
 				`Unable to resolve token as no container is currently making a request: ${token.identifier.toString()}`,
 			);
 		}
+
 		return this.#currentRequest.#resolve(token, options);
 	}
 
@@ -65,19 +67,16 @@ export class Container implements interfaces.Container {
 		return this.bind(token);
 	};
 
-	public load(module: interfaces.AsyncContainerModule): Promise<void>;
-	public load(module: interfaces.SyncContainerModule): void;
-	// eslint-disable-next-line @typescript-eslint/promise-function-async
-	public load(module: interfaces.ContainerModule): void | Promise<void> {
+	public load = ((module): void | Promise<void> => {
 		return module(this.bind, this.unbind, this.has, this.rebind);
-	}
+	}) as interfaces.Container['load'];
 
 	public addBinding = <T>(builder: BindingBuilder<T>, binding: Binding<T>): void => {
 		this.#incompleteBindings.delete(builder);
 		this.#bindings.push(binding);
 	};
 
-	#resolve = <T>(token: Token<T>, options: interfaces.InjectOptions): T => {
+	#resolve = async <T>(token: Token<T>, options: interfaces.InjectOptions): Promise<T> => {
 		if (this.#singletonCache[token.identifier] != null) {
 			return this.#singletonCache[token.identifier] as T;
 		} else if (this.#requestCache[token.identifier] != null) {
@@ -99,7 +98,7 @@ export class Container implements interfaces.Container {
 			}
 		}
 
-		const value = this.#resolveBinding(binding) as T;
+		const value = await this.#resolveBinding(binding);
 		this.#cacheBinding(binding, value);
 
 		return value;
@@ -133,16 +132,26 @@ export class Container implements interfaces.Container {
 		}
 	};
 
-	// eslint-disable-next-line @typescript-eslint/require-await
 	public get = async <T>(token: Token<T>): Promise<T> => {
 		this.#validateBindings();
 		this.#requestCache = {};
+		console.log(
+			'Calculated plan:',
+			calculatePlan(this.#bindings, this.#resolveBinding, {
+				type: 'request',
+				options: {
+					optional: false,
+				},
+				token,
+			}),
+		);
 
 		const lastRequest = Container.#currentRequest;
 		try {
 			Container.#currentRequest = this;
-			return this.#resolve(token, { optional: false });
+			return await this.#resolve(token, { optional: false });
 		} finally {
+			// eslint-disable-next-line require-atomic-updates
 			Container.#currentRequest = lastRequest;
 		}
 	};
