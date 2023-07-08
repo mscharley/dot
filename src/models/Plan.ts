@@ -12,7 +12,7 @@ export interface FetchFromCache<T = unknown> {
 export interface CreateInstance<T = unknown> {
 	type: 'createClass';
 	cache: 'singleton' | 'request' | undefined;
-	generate: () => T;
+	generate: () => T | Promise<T>;
 	token: Token<T>;
 	expectedTokensUsed: Array<Token<unknown>>;
 }

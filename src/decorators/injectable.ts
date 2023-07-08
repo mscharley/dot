@@ -26,9 +26,9 @@ export const injectable = <T>(): InjectableDecorator<T> =>
 				public constructor() {
 					// eslint-disable-next-line @typescript-eslint/no-unsafe-call
 					super();
-					map.forEach(({ name, token, options }) => {
+					map.forEach(({ name, token }) => {
 						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-						(this as any)[name] = Container.resolve(token, options);
+						(this as any)[name] = Container.resolve(token);
 					});
 				}
 			};

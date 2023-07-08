@@ -9,9 +9,26 @@ export const calculatePlan = <T>(
 	input: Injection,
 ): Plan<T> => {
 	const token = input.token;
-	const binding = bindings.find((v) => v.token === token);
+	const binds = bindings.filter((v) => v.token === token);
+	if (binds.length > 1) {
+		throw new Error(`Multiple bindings exist for token: ${token.identifier.toString()}`);
+	}
+
+	const binding = binds[0];
 	if (binding == null) {
-		throw new Error(`Unable to find a binding for token: ${token.identifier.toString()}`);
+		if (input.options.optional) {
+			return [
+				{
+					type: 'createClass',
+					generate: () => undefined as T,
+					token,
+					expectedTokensUsed: [],
+					cache: undefined,
+				},
+			];
+		} else {
+			throw new Error(`Unable to resolve token as no bindings exist: ${token.identifier.toString()}`);
+		}
 	}
 
 	const cache = binding.scope === 'transient' ? undefined : binding.scope;

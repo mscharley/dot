@@ -2,11 +2,13 @@ import type * as interfaces from './interfaces/index.js';
 import type { Binding } from './models/Binding.js';
 import { BindingBuilder } from './BindingBuilder.js';
 import { calculatePlan } from './planner/calculatePlan.js';
+import { executePlan } from './planner/executePlan.js';
 import { isNever } from './util/isNever.js';
+import type { Request } from './models/Request.js';
 import type { Token } from './Token.js';
 
 export class Container implements interfaces.Container {
-	static #currentRequest: Container | undefined;
+	static #currentRequest: Request<unknown> | undefined;
 
 	public static get isProcessingRequest(): boolean {
 		return this.#currentRequest != null;
@@ -17,7 +19,6 @@ export class Container implements interfaces.Container {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	#bindings: Array<Binding<any>> = [];
 	readonly #singletonCache: Record<symbol, unknown> = {};
-	#requestCache: Record<symbol, unknown> = {};
 	public readonly config: Readonly<interfaces.ContainerConfiguration>;
 
 	public constructor(config?: Partial<interfaces.ContainerConfiguration>) {
@@ -27,14 +28,20 @@ export class Container implements interfaces.Container {
 		};
 	}
 
-	public static resolve<T>(token: Token<T>, options: interfaces.InjectOptions): T {
+	public static resolve<T>(token: Token<T>): T {
 		if (this.#currentRequest == null) {
 			throw new Error(
 				`Unable to resolve token as no container is currently making a request: ${token.identifier.toString()}`,
 			);
 		}
 
-		return this.#currentRequest.#resolve(token, options);
+		if (!(token.identifier in this.#currentRequest.stack)) {
+			throw new Error(`Token hasn't been created yet: ${token.identifier.toString()}}`);
+		}
+		const value = this.#currentRequest.stack[token.identifier] as T;
+		delete this.#currentRequest.stack[token.identifier];
+
+		return value;
 	}
 
 	#validateBindings = (): void => {
@@ -76,49 +83,6 @@ export class Container implements interfaces.Container {
 		this.#bindings.push(binding);
 	};
 
-	#resolve = async <T>(token: Token<T>, options: interfaces.InjectOptions): Promise<T> => {
-		if (this.#singletonCache[token.identifier] != null) {
-			return this.#singletonCache[token.identifier] as T;
-		} else if (this.#requestCache[token.identifier] != null) {
-			return this.#requestCache[token.identifier] as T;
-		}
-
-		const bindings = this.#bindings.filter((b): b is Binding<T> => b.token.identifier === token.identifier);
-
-		if (bindings.length > 1) {
-			throw new Error(`Multiple bindings exist for token: ${token.identifier.toString()}`);
-		}
-
-		const binding = bindings[0];
-		if (binding == null) {
-			if (options.optional) {
-				return undefined as T;
-			} else {
-				throw new Error(`Unable to resolve token as no bindings exist: ${token.identifier.toString()}`);
-			}
-		}
-
-		const value = await this.#resolveBinding(binding);
-		this.#cacheBinding(binding, value);
-
-		return value;
-	};
-
-	#cacheBinding = <T>({ scope, token }: Binding<T>, value: T): void => {
-		switch (scope) {
-			case 'singleton':
-				this.#singletonCache[token.identifier] = value;
-				break;
-			case 'request':
-				this.#requestCache[token.identifier] = value;
-				break;
-			case 'transient':
-				break;
-			default:
-				isNever(scope, 'Invalid scope for binding');
-		}
-	};
-
 	#resolveBinding = <T>(binding: Binding<T>): T | Promise<T> => {
 		switch (binding.type) {
 			case 'static':
@@ -134,22 +98,24 @@ export class Container implements interfaces.Container {
 
 	public get = async <T>(token: Token<T>): Promise<T> => {
 		this.#validateBindings();
-		this.#requestCache = {};
-		console.log(
-			'Calculated plan:',
-			calculatePlan(this.#bindings, this.#resolveBinding, {
-				type: 'request',
-				options: {
-					optional: false,
-				},
-				token,
-			}),
-		);
+
+		const plan = calculatePlan<T>(this.#bindings, this.#resolveBinding, {
+			type: 'request',
+			options: {
+				optional: false,
+			},
+			token,
+		});
+		const request: Request<T> = {
+			stack: {},
+			singletonCache: this.#singletonCache,
+			token,
+		};
 
 		const lastRequest = Container.#currentRequest;
 		try {
-			Container.#currentRequest = this;
-			return await this.#resolve(token, { optional: false });
+			Container.#currentRequest = request;
+			return await executePlan(plan, request);
 		} finally {
 			// eslint-disable-next-line require-atomic-updates
 			Container.#currentRequest = lastRequest;
