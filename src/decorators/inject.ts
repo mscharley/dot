@@ -1,7 +1,6 @@
 import type * as interfaces from '../interfaces/index.js';
 import { addTc39Injection } from './injectable.js';
 import { Container } from '../Container.js';
-import { registerInjection } from './registry.js';
 import type { Token } from '../Token.js';
 
 /** @public */
@@ -34,8 +33,7 @@ export const inject: InjectDecoratorFactory = <T>(
 		/* c8 ignore start */
 		if (target != null) {
 			// experimental
-			const ctr = target.constructor as new () => T;
-			registerInjection(ctr, {
+			addTc39Injection({
 				type: 'property',
 				name: context as Exclude<typeof context, ClassFieldDecoratorContext<unknown, T>>,
 				token,

@@ -35,6 +35,7 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 			default:
 				isNever(step, 'Invalid plan step');
 		}
+		// eslint-disable-next-line require-atomic-updates
 		stack[step.token.identifier] = stepStack;
 	}
 

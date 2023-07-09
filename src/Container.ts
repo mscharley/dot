@@ -36,8 +36,7 @@ export class Container implements interfaces.Container {
 		}
 
 		if (!(token.identifier in this.#currentRequest.stack)) {
-			console.log(this.#currentRequest);
-			throw new Error(`Token hasn't been created yet: ${token.identifier.toString()}}`);
+			throw new Error(`Token hasn't been created yet: ${token.identifier.toString()}`);
 		}
 		const tokenStack = this.#currentRequest.stack[token.identifier] as T[];
 		const [value] = tokenStack.splice(0, 1);
@@ -45,7 +44,6 @@ export class Container implements interfaces.Container {
 			delete this.#currentRequest.stack[token.identifier];
 		}
 
-		console.log(`Resolving ${token.identifier.toString()}:`, value);
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		return value!;
 	}
@@ -117,7 +115,6 @@ export class Container implements interfaces.Container {
 			singletonCache: this.#singletonCache,
 			token,
 		};
-		console.log('plan:', plan);
 
 		const lastRequest = Container.#currentRequest;
 		try {

@@ -21,17 +21,23 @@ export const injectable = <T>(): InjectableDecorator<T> =>
 		/* c8 ignore start */
 		if (context == null) {
 			// experimental
-			const map = getPropertyInjections(target);
-			return class extends target {
-				public constructor() {
-					// eslint-disable-next-line @typescript-eslint/no-unsafe-call
-					super();
-					map.forEach(({ name, token }) => {
-						// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-						(this as any)[name] = Container.resolve(token);
-					});
-				}
-			};
+			// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+			const klass = (() =>
+				class extends target {
+					public constructor() {
+						// eslint-disable-next-line @typescript-eslint/no-unsafe-call
+						super();
+						getPropertyInjections(klass).forEach(({ name, token }) => {
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+							(this as any)[name] = Container.resolve(token);
+						});
+					}
+				})();
+			_tc39Injections.splice(0).forEach((injection) => {
+				registerInjection(klass, injection);
+			});
+
+			return klass;
 			/* c8 ignore end */
 		} else {
 			// tc39 - no op
