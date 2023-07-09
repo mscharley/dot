@@ -15,17 +15,18 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 			continue;
 		}
 
+		const stepStack = stack[step.token.identifier] ?? [];
 		switch (step.type) {
 			case 'fetchFromCache':
 				if (step.token.identifier in caches[step.cache]) {
-					stack[step.token.identifier] = caches[step.cache][step.token.identifier];
+					stepStack.push(caches[step.cache][step.token.identifier]);
 					skip = step.skipStepsIfFound;
 				}
 				break;
 			case 'createClass': {
 				// eslint-disable-next-line no-await-in-loop
 				const value = await step.generate();
-				stack[step.token.identifier] = value;
+				stepStack.push(value);
 				if (step.cache != null) {
 					caches[step.cache][step.token.identifier] = value;
 				}
@@ -34,13 +35,17 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 			default:
 				isNever(step, 'Invalid plan step');
 		}
+		stack[step.token.identifier] = stepStack;
 	}
 
 	if (!(token.identifier in stack)) {
 		throw new Error(`Unable to resolve final request: ${token.identifier.toString()}`);
 	}
-	const returnValue = stack[token.identifier] as T;
-	delete stack[token.identifier];
+	const [returnValue] = (stack[token.identifier]?.splice(0, 1) ?? []) as T[];
+
+	if (stack[token.identifier]?.length === 0) {
+		delete stack[token.identifier];
+	}
 
 	const unresolved = Object.keys(stack);
 	if (unresolved.length > 0) {
@@ -50,5 +55,6 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 				.join(', ')}`,
 		);
 	}
-	return returnValue;
+	// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+	return returnValue!;
 };

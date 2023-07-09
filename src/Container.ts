@@ -36,12 +36,18 @@ export class Container implements interfaces.Container {
 		}
 
 		if (!(token.identifier in this.#currentRequest.stack)) {
+			console.log(this.#currentRequest);
 			throw new Error(`Token hasn't been created yet: ${token.identifier.toString()}}`);
 		}
-		const value = this.#currentRequest.stack[token.identifier] as T;
-		delete this.#currentRequest.stack[token.identifier];
+		const tokenStack = this.#currentRequest.stack[token.identifier] as T[];
+		const [value] = tokenStack.splice(0, 1);
+		if (tokenStack.length === 0) {
+			delete this.#currentRequest.stack[token.identifier];
+		}
 
-		return value;
+		console.log(`Resolving ${token.identifier.toString()}:`, value);
+		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+		return value!;
 	}
 
 	#validateBindings = (): void => {
@@ -111,6 +117,7 @@ export class Container implements interfaces.Container {
 			singletonCache: this.#singletonCache,
 			token,
 		};
+		console.log('plan:', plan);
 
 		const lastRequest = Container.#currentRequest;
 		try {
