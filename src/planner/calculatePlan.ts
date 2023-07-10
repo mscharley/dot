@@ -20,7 +20,7 @@ export const calculatePlan = <T>(
 			return [
 				{
 					type: 'createClass',
-					generate: () => undefined as T,
+					generate: () => undefined,
 					token,
 					expectedTokensUsed: [],
 					cache: undefined,

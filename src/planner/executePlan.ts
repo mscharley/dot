@@ -33,7 +33,7 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 				break;
 			}
 			default:
-				isNever(step, 'Invalid plan step');
+				return isNever(step, 'Invalid plan step');
 		}
 		// eslint-disable-next-line require-atomic-updates
 		stack[step.token.identifier] = stepStack;
@@ -51,7 +51,7 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 	const unresolved = Object.keys(stack);
 	if (unresolved.length > 0) {
 		throw new Error(
-			`Unresolved dependecies created. This implies a missing @injectable somewhere in your application. Extra dependencies: ${unresolved
+			`Unresolved dependecies created, this is probably a bug. Please report this! Extra dependencies: ${unresolved
 				.map((i) => i.toString())
 				.join(', ')}`,
 		);

@@ -8,9 +8,9 @@ export interface InjectableDecorator<T> {
 	(target: new () => T, context?: undefined): undefined | (new () => T);
 }
 
-const _tc39Injections: Injection[] = [];
-export const addTc39Injection = (injection: Injection): void => {
-	_tc39Injections.push(injection);
+const _injections: Injection[] = [];
+export const addInjection = (injection: Injection): void => {
+	_injections.push(injection);
 };
 
 /**
@@ -33,7 +33,7 @@ export const injectable = <T>(): InjectableDecorator<T> =>
 						});
 					}
 				})();
-			_tc39Injections.splice(0).forEach((injection) => {
+			_injections.splice(0).forEach((injection) => {
 				registerInjection(klass, injection);
 			});
 
@@ -41,7 +41,7 @@ export const injectable = <T>(): InjectableDecorator<T> =>
 			/* c8 ignore end */
 		} else {
 			// tc39 - no op
-			_tc39Injections.splice(0).forEach((injection) => {
+			_injections.splice(0).forEach((injection) => {
 				registerInjection(target, injection);
 			});
 

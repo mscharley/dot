@@ -10,9 +10,11 @@ export const registerInjection = <T>(klass: new () => T, injection: Injection): 
 };
 
 export const getInjections = <T>(klass: new () => T): Injection[] => {
-	return [...(registry.get(klass) ?? [])];
+	const injections: Injection[] = registry.get(klass) ?? [];
+	return [...injections];
 };
 
 export const getPropertyInjections = <T>(klass: new () => T): PropertyInjection[] => {
-	return [...(registry.get(klass) ?? [])].filter((i): i is PropertyInjection => i.type === 'property');
+	const injections: Injection[] = registry.get(klass) ?? [];
+	return [...injections].filter((i): i is PropertyInjection => i.type === 'property');
 };

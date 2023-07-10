@@ -131,6 +131,7 @@ describe('Bindings', () => {
 	describe('has()', () => {
 		it('can check if a token has been bound', () => {
 			const c = new Container();
+			c.bind(new Token<undefined>('random.token')).toConstantValue(undefined);
 			expect(c.has(token)).toBe(false);
 			c.bind(token).toConstantValue({ id: 10 });
 			expect(c.has(token)).toBe(true);
@@ -140,14 +141,18 @@ describe('Bindings', () => {
 	describe('unbind()', () => {
 		it('can unbind a token that has been bound', () => {
 			const c = new Container();
+			const t = new Token<undefined>('random.token');
+			c.bind(t).toConstantValue(undefined);
 			c.bind(token).toConstantValue({ id: 10 });
 			expect(c.has(token)).toBe(true);
 			c.unbind(token);
 			expect(c.has(token)).toBe(false);
+			expect(c.has(t)).toBe(true);
 		});
 
 		it('throws an error if the token has not been bound', () => {
 			const c = new Container();
+			c.bind(new Token<undefined>('random.token')).toConstantValue(undefined);
 			expect(() => c.unbind(token)).toThrowErrorMatchingInlineSnapshot(
 				'"Unable to unbind token because it is not bound: Symbol(test)"',
 			);
