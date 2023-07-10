@@ -1,4 +1,4 @@
-import type { ScopeOptions } from './ScopeOptions';
+import type { ScopeOptions } from './ScopeOptions.js';
 
 /**
  * @public

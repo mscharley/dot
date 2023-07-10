@@ -1,4 +1,4 @@
-import type { BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions';
+import type { BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions.js';
 
 /** @public */
 export type AsyncContainerModule = (

@@ -10,8 +10,13 @@
 		"di",
 		"ioc"
 	],
-	"main": "./dist/index.js",
-	"types": "./dist/ioc-deco.d.ts",
+	"type": "module",
+	"exports": {
+		".": {
+			"types": "./dist/ioc-deco.d.ts",
+			"require": "./dist/index.js"
+		}
+	},
 	"scripts": {
 		"build": "npm run build:tsc && npm run build:api",
 		"build:tsc": "tsc",
@@ -22,9 +27,9 @@
 		"test": "npm run test:eslint && npm run test:api && npm run test:jest:experimental && npm run test:jest:tc39",
 		"test:api": "api-extractor run",
 		"test:eslint": "eslint .",
-		"test:jest:tc39": "DECORATOR_TYPE=tc39 jest",
-		"test:jest:experimental": "DECORATOR_TYPE=experimental jest",
-		"stryker": "DECORATOR_TYPE=tc39 stryker run",
+		"test:jest:tc39": "DECORATOR_TYPE=tc39 NODE_OPTIONS=--experimental-vm-modules jest",
+		"test:jest:experimental": "DECORATOR_TYPE=experimental NODE_OPTIONS=--experimental-vm-modules jest",
+		"stryker": "DECORATOR_TYPE=tc39 NODE_OPTIONS=--experimental-vm-modules stryker run",
 		"rebuild-test": "npm run clean && npm run build && npm test && npm run stryker && npm run build:docs"
 	},
 	"author": "Matthew Scharley <matt@scharley.me>",
@@ -48,6 +53,7 @@
 		"@mscharley/prettier-config": "2.0.2",
 		"@stryker-mutator/core": "7.1.0",
 		"@stryker-mutator/jest-runner": "7.1.0",
+		"@stryker-mutator/typescript-checker": "^7.1.0",
 		"jest": "29.6.1",
 		"reflect-metadata": "0.1.13",
 		"stryker-cli": "1.0.2",

@@ -1,58 +1,49 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { describe, expect, it, jest } from '@jest/globals';
-import { BindingBuilder } from '../BindingBuilder';
-import { Container } from '../Container';
-import type { ScopeOptions } from '../interfaces/ScopeOptions';
-import { Token } from '../Token';
-import type { TokenType } from '../Token';
+import { Container } from '../Container.js';
+import { Token } from '../Token.js';
+import type { TokenType } from '../Token.js';
 
 const token = new Token<{ id: number }>('test');
 
 describe('Bindings', () => {
-	it('enforces finalising bindings', () => {
+	it('enforces finalising bindings', async () => {
 		const c = new Container();
 		c.bind(token);
 		c.bind(new Token('foo'));
 
-		expect(() => c.get(token)).toThrowErrorMatchingInlineSnapshot(
+		await expect(async () => c.get(token)).rejects.toThrowErrorMatchingInlineSnapshot(
 			'"Some bindings were started but not completed: Symbol(test), Symbol(foo)"',
 		);
 	});
 
-	it('throws an error if no binding is found for a token', () => {
+	it('throws an error if no binding is found for a token', async () => {
 		const c = new Container();
 
-		expect(() => c.get(token)).toThrowErrorMatchingInlineSnapshot(
+		await expect(async () => c.get(token)).rejects.toThrowErrorMatchingInlineSnapshot(
 			'"Unable to resolve token as no bindings exist: Symbol(test)"',
 		);
 	});
 
-	it('invalid bindings trigger an error', () => {
-		const c = new Container();
-		c.addBinding(token, 'foo' as ScopeOptions, new BindingBuilder(token, c.addBinding), () => ({ id: 10 }));
-
-		expect(() => c.get(token)).toThrowErrorMatchingInlineSnapshot('"Invalid scope for binding: foo"');
-	});
-
 	it('fails if attempting a resolution outside a request', () => {
-		expect(() => Container.resolve(token, { optional: false })).toThrowErrorMatchingInlineSnapshot(
+		expect(() => Container.resolve(token)).toThrowErrorMatchingInlineSnapshot(
 			'"Unable to resolve token as no container is currently making a request: Symbol(test)"',
 		);
 	});
 
 	describe('isProcessingRequest', () => {
-		it('can display if a request is running', () => {
+		it('can display if a request is running', async () => {
 			const c = new Container();
 			c.bind(token).toDynamicValue(() => {
 				expect(Container.isProcessingRequest).toBe(true);
 				return { id: 10 };
 			});
-			expect(c.get(token)).toMatchObject({ id: 10 });
+			await expect(c.get(token)).resolves.toMatchObject({ id: 10 });
 		});
 
-		it('properly ends the current request if it fails', () => {
+		it('properly ends the current request if it fails', async () => {
 			const c = new Container();
-			expect(() => c.get(token)).toThrowError();
+			await expect(async () => c.get(token)).rejects.toThrowError();
 			expect(Container.isProcessingRequest).toBe(false);
 		});
 	});
@@ -65,13 +56,13 @@ describe('Bindings', () => {
 				c.bind(token).inSingletonScope().toConstantValue;
 			});
 
-			it('acts like singleton scope', () => {
+			it('acts like singleton scope', async () => {
 				const c = new Container();
 				const result = c.bind(token).toConstantValue({ id: 10 });
 				expect(result).not.toBeInstanceOf(Promise);
-				const resolved = c.get(token);
+				const resolved = await c.get(token);
 				expect(resolved).toMatchObject({ id: 10 });
-				expect(resolved).toBe(c.get(token));
+				expect(resolved).toBe(await c.get(token));
 			});
 
 			it('can handle async bindings', async () => {
@@ -79,48 +70,48 @@ describe('Bindings', () => {
 				const result = c.bind(token).toConstantValue(Promise.resolve({ id: 10 }));
 				expect(result).toBeInstanceOf(Promise);
 				await result;
-				expect(c.get(token)).toMatchObject({ id: 10 });
+				expect(await c.get(token)).toMatchObject({ id: 10 });
 			});
 		});
 
 		describe('toDynamicValue()', () => {
-			it('transient scope will always run the function', () => {
+			it('transient scope will always run the function', async () => {
 				const c = new Container();
 				const fn = jest.fn<() => TokenType<typeof token>>().mockImplementation(() => ({ id: 10 }));
 				c.bind(token).inTransientScope().toDynamicValue(fn);
 
-				expect(c.get(token)).not.toBe(c.get(token));
+				expect(await c.get(token)).not.toBe(await c.get(token));
 				expect(fn.mock.calls.length).toBe(2);
 			});
 
-			it('singleton scope will only run the function once', () => {
+			it('singleton scope will only run the function once', async () => {
 				const c = new Container();
 				const fn = jest.fn<() => TokenType<typeof token>>().mockImplementation(() => ({ id: 10 }));
 				c.bind(token).inSingletonScope().toDynamicValue(fn);
 
-				const resolved = c.get(token);
+				const resolved = await c.get(token);
 				expect(resolved).toMatchObject({ id: 10 });
-				expect(resolved).toBe(c.get(token));
+				expect(resolved).toBe(await c.get(token));
 				expect(fn.mock.calls.length).toBe(1);
 			});
 
-			it('can handle nested requests', () => {
+			it('can handle nested requests', async () => {
 				const c = new Container();
 				const subrequest = new Token<string>('subrequest');
 				c.bind(token)
 					.inSingletonScope()
-					.toDynamicValue(({ container }) => {
-						expect(container.get(subrequest)).toBe('Hello world!');
+					.toDynamicValue(async ({ container }) => {
+						expect(await container.get(subrequest)).toBe('Hello world!');
 						return { id: 10 };
 					});
 				c.bind(subrequest).toConstantValue('Hello world!');
 
-				expect(c.get(token)).toMatchObject({ id: 10 });
+				await expect(c.get(token)).resolves.toMatchObject({ id: 10 });
 			});
 		});
 
 		describe('to()', () => {
-			it('constructs a new instance', () => {
+			it('constructs a new instance', async () => {
 				const c = new Container();
 				c.bind(token)
 					.inSingletonScope()
@@ -130,9 +121,9 @@ describe('Bindings', () => {
 						},
 					);
 
-				const resolved = c.get(token);
+				const resolved = await c.get(token);
 				expect(resolved).toMatchObject({ id: 10 });
-				expect(resolved).toBe(c.get(token));
+				expect(resolved).toBe(await c.get(token));
 			});
 		});
 	});
@@ -140,6 +131,7 @@ describe('Bindings', () => {
 	describe('has()', () => {
 		it('can check if a token has been bound', () => {
 			const c = new Container();
+			c.bind(new Token<undefined>('random.token')).toConstantValue(undefined);
 			expect(c.has(token)).toBe(false);
 			c.bind(token).toConstantValue({ id: 10 });
 			expect(c.has(token)).toBe(true);
@@ -149,14 +141,18 @@ describe('Bindings', () => {
 	describe('unbind()', () => {
 		it('can unbind a token that has been bound', () => {
 			const c = new Container();
+			const t = new Token<undefined>('random.token');
+			c.bind(t).toConstantValue(undefined);
 			c.bind(token).toConstantValue({ id: 10 });
 			expect(c.has(token)).toBe(true);
 			c.unbind(token);
 			expect(c.has(token)).toBe(false);
+			expect(c.has(t)).toBe(true);
 		});
 
 		it('throws an error if the token has not been bound', () => {
 			const c = new Container();
+			c.bind(new Token<undefined>('random.token')).toConstantValue(undefined);
 			expect(() => c.unbind(token)).toThrowErrorMatchingInlineSnapshot(
 				'"Unable to unbind token because it is not bound: Symbol(test)"',
 			);
@@ -164,24 +160,24 @@ describe('Bindings', () => {
 	});
 
 	describe('rebind()', () => {
-		it('is unbind then bind', () => {
+		it('is unbind then bind', async () => {
 			const c = new Container();
 			c.bind(token).toConstantValue({ id: 10 });
 			c.rebind(token).toConstantValue({ id: 20 });
 
-			expect(c.get(token)).toMatchObject({ id: 20 });
+			await expect(c.get(token)).resolves.toMatchObject({ id: 20 });
 		});
 	});
 
 	describe('load()', () => {
-		it('can bind tokens via a module', () => {
+		it('can bind tokens via a module', async () => {
 			const c = new Container();
 			const value = { id: 10 };
 			c.load((bind) => {
 				bind(token).toConstantValue(value);
 				return undefined;
 			});
-			expect(c.get(token)).toBe(value);
+			await expect(c.get(token)).resolves.toBe(value);
 		});
 
 		it('returns the correct types for sync and async loads', async () => {

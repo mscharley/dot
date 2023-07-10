@@ -32,7 +32,7 @@ export default {
 	coverageDirectory: 'reports/coverage',
 
 	// An array of regexp pattern strings used to skip coverage collection
-	coveragePathIgnorePatterns: ['/node_modules/', '/src/index.ts', '/src/demo/', '/src/interfaces/'],
+	coveragePathIgnorePatterns: ['/node_modules/', '/src/index.ts', '/src/demo/', '/src/interfaces/', '/src/models/'],
 
 	// Indicates which provider should be used to instrument code for coverage
 	coverageProvider: 'v8',
@@ -89,7 +89,9 @@ export default {
 	// ],
 
 	// A map from regular expressions to module names or to arrays of module names that allow to stub out resources with a single module
-	// moduleNameMapper: {},
+	moduleNameMapper: {
+		'^(\\.{1,2}/.*)\\.js$': '$1',
+	},
 
 	// An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader
 	// modulePathIgnorePatterns: [],
@@ -175,9 +177,13 @@ export default {
 			{
 				isolatedModules: true,
 				tsconfig: process.env.DECORATOR_TYPE === 'tc39' ? './tsconfig.tc39.json' : './tsconfig.experimental.json',
+				useESM: true,
 			},
 		],
 	},
+
+	// Extensions that Jest should treat as ESM modules
+	extensionsToTreatAsEsm: ['.ts'],
 
 	// An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
 	// transformIgnorePatterns: [

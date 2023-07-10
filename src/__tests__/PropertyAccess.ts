@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { Container } from '../Container';
-import { inject } from '../decorators/inject';
-import { injectable } from '../decorators/injectable';
-import { Token } from '../Token';
+import { Container } from '../Container.js';
+import { inject } from '../decorators/inject.js';
+import { injectable } from '../decorators/injectable.js';
+import { Token } from '../Token.js';
 
 const prop = new Token<string>('bar');
 @injectable()
@@ -28,22 +28,22 @@ describe('PropertyAccess', () => {
 		c.bind(foo).to(Foo);
 	});
 
-	it('can be accessed publically from outside the class', () => {
-		const n = c.get(foo);
+	it('can be accessed publically from outside the class', async () => {
+		const n = await c.get(foo);
 		expect(n.prop).toBe('Hello world!');
 	});
 
 	if (process.env.DECORATOR_TYPE === 'tc39') {
-		it('can access injected properties from the constructor', () => {
-			const n = c.get(foo);
+		it('can access injected properties from the constructor', async () => {
+			const n = await c.get(foo);
 			expect(n.constructorValue).toBe('Hello world!');
 		});
 	} else {
 		it.todo('can access injected properties from the constructor');
 	}
 
-	it('can access injected properties from other methods', () => {
-		const n = c.get(foo);
+	it('can access injected properties from other methods', async () => {
+		const n = await c.get(foo);
 		expect(n.getProp()).toBe('Hello world!');
 	});
 });

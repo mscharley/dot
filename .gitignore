@@ -6,6 +6,7 @@ node_modules/
 docs/
 reports/
 temp/
+tsdoc-metadata.json
 
 # stryker temp files
 .stryker-tmp

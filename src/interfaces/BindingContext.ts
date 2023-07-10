@@ -1,8 +1,10 @@
-import type { Container } from './Container';
+import type { Container } from './Container.js';
+import type { Token } from '../Token.js';
 
 /**
  * @public
  */
-export interface BindingContext {
+export interface BindingContext<out T> {
 	container: Container;
+	token: Token<T>;
 }

@@ -1,5 +1,5 @@
-import type { BindingBuilder } from './BindingBuilder';
-import type { Token } from '..';
+import type { BindingBuilder } from './BindingBuilder.js';
+import type { Token } from '../Token.js';
 
 /** @public */
 export type BindFunction = <T>(token: Token<T>) => BindingBuilder<T>;

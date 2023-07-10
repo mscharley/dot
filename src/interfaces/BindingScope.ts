@@ -1,9 +1,9 @@
-import type { FixedScopeBindingOptions } from './Binder';
+import type { FixedScopeBindingOptions } from './Binder.js';
 
 /**
  * @public
  */
-export interface BindingScope<in T, Builder> {
+export interface BindingScope<in T, out Builder> {
 	inSingletonScope: () => Omit<Builder, FixedScopeBindingOptions | keyof BindingScope<T, unknown>>;
 	inTransientScope: () => Omit<Builder, FixedScopeBindingOptions | keyof BindingScope<T, unknown>>;
 	inRequestScope: () => Omit<Builder, FixedScopeBindingOptions | keyof BindingScope<T, unknown>>;

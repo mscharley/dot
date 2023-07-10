@@ -1,5 +1,5 @@
-import type { ThrowableWeapon, Warrior, Weapon } from './interfaces';
-import { Token } from '../';
+import type { ThrowableWeapon, Warrior, Weapon } from './interfaces.js';
+import { Token } from '../index.js';
 
 const TYPES = {
 	Warrior: new Token<Warrior>('Warrior'),

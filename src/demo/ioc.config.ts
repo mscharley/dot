@@ -1,11 +1,10 @@
-import { Katana, Ninja, Shuriken } from './entities';
-import type { ContainerModule } from '../interfaces';
-import { createContainer } from '..';
-import { TYPES } from './types';
+import { createContainer, type interfaces } from '../index.js';
+import { Katana, Ninja, Shuriken } from './entities.js';
+import { TYPES } from './types.js';
 
 const myContainer = createContainer();
 
-const demoModule: ContainerModule = (bind) => {
+const demoModule: interfaces.ContainerModule = (bind) => {
 	bind(TYPES.Warrior).inSingletonScope().to(Ninja);
 	bind(TYPES.Weapon).to(Katana);
 	bind(TYPES.ThrowableWeapon).to(Shuriken);

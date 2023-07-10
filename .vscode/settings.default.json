@@ -1,3 +1,4 @@
 {
+	"jest.jestCommandLine": "DECORATOR_TYPE=tc39 NODE_OPTIONS=--experimental-vm-modules ${NVM_HOME:-~/.nvm}/nvm-exec npx jest",
 	"typescript.tsdk": "node_modules/typescript/lib"
 }
