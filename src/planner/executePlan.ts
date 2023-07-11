@@ -32,6 +32,14 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 				}
 				break;
 			}
+			case 'aggregateMultiple': {
+				const value = stepStack.splice(-step.count);
+				if (value.length !== step.count) {
+					throw new Error(`Unable to load expected number of injected services: ${value.length} !== ${step.count}`);
+				}
+				stepStack.push(value.flat());
+				break;
+			}
 			default:
 				return isNever(step, 'Invalid plan step');
 		}

@@ -5,8 +5,9 @@ import type { Token } from '../Token.js';
 
 /** @public */
 export interface InjectDecoratorFactory {
-	<T>(token: Token<T>, options: interfaces.InjectOptions & { optional: true }): InjectDecorator<T | undefined>;
-	<T>(token: Token<T>, options?: interfaces.InjectOptions): InjectDecorator<T>;
+	<T>(token: Token<T>, options: Partial<interfaces.InjectOptions> & { multiple: true }): InjectDecorator<T[]>;
+	<T>(token: Token<T>, options: Partial<interfaces.InjectOptions> & { optional: true }): InjectDecorator<T | undefined>;
+	<T>(token: Token<T>, options?: Partial<interfaces.InjectOptions>): InjectDecorator<T>;
 }
 
 /* eslint-disable @typescript-eslint/ban-types */
@@ -25,6 +26,7 @@ export const inject: InjectDecoratorFactory = <T>(
 	options?: Partial<interfaces.InjectOptions>,
 ): InjectDecorator<T> => {
 	const opts: interfaces.InjectOptions = {
+		multiple: false,
 		optional: false,
 		...options,
 	};
