@@ -1,4 +1,3 @@
-// Only necessary for typescript experimental decorators
 import { myContainer } from './ioc.config.js';
 import { TYPES } from './types.js';
 
