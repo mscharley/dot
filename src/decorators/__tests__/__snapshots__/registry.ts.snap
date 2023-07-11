@@ -5,6 +5,7 @@ exports[`registry getInjections can get all injections registered 1`] = `
   {
     "name": "str",
     "options": {
+      "multiple": false,
       "optional": false,
     },
     "token": Token {
@@ -14,6 +15,7 @@ exports[`registry getInjections can get all injections registered 1`] = `
   },
   {
     "options": {
+      "multiple": false,
       "optional": false,
     },
     "token": Token {
@@ -29,6 +31,7 @@ exports[`registry getPropertyInjections can get all property injections 1`] = `
   {
     "name": "str",
     "options": {
+      "multiple": false,
       "optional": false,
     },
     "token": Token {

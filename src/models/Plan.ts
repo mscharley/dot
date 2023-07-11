@@ -17,7 +17,13 @@ export interface CreateInstance<T = unknown> {
 	expectedTokensUsed: Array<Token<unknown>>;
 }
 
-export type PlanStep = CreateInstance | FetchFromCache;
+export interface AggregateMultiple<T = unknown> {
+	type: 'aggregateMultiple';
+	token: Token<T>;
+	count: number;
+}
+
+export type PlanStep = AggregateMultiple | CreateInstance | FetchFromCache;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type Plan<T> = PlanStep[];

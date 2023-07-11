@@ -103,15 +103,21 @@ export interface InjectDecorator<T> {
 // @public (undocumented)
 export interface InjectDecoratorFactory {
     // (undocumented)
-    <T>(token: Token<T>, options: interfaces.InjectOptions & {
+    <T>(token: Token<T>, options: Partial<interfaces.InjectOptions> & {
+        multiple: true;
+    }): InjectDecorator<T[]>;
+    // (undocumented)
+    <T>(token: Token<T>, options: Partial<interfaces.InjectOptions> & {
         optional: true;
     }): InjectDecorator<T | undefined>;
     // (undocumented)
-    <T>(token: Token<T>, options?: interfaces.InjectOptions): InjectDecorator<T>;
+    <T>(token: Token<T>, options?: Partial<interfaces.InjectOptions>): InjectDecorator<T>;
 }
 
 // @public (undocumented)
 interface InjectOptions {
+    // (undocumented)
+    multiple: boolean;
     // (undocumented)
     optional: boolean;
 }

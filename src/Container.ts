@@ -106,6 +106,7 @@ export class Container implements interfaces.Container {
 		const plan = calculatePlan<T>(this.#bindings, this.#resolveBinding, {
 			type: 'request',
 			options: {
+				multiple: false,
 				optional: false,
 			},
 			token,
