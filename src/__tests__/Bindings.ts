@@ -101,12 +101,25 @@ describe('Bindings', () => {
 				c.bind(token)
 					.inSingletonScope()
 					.toDynamicValue(async ({ container }) => {
-						expect(await container.get(subrequest)).toBe('Hello world!');
+						await expect(container.get(subrequest)).resolves.toBe('Hello world!');
 						return { id: 10 };
 					});
 				c.bind(subrequest).toConstantValue('Hello world!');
 
 				await expect(c.get(token)).resolves.toMatchObject({ id: 10 });
+			});
+
+			it('can handle async errors', async () => {
+				const c = new Container();
+				const subrequest = new Token<string>('subrequest');
+				c.bind(token)
+					.inSingletonScope()
+					.toDynamicValue(async (): Promise<{ id: number }> => {
+						return Promise.reject(new Error('Hello, world!'));
+					});
+				c.bind(subrequest).toConstantValue('Hello world!');
+
+				await expect(c.get(token)).rejects.toThrow('Hello, world!');
 			});
 		});
 

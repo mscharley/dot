@@ -27,8 +27,8 @@ const planBinding = <T>(
 		...injectionSteps,
 		{
 			type: 'createClass',
-			generate: (): unknown => {
-				const value = resolveBinding(binding);
+			generate: async (): Promise<unknown> => {
+				const value = await resolveBinding(binding);
 				return input.options.multiple ? [value] : value;
 			},
 			token: binding.token,
