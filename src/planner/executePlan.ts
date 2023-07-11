@@ -56,7 +56,7 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 		delete stack[token.identifier];
 	}
 
-	const unresolved = Object.keys(stack);
+	const unresolved = Object.getOwnPropertySymbols(stack);
 	if (unresolved.length > 0) {
 		throw new Error(
 			`Unresolved dependecies created, this is probably a bug. Please report this! Extra dependencies: ${unresolved
