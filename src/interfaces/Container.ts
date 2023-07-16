@@ -1,6 +1,6 @@
 import type { AsyncContainerModule, SyncContainerModule } from './ContainerModule.js';
 import type { BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions.js';
-import type { Token } from '../Token.js';
+import type { ServiceIdentifier } from './ServiceIdentifier.js';
 
 /**
  * @public
@@ -14,5 +14,5 @@ export interface Container {
 		(module: AsyncContainerModule): Promise<void>;
 		(module: SyncContainerModule): void;
 	};
-	get: <T>(token: Token<T>) => Promise<T>;
+	get: <T>(id: ServiceIdentifier<T>) => Promise<T>;
 }

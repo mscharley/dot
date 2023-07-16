@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-type-alias */
-
 import type { Token } from '../Token.js';
 
 export interface FetchFromCache<T = unknown> {

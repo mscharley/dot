@@ -10,7 +10,7 @@ type AsyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound
 // @public (undocumented)
 interface Binder<in out T> {
     // (undocumented)
-    to: (fn: new () => T) => void;
+    to: (fn: Constructor<T>) => void;
     // (undocumented)
     toConstantValue: ((v: T) => void) & ((v: Promise<T>) => Promise<void>);
     // (undocumented)
@@ -18,10 +18,13 @@ interface Binder<in out T> {
 }
 
 // @public (undocumented)
-type BindFunction = <T>(token: Token<T>) => BindingBuilder<T>;
+type BindFunction = {
+    <T>(id: Constructor<T>): ClassBindingBuilder<T>;
+    <T>(id: ServiceIdentifier<T>): BindingBuilder<T>;
+};
 
 // @public (undocumented)
-interface BindingBuilder<in out T> extends Binder<T>, BindingScope<T, BindingBuilder<T>> {
+interface BindingBuilder<in out T> extends Binder<T>, BindingScope<T, BindingBuilder<T>>, ClassBinder<T> {
 }
 
 // @public (undocumented)
@@ -29,7 +32,7 @@ interface BindingContext<out T> {
     // (undocumented)
     container: Container;
     // (undocumented)
-    token: Token<T>;
+    id: ServiceIdentifier<T>;
 }
 
 // @public (undocumented)
@@ -43,11 +46,26 @@ interface BindingScope<in T, out Builder> {
 }
 
 // @public (undocumented)
+interface ClassBinder<in T> {
+    // (undocumented)
+    toSelf: () => void;
+}
+
+// @public (undocumented)
+interface ClassBindingBuilder<in out T> extends Binder<T>, BindingScope<T, BindingBuilder<T>>, ClassBinder<T> {
+}
+
+// Warning: (ae-missing-release-tag) "Constructor" is part of the package's API, but it is missing a release tag (@alpha, @beta, @public, or @internal)
+//
+// @public (undocumented)
+type Constructor<T> = new () => T;
+
+// @public (undocumented)
 interface Container {
     // (undocumented)
     bind: BindFunction;
     // (undocumented)
-    get: <T>(token: Token<T>) => Promise<T>;
+    get: <T>(id: ServiceIdentifier<T>) => Promise<T>;
     // (undocumented)
     has: IsBoundFunction;
     // (undocumented)
@@ -127,8 +145,11 @@ declare namespace interfaces {
         Binder,
         FixedScopeBindingOptions,
         BindingBuilder,
+        ClassBindingBuilder,
         BindingContext,
         BindingScope,
+        ClassBinder,
+        Constructor,
         Container,
         ContainerConfiguration,
         AsyncContainerModule,
@@ -139,19 +160,25 @@ declare namespace interfaces {
         RebindFunction,
         UnbindFunction,
         InjectOptions,
-        ScopeOptions
+        ScopeOptions,
+        ServiceIdentifier
     }
 }
 export { interfaces }
 
 // @public (undocumented)
-type IsBoundFunction = (token: Token<unknown>) => boolean;
+type IsBoundFunction = <T>(id: ServiceIdentifier<T>) => boolean;
 
 // @public (undocumented)
-type RebindFunction = <T>(token: Token<T>) => BindingBuilder<T>;
+type RebindFunction = BindFunction;
 
 // @public (undocumented)
 type ScopeOptions = 'transient' | 'request' | 'singleton';
+
+// Warning: (ae-missing-release-tag) "ServiceIdentifier" is part of the package's API, but it is missing a release tag (@alpha, @beta, @public, or @internal)
+//
+// @public (undocumented)
+type ServiceIdentifier<T> = (new () => T) | Token<T>;
 
 // @public (undocumented)
 type SyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound: IsBoundFunction, rebind: RebindFunction) => void;
@@ -167,7 +194,7 @@ export class Token<out T> {
 export type TokenType<T extends Token<unknown>> = T extends Token<infer U> ? U : never;
 
 // @public (undocumented)
-type UnbindFunction = (token: Token<unknown>) => void;
+type UnbindFunction = <T>(id: ServiceIdentifier<T>) => void;
 
 // (No @packageDocumentation comment for this package)
 

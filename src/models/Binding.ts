@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-type-alias */
 import type * as interfaces from '../interfaces/index.js';
 import type { Token } from '../Token.js';
 
 export interface ConstructorBinding<out T> {
 	type: 'constructor';
+	id: interfaces.ServiceIdentifier<T>;
 	token: Token<T>;
 	scope: interfaces.ScopeOptions;
 	ctr: new () => T;
@@ -11,6 +11,7 @@ export interface ConstructorBinding<out T> {
 
 export interface StaticBinding<out T> {
 	type: 'static';
+	id: interfaces.ServiceIdentifier<T>;
 	token: Token<T>;
 	scope: interfaces.ScopeOptions;
 	value: T;
@@ -18,6 +19,7 @@ export interface StaticBinding<out T> {
 
 export interface DynamicBinding<in out T> {
 	type: 'dynamic';
+	id: interfaces.ServiceIdentifier<T>;
 	token: Token<T>;
 	scope: interfaces.ScopeOptions;
 	generator: (context: interfaces.BindingContext<T>) => T | Promise<T>;

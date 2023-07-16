@@ -1,17 +1,21 @@
 import type * as interfaces from './interfaces/index.js';
 import type { Binding } from './models/Binding.js';
 import { isPromise } from './util/isPromise.js';
+import { stringifyIdentifier } from './util/stringifyIdentifier.js';
 import type { Token } from './Token.js';
+import { tokenForIdentifier } from './util/tokenForIdentifier.js';
 
-export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
+export class BindingBuilder<in out T> implements interfaces.ClassBindingBuilder<T> {
 	#scope: interfaces.ScopeOptions;
 	readonly #addBinding: (builder: BindingBuilder<T>, binding: Binding<T>) => void;
+	public readonly token: Token<T>;
 
 	public constructor(
-		public readonly token: Token<T>,
+		public readonly id: interfaces.ServiceIdentifier<T>,
 		containerConfiguration: interfaces.ContainerConfiguration,
 		addBinding: (builder: BindingBuilder<T>, binding: Binding<T>) => void,
 	) {
+		this.token = tokenForIdentifier(id);
 		this.#scope = containerConfiguration.defaultScope;
 		this.#addBinding = addBinding;
 	}
@@ -19,9 +23,23 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 	public to: interfaces.BindingBuilder<T>['to'] = (ctr) => {
 		this.#addBinding(this, {
 			type: 'constructor',
+			id: this.id,
 			token: this.token,
 			scope: this.#scope,
 			ctr,
+		});
+	};
+
+	public toSelf: interfaces.ClassBinder<T>['toSelf'] = () => {
+		if (typeof this.id !== 'function') {
+			throw new Error(`Invalid call of toSelf(): identifier is not a constructor: ${stringifyIdentifier(this.id)}`);
+		}
+		this.#addBinding(this, {
+			type: 'constructor',
+			id: this.id,
+			token: this.token,
+			scope: this.#scope,
+			ctr: this.id,
 		});
 	};
 
@@ -30,6 +48,7 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 			return value.then((v) =>
 				this.#addBinding(this, {
 					type: 'static',
+					id: this.id,
 					token: this.token,
 					scope: this.#scope,
 					value: v,
@@ -38,6 +57,7 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 		} else {
 			return this.#addBinding(this, {
 				type: 'static',
+				id: this.id,
 				token: this.token,
 				scope: this.#scope,
 				value,
@@ -48,6 +68,7 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 	public toDynamicValue: interfaces.BindingBuilder<T>['toDynamicValue'] = (factory) => {
 		this.#addBinding(this, {
 			type: 'dynamic',
+			id: this.id,
 			token: this.token,
 			scope: this.#scope,
 			generator: factory,

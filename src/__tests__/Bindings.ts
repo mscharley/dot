@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { describe, expect, it, jest } from '@jest/globals';
 import { Container } from '../Container.js';
+import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';
 import type { TokenType } from '../Token.js';
 
@@ -202,6 +203,20 @@ describe('Bindings', () => {
 			await c.load(async () => {
 				/* no op */
 			});
+		});
+	});
+
+	describe('Constructor service identifier', () => {
+		it('can use a class as a service identifier', async () => {
+			const c = new Container();
+			@injectable()
+			class Test {
+				public id = 10;
+			}
+
+			c.bind(Test).toSelf();
+
+			await expect(c.get(Test)).resolves.toMatchObject({ id: 10 });
 		});
 	});
 });

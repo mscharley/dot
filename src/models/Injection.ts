@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-type-alias */
 import type * as interfaces from '../interfaces/index.js';
 import type { Token } from '../Token.js';
 
