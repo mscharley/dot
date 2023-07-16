@@ -1,10 +1,13 @@
 export type { Binder, FixedScopeBindingOptions } from './Binder.js';
-export type { BindingBuilder } from './BindingBuilder.js';
+export type { BindingBuilder, ClassBindingBuilder } from './BindingBuilder.js';
 export type { BindingContext } from './BindingContext.js';
 export type { BindingScope } from './BindingScope.js';
+export type { ClassBinder } from './ClassBinder.js';
+export type { Constructor } from './Constructor.js';
 export type { Container } from './Container.js';
 export type { ContainerConfiguration } from './ContainerConfiguration.js';
 export type { AsyncContainerModule, ContainerModule, SyncContainerModule } from './ContainerModule.js';
 export type { BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions.js';
 export type { InjectOptions } from './InjectOptions.js';
 export type { ScopeOptions } from './ScopeOptions.js';
+export type { ServiceIdentifier } from './ServiceIdentifier.js';

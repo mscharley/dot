@@ -1,10 +1,10 @@
 import type { Container } from './Container.js';
-import type { Token } from '../Token.js';
+import type { ServiceIdentifier } from './ServiceIdentifier.js';
 
 /**
  * @public
  */
 export interface BindingContext<out T> {
 	container: Container;
-	token: Token<T>;
+	id: ServiceIdentifier<T>;
 }

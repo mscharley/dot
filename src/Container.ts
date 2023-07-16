@@ -6,6 +6,7 @@ import { executePlan } from './planner/executePlan.js';
 import { isNever } from './util/isNever.js';
 import type { Request } from './models/Request.js';
 import type { Token } from './Token.js';
+import { tokenForIdentifier } from './util/tokenForIdentifier.js';
 
 export class Container implements interfaces.Container {
 	static #currentRequest: Request<unknown> | undefined;
@@ -57,14 +58,15 @@ export class Container implements interfaces.Container {
 		}
 	};
 
-	public bind: interfaces.BindFunction = <T>(token: Token<T>): interfaces.BindingBuilder<T> => {
-		const binding = new BindingBuilder(token, this.config, this.addBinding);
+	public bind = ((id) => {
+		const binding = new BindingBuilder(id, this.config, this.addBinding);
 		this.#incompleteBindings.add(binding);
 
 		return binding;
-	};
+	}) as interfaces.BindFunction;
 
-	public unbind: interfaces.UnbindFunction = (token: Token<unknown>): void => {
+	public unbind: interfaces.UnbindFunction = (id) => {
+		const token = tokenForIdentifier(id);
 		const bindings = this.#bindings.flatMap((b) => (b.token.identifier === token.identifier ? [token.identifier] : []));
 		if (bindings.length === 0) {
 			throw new Error(`Unable to unbind token because it is not bound: ${token.identifier.toString()}`);
@@ -73,9 +75,9 @@ export class Container implements interfaces.Container {
 		this.#bindings = this.#bindings.filter((b) => !bindings.includes(b.token.identifier));
 	};
 
-	public rebind: interfaces.RebindFunction = <T>(token: Token<T>): interfaces.BindingBuilder<T> => {
-		this.unbind(token);
-		return this.bind(token);
+	public rebind: interfaces.RebindFunction = (id) => {
+		this.unbind(id);
+		return this.bind(id);
 	};
 
 	public load = ((module): void | Promise<void> => {
@@ -92,7 +94,7 @@ export class Container implements interfaces.Container {
 			case 'static':
 				return binding.value;
 			case 'dynamic':
-				return binding.generator({ container: this, token: binding.token });
+				return binding.generator({ container: this, id: binding.id });
 			case 'constructor':
 				return new binding.ctr();
 			default:
@@ -100,8 +102,9 @@ export class Container implements interfaces.Container {
 		}
 	};
 
-	public get = async <T>(token: Token<T>): Promise<T> => {
+	public get = async <T>(id: interfaces.ServiceIdentifier<T>): Promise<T> => {
 		this.#validateBindings();
+		const token = tokenForIdentifier(id);
 
 		const plan = calculatePlan<T>(this.#bindings, this.#resolveBinding, {
 			type: 'request',
@@ -127,7 +130,8 @@ export class Container implements interfaces.Container {
 		}
 	};
 
-	public has: interfaces.IsBoundFunction = (token) => {
+	public has: interfaces.IsBoundFunction = (id) => {
+		const token = tokenForIdentifier(id);
 		return this.#bindings.find((b) => b.token.identifier === token.identifier) != null;
 	};
 }

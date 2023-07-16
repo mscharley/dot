@@ -1,11 +1,15 @@
-import type { BindingBuilder } from './BindingBuilder.js';
-import type { Token } from '../Token.js';
+import type { BindingBuilder, ClassBindingBuilder } from './BindingBuilder.js';
+import type { Constructor } from './Constructor.js';
+import type { ServiceIdentifier } from './ServiceIdentifier.js';
 
 /** @public */
-export type BindFunction = <T>(token: Token<T>) => BindingBuilder<T>;
+export type BindFunction = {
+	<T>(id: Constructor<T>): ClassBindingBuilder<T>;
+	<T>(id: ServiceIdentifier<T>): BindingBuilder<T>;
+};
 /** @public */
-export type IsBoundFunction = (token: Token<unknown>) => boolean;
+export type IsBoundFunction = <T>(id: ServiceIdentifier<T>) => boolean;
 /** @public */
-export type RebindFunction = <T>(token: Token<T>) => BindingBuilder<T>;
+export type RebindFunction = BindFunction;
 /** @public */
-export type UnbindFunction = (token: Token<unknown>) => void;
+export type UnbindFunction = <T>(id: ServiceIdentifier<T>) => void;
