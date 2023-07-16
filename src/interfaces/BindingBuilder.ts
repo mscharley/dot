@@ -10,4 +10,4 @@ export interface BindingBuilder<in out T> extends Binder<T>, BindingScope<T, Bin
 /**
  * @public
  */
-export interface ClassBindingBuilder<in out T> extends Binder<T>, BindingScope<T, BindingBuilder<T>>, ClassBinder<T> {}
+export interface ClassBindingBuilder<in out T> extends BindingBuilder<T>, ClassBinder<T> {}
