@@ -1,2 +1,5 @@
 dist/
 jest.config.ts
+ioc.cjs
+ioc.js
+ioc.d.ts

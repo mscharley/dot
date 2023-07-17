@@ -11,20 +11,24 @@
 		"ioc"
 	],
 	"type": "module",
-	"types": "./dist/ioc-deco.d.ts",
+	"types": "./ioc.d.ts",
 	"exports": {
 		".": {
-			"types": "./dist/ioc-deco.d.ts",
-			"require": "./dist/index.js"
+			"types": "./ioc.d.ts",
+			"require": "./ioc.cjs",
+			"import": "./ioc.js"
 		}
 	},
 	"scripts": {
 		"prepack": "npm run clean && npm run build",
-		"build": "npm run build:tsc && npm run build:api",
+		"build": "npm run build:tsc && npm run build:api && npm run build:esbuild",
 		"build:tsc": "tsc",
 		"build:api": "api-extractor run --local",
 		"build:docs": "api-documenter markdown -i ./reports/docs -o ./docs",
-		"clean": "rm -rf dist/ coverage/ docs/ reports/ temp/ .stryker-tmp/ tsdoc-metadata.json",
+		"build:esbuild": "npm run build:esbuild:esm && npm run build:esbuild:cjs",
+		"build:esbuild:cjs": "esbuild dist/index.js --bundle --sourcemap=linked --outfile=ioc.cjs --platform=node --packages=external",
+		"build:esbuild:esm": "esbuild dist/index.js --bundle --sourcemap=linked --outfile=ioc.js --platform=neutral --packages=external",
+		"clean": "rm -rf ioc.* dist/ coverage/ docs/ reports/ temp/ .stryker-tmp/ tsdoc-metadata.json",
 		"start": "node ./dist/demo/index.js",
 		"test": "npm run test:eslint && npm run test:api && npm run test:jest:experimental && npm run test:jest:tc39",
 		"test:api": "api-extractor run",
@@ -56,6 +60,7 @@
 		"@stryker-mutator/core": "7.1.1",
 		"@stryker-mutator/jest-runner": "7.1.1",
 		"@stryker-mutator/typescript-checker": "7.1.1",
+		"esbuild": "^0.18.13",
 		"jest": "29.6.1",
 		"stryker-cli": "1.0.2",
 		"ts-jest": "29.1.1",

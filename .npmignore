@@ -1,10 +1,5 @@
-# Compiled tests
-dist/demo
-dist/**/__tests__
-
-# d.ts rollup
-dist/**/*.d.ts*
-!dist/ioc-deco.d.ts
+# Compiled TS
+dist/
 
 # TypeScript tests
 src/demo
