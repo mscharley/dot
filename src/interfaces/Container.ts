@@ -3,6 +3,13 @@ import type { BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } fr
 import type { ServiceIdentifier } from './ServiceIdentifier.js';
 
 /**
+ * An IOC container
+ *
+ * @remarks
+ *
+ * You can either manage bindings directly on a container or use {@link @mscharley/ioc#interfaces.ContainerModule | ContainerModules }
+ * to manage bindings in a reusable and modular way.
+ *
  * @public
  */
 export interface Container {
@@ -14,5 +21,9 @@ export interface Container {
 		(module: AsyncContainerModule): Promise<void>;
 		(module: SyncContainerModule): void;
 	};
+
+	/**
+	 * Make a request from this container
+	 */
 	get: <T>(id: ServiceIdentifier<T>) => Promise<T>;
 }

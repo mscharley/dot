@@ -1,11 +1,28 @@
+# Compiled tests
 dist/demo
 dist/**/__tests__
+
+# d.ts rollup
 dist/**/*.d.ts*
 !dist/ioc-deco.d.ts
 
+# TypeScript tests
 src/demo
 src/**/__tests__
 
+# Dev files
 reports/
 docs/
 temp/
+.github/
+.vscode/
+.nvmrc
+api-extractor.json
+tsconfig.*.json
+tsdoc-metadata.json
+stryker.conf.json
+jest.config.ts
+renovate.json
+
+# Previous versions
+*.tgz

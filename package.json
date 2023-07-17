@@ -1,5 +1,5 @@
 {
-	"name": "@mscharley/ioc-deco",
+	"name": "@mscharley/ioc",
 	"version": "1.0.0",
 	"description": "A lightweight inversion of control framework for JavaScript and TypeScript",
 	"keywords": [
@@ -18,11 +18,12 @@
 		}
 	},
 	"scripts": {
+		"prepack": "npm run build",
 		"build": "npm run build:tsc && npm run build:api",
 		"build:tsc": "tsc",
 		"build:api": "api-extractor run --local",
 		"build:docs": "api-documenter markdown -i ./reports/docs -o ./docs",
-		"clean": "rm -rf dist/ coverage/ docs/ reports/ temp/ .stryker-tmp/",
+		"clean": "rm -rf dist/ coverage/ docs/ reports/ temp/ .stryker-tmp/ tsdoc-metadata.json",
 		"start": "node ./dist/demo/index.js",
 		"test": "npm run test:eslint && npm run test:api && npm run test:jest:experimental && npm run test:jest:tc39",
 		"test:api": "api-extractor run",
