@@ -21,6 +21,20 @@ Support for TC39 standard decorators for use with both TypeScript and JavaScript
 
     npm i --save @mscharley/ioc
 
+This library should work out of the box with any TypeScript configuration if you are using TypeScript 5.0 or later. Read below for other versions.
+
+### TypeScript support
+
+This library is designed to work with either setting of the `experimentalDecorators` option in TypeScript 5.x or later. In TypeScript 4.x and earlier, you will need to enable experimental decorators as that is the only option for decorator support. In either case, the `emitDecoratorMetadata` is not required, and is not used for any functionality if enabled.
+
+### JavaScript support
+
+JavaScript should work out of the box with any JavaScript transpiler that supports TC39 decorators. For now you will need a transpiler until the standard gets implemented more widely.
+
+Known implementations:
+
+* [Babel](https://babeljs.io/docs/babel-plugin-proposal-decorators)
+
 ## Usage
 
 [For usage examples, please see the documentation.](https://mscharley.github.io/ioc-deco/ioc-deco.html#example)
