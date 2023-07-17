@@ -11,6 +11,7 @@
 		"ioc"
 	],
 	"type": "module",
+	"types": "./dist/ioc-deco.d.ts",
 	"exports": {
 		".": {
 			"types": "./dist/ioc-deco.d.ts",
