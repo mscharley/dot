@@ -1,4 +1,6 @@
 /**
+ * A simple identifier that has a reference to a type that can be injected
+ *
  * @public
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -12,6 +14,8 @@ export class Token<out T> {
 }
 
 /**
+ * A helper type to extract the type that a token will inject
+ *
  * @public
  */
 export type TokenType<T extends Token<unknown>> = T extends Token<infer U> ? U : never;
