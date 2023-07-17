@@ -18,7 +18,7 @@
 		}
 	},
 	"scripts": {
-		"prepack": "npm run build",
+		"prepack": "npm run clean && npm run build",
 		"build": "npm run build:tsc && npm run build:api",
 		"build:tsc": "tsc",
 		"build:api": "api-extractor run --local",
