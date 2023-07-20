@@ -39,5 +39,4 @@ jobs:
           node-version-file: .nvmrc
           cache: 'npm'
       - run: npm ci
-      - run: npm run build --if-present
       - run: npm run stryker
