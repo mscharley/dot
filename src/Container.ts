@@ -1,7 +1,8 @@
 import type * as interfaces from './interfaces/index.js';
 import type { Binding } from './models/Binding.js';
-import { BindingBuilder } from './BindingBuilder.js';
+import type { BindingBuilder } from './BindingBuilder.js';
 import { calculatePlan } from './planner/calculatePlan.js';
+import { ClassBindingBuilder } from './BindingBuilder.js';
 import { executePlan } from './planner/executePlan.js';
 import { isNever } from './util/isNever.js';
 import type { Request } from './models/Request.js';
@@ -17,8 +18,8 @@ export class Container implements interfaces.Container {
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	readonly #incompleteBindings = new Set<BindingBuilder<any>>();
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	#bindings: Array<Binding<any>> = [];
+
+	#bindings: Array<Binding<unknown>> = [];
 	readonly #singletonCache: Record<symbol, unknown> = {};
 	public readonly config: Readonly<interfaces.ContainerConfiguration>;
 
@@ -58,8 +59,12 @@ export class Container implements interfaces.Container {
 		}
 	};
 
-	public bind = ((id) => {
-		const binding = new BindingBuilder(id, this.config, this.addBinding);
+	public bind = (<T>(id: interfaces.ServiceIdentifier<T>): interfaces.BindingBuilder<T> => {
+		const binding = new ClassBindingBuilder(
+			id as interfaces.ServiceIdentifier<object>,
+			this.config,
+			this.addBinding,
+		) as unknown as BindingBuilder<T>;
 		this.#incompleteBindings.add(binding);
 
 		return binding;
@@ -75,10 +80,10 @@ export class Container implements interfaces.Container {
 		this.#bindings = this.#bindings.filter((b) => !bindings.includes(b.token.identifier));
 	};
 
-	public rebind: interfaces.RebindFunction = (id) => {
+	public rebind: interfaces.RebindFunction = (<T>(id: interfaces.ServiceIdentifier<T>) => {
 		this.unbind(id);
 		return this.bind(id);
-	};
+	}) as interfaces.RebindFunction;
 
 	public load = ((module): void | Promise<void> => {
 		return module(this.bind, this.unbind, this.has, this.rebind);
@@ -86,7 +91,7 @@ export class Container implements interfaces.Container {
 
 	public addBinding = <T>(builder: BindingBuilder<T>, binding: Binding<T>): void => {
 		this.#incompleteBindings.delete(builder);
-		this.#bindings.push(binding);
+		this.#bindings.push(binding as Binding<unknown>);
 	};
 
 	#resolveBinding = <T>(binding: Binding<T>): T | Promise<T> => {

@@ -1,10 +1,11 @@
-import type { BindingBuilder, ClassBindingBuilder } from './BindingBuilder.js';
+import type { BindingBuilder, ClassBindingBuilder, ObjectBindingBuilder } from './BindingBuilder.js';
 import type { Constructor } from './Constructor.js';
 import type { ServiceIdentifier } from './ServiceIdentifier.js';
 
 /** @public */
 export type BindFunction = {
-	<T>(id: Constructor<T>): ClassBindingBuilder<T>;
+	<T extends object>(id: Constructor<T>): ClassBindingBuilder<T>;
+	<T extends object>(id: ServiceIdentifier<T>): ObjectBindingBuilder<T>;
 	<T>(id: ServiceIdentifier<T>): BindingBuilder<T>;
 };
 /** @public */

@@ -8,12 +8,19 @@ export interface PropertyInjection<T = unknown> {
 	options: interfaces.InjectOptions;
 }
 
+export interface ConstructorParamaterInjection<T = unknown> {
+	type: 'constructorParameter';
+	index: number;
+	token: Token<T>;
+	options: interfaces.InjectOptions;
+}
+
 export interface RequestInjection<T = unknown> {
 	type: 'request';
 	token: Token<T>;
 	options: interfaces.InjectOptions;
 }
 
-export type Injection<T = unknown> = PropertyInjection<T> | RequestInjection<T>;
+export type Injection<T> = PropertyInjection<T> | ConstructorParamaterInjection<T> | RequestInjection<T>;
 
-export type InjectionRegistry = WeakMap<new () => unknown, Injection[]>;
+export type InjectionRegistry = WeakMap<interfaces.Constructor<object, unknown[]>, Array<Injection<unknown>>>;

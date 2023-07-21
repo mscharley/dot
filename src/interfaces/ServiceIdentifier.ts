@@ -1,3 +1,4 @@
+import type { Constructor } from './Constructor.js';
 import type { Token } from '../Token.js';
 
 /**
@@ -10,4 +11,4 @@ import type { Token } from '../Token.js';
  *
  * @public
  */
-export type ServiceIdentifier<T> = (new () => T) | Token<T>;
+export type ServiceIdentifier<T> = Token<T> | (T extends object ? Constructor<T> : never);
