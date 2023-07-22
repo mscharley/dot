@@ -24,8 +24,6 @@ class Service {
 	public node!: Node;
 }
 
-// TODO: Efforts should be made to turn this setup into errors as much as possible.
-
 describe('Invalid decorator', () => {
 	if (process.env.DECORATOR_TYPE === 'tc39') {
 		it('can successfully build a service', async () => {

@@ -7,7 +7,7 @@ describe('isConstructor', () => {
 		expect(isConstructor(Symbol)).toBe(true);
 
 		expect(isConstructor('hello world')).toBe(false);
-		expect(isConstructor(1234)).toBe(false);
+		expect(isConstructor(1)).toBe(false);
 		expect(isConstructor(true)).toBe(false);
 	});
 });
