@@ -29,5 +29,15 @@ describe('ExceptionHandling', () => {
 
 			await expect(c.get(token)).rejects.toThrow('Oops, something bad happened.');
 		});
+
+		it('async dynamic value', async () => {
+			const c = createContainer();
+			// eslint-disable-next-line @typescript-eslint/require-await
+			c.bind(token).toDynamicValue(async () => {
+				throw new Error('Oops, something bad happened.');
+			});
+
+			await expect(c.get(token)).rejects.toThrow('Oops, something bad happened.');
+		});
 	});
 });

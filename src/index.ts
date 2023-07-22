@@ -43,14 +43,12 @@
  *   }
  * }
  *
- * @injectable()
+ * @injectable(TYPES.Weapon, TYPES.ThrowableWeapon)
  * class Ninja implements Warrior {
- *   @inject(TYPES.Weapon)
- *   private readonly katana!: Weapon;
- *   @inject(TYPES.ThrowableWeapon)
- *   private readonly shuriken!: ThrowableWeapon;
- *
- *   public constructor() {
+ *   public constructor(
+ *     private readonly katana: Weapon,
+ *     private readonly shuriken: ThrowableWeapon,
+ *   ) {
  *     console.log('constructing:', this.katana, this.shuriken);
  *   }
  *
@@ -103,7 +101,12 @@ export const createContainer = (config?: interfaces.ContainerConfiguration): int
 
 export type { interfaces };
 export type { InjectDecorator, InjectDecoratorFactory } from './decorators/inject.js';
-export type { InjectableDecorator } from './decorators/injectable.js';
+export type {
+	ArgsForTokens,
+	ConstructorInjectedType,
+	ConstructorInjection,
+	InjectableDecorator,
+} from './decorators/injectable.js';
 export type { TokenType } from './Token.js';
 export { inject } from './decorators/inject.js';
 export { injectable } from './decorators/injectable.js';

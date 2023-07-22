@@ -4,13 +4,18 @@
 
 ```ts
 
+// @public (undocumented)
+export type ArgsForTokens<Tokens extends [...Array<ConstructorInjection<unknown>>]> = {
+    [Index in keyof Tokens]: ConstructorInjectedType<Tokens[Index]>;
+} & {
+    length: Tokens['length'];
+};
+
 // @public
 type AsyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound: IsBoundFunction, rebind: RebindFunction) => Promise<void>;
 
 // @public (undocumented)
 interface Binder<in out T> {
-    // (undocumented)
-    to: (fn: Constructor<T>) => void;
     // (undocumented)
     toConstantValue: ((v: T) => void) & ((v: Promise<T>) => Promise<void>);
     // (undocumented)
@@ -19,12 +24,13 @@ interface Binder<in out T> {
 
 // @public (undocumented)
 type BindFunction = {
-    <T>(id: Constructor<T>): ClassBindingBuilder<T>;
+    <T extends object>(id: Constructor<T>): ClassBindingBuilder<T>;
+    <T extends object>(id: ServiceIdentifier<T>): ObjectBindingBuilder<T>;
     <T>(id: ServiceIdentifier<T>): BindingBuilder<T>;
 };
 
 // @public (undocumented)
-interface BindingBuilder<in out T> extends Binder<T>, BindingScope<T, BindingBuilder<T>>, ClassBinder<T> {
+interface BindingBuilder<in out T> extends Binder<T>, BindingScope<T, BindingBuilder<T>> {
 }
 
 // @public (undocumented)
@@ -52,11 +58,17 @@ interface ClassBinder<in T> {
 }
 
 // @public (undocumented)
-interface ClassBindingBuilder<in out T> extends BindingBuilder<T>, ClassBinder<T> {
+interface ClassBindingBuilder<in out T extends object> extends Binder<T>, BindingScope<T, ClassBindingBuilder<T>>, ObjectBinder<T>, ClassBinder<T> {
 }
 
 // @public
-type Constructor<T> = new () => T;
+type Constructor<out T extends object, in Args extends unknown[] = any> = new (...args: Args) => T;
+
+// @public (undocumented)
+export type ConstructorInjectedType<T extends ConstructorInjection<unknown>> = T extends interfaces.ServiceIdentifier<infer U> ? U : T extends [interfaces.ServiceIdentifier<infer U>] ? U : never;
+
+// @public (undocumented)
+export type ConstructorInjection<T> = interfaces.ServiceIdentifier<T> | [interfaces.ServiceIdentifier<T>, Partial<interfaces.InjectOptions>];
 
 // Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
 //
@@ -98,14 +110,14 @@ type FixedScopeBindingOptions = 'toConstantValue';
 export const inject: InjectDecoratorFactory;
 
 // @public (undocumented)
-export const injectable: <T>() => InjectableDecorator<T>;
+export const injectable: <Tokens extends ConstructorInjection<unknown>[]>(...constructorTokens: Tokens) => InjectableDecorator<ArgsForTokens<Tokens>>;
 
 // @public (undocumented)
-export interface InjectableDecorator<T> {
+export interface InjectableDecorator<Args extends unknown[]> {
     // (undocumented)
-    (target: new () => T, context: ClassDecoratorContext<new () => T>): undefined;
+    <T extends object>(target: interfaces.Constructor<T, Args>, context: ClassDecoratorContext<interfaces.Constructor<T, Args>>): undefined;
     // (undocumented)
-    (target: new () => T, context?: undefined): undefined | (new () => T);
+    <T extends object>(target: interfaces.Constructor<T, Args>, context?: undefined): undefined | interfaces.Constructor<T, Args>;
 }
 
 // @public (undocumented)
@@ -146,6 +158,7 @@ declare namespace interfaces {
         FixedScopeBindingOptions,
         BindingBuilder,
         ClassBindingBuilder,
+        ObjectBindingBuilder,
         BindingContext,
         BindingScope,
         ClassBinder,
@@ -160,6 +173,7 @@ declare namespace interfaces {
         RebindFunction,
         UnbindFunction,
         InjectOptions,
+        ObjectBinder,
         ScopeOptions,
         ServiceIdentifier
     }
@@ -170,13 +184,23 @@ export { interfaces }
 type IsBoundFunction = <T>(id: ServiceIdentifier<T>) => boolean;
 
 // @public (undocumented)
+interface ObjectBinder<in out T extends object> {
+    // (undocumented)
+    to: (fn: Constructor<T>) => void;
+}
+
+// @public (undocumented)
+interface ObjectBindingBuilder<in out T extends object> extends Binder<T>, BindingScope<T, ObjectBindingBuilder<T>>, ObjectBinder<T> {
+}
+
+// @public (undocumented)
 type RebindFunction = BindFunction;
 
 // @public (undocumented)
 type ScopeOptions = 'transient' | 'request' | 'singleton';
 
 // @public
-type ServiceIdentifier<T> = (new () => T) | Token<T>;
+type ServiceIdentifier<T> = Token<T> | (T extends object ? Constructor<T> : never);
 
 // @public
 type SyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound: IsBoundFunction, rebind: RebindFunction) => void;

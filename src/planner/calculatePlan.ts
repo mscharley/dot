@@ -1,4 +1,4 @@
-import type { FetchFromCache, Plan } from '../models/Plan.js';
+import type { FetchFromCache, Plan, PlanStep } from '../models/Plan.js';
 import type { Binding } from '../models/Binding.js';
 import { getInjections } from '../decorators/registry.js';
 import type { Injection } from '../models/Injection.js';
@@ -7,7 +7,7 @@ const planBinding = <T>(
 	binding: Binding<T>,
 	input: Injection<T>,
 	resolveBinding: <U>(binding: Binding<U>) => U | Promise<U>,
-	resolveInjection: (injection: Injection) => Plan<T>,
+	resolveInjection: (injection: Injection<unknown>) => PlanStep[],
 ): Plan<T> => {
 	const cache = binding.scope === 'transient' ? undefined : binding.scope;
 	const injections = binding.type === 'constructor' ? getInjections(binding.ctr) : [];
@@ -41,7 +41,7 @@ const planBinding = <T>(
 export const calculatePlan = <T>(
 	bindings: Array<Binding<unknown>>,
 	resolveBinding: <U>(binding: Binding<U>) => U | Promise<U>,
-	input: Injection,
+	input: Injection<unknown>,
 ): Plan<T> => {
 	const token = input.token;
 	const binds = bindings.filter((v) => v.token === token);
