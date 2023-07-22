@@ -114,7 +114,10 @@ export class Container implements interfaces.Container {
 		}
 	};
 
-	public get = async <T>(id: interfaces.ServiceIdentifier<T>): Promise<T> => {
+	public get = async <T>(
+		id: interfaces.ServiceIdentifier<T>,
+		options?: Partial<interfaces.InjectOptions>,
+	): Promise<T> => {
 		this.#validateBindings();
 		const token = tokenForIdentifier(id);
 
@@ -123,6 +126,7 @@ export class Container implements interfaces.Container {
 			options: {
 				multiple: false,
 				optional: false,
+				...options,
 			},
 			token,
 		});

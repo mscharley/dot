@@ -1,5 +1,6 @@
 import type { AsyncContainerModule, SyncContainerModule } from './ContainerModule.js';
 import type { BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions.js';
+import type { InjectOptions } from './InjectOptions.js';
 import type { ServiceIdentifier } from './ServiceIdentifier.js';
 
 /**
@@ -25,5 +26,9 @@ export interface Container {
 	/**
 	 * Make a request from this container
 	 */
-	get: <T>(id: ServiceIdentifier<T>) => Promise<T>;
+	get: {
+		<T>(id: ServiceIdentifier<T>, options: Partial<InjectOptions> & { multiple: true }): Promise<T[]>;
+		<T>(id: ServiceIdentifier<T>, options: Partial<InjectOptions> & { optional: true }): Promise<T | undefined>;
+		<T>(id: ServiceIdentifier<T>, options?: Partial<InjectOptions>): Promise<T>;
+	};
 }
