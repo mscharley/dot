@@ -4,6 +4,7 @@ import type { BindingBuilder } from './BindingBuilder.js';
 import { calculatePlan } from './planner/calculatePlan.js';
 import { ClassBindingBuilder } from './BindingBuilder.js';
 import { executePlan } from './planner/executePlan.js';
+import { getConstructorParameterInjections } from './decorators/registry.js';
 import { isNever } from './util/isNever.js';
 import type { Request } from './models/Request.js';
 import type { Token } from './Token.js';
@@ -100,8 +101,14 @@ export class Container implements interfaces.Container {
 				return binding.value;
 			case 'dynamic':
 				return binding.generator({ container: this, id: binding.id });
-			case 'constructor':
-				return new binding.ctr();
+			case 'constructor': {
+				const args = getConstructorParameterInjections(binding.ctr)
+					// eslint-disable-next-line @typescript-eslint/no-magic-numbers
+					.sort((a, b) => (a.index < b.index ? -1 : 1))
+					.map(({ token }) => Container.resolve(token));
+
+				return new binding.ctr(...args);
+			}
 			default:
 				return isNever(binding, 'Unknown binding found');
 		}

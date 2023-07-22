@@ -1,5 +1,6 @@
 import type * as interfaces from './interfaces/index.js';
 import type { Binding, ConstructorBinding } from './models/Binding.js';
+import { isConstructor } from './util/isConstructor.js';
 import { isPromise } from './util/isPromise.js';
 import { stringifyIdentifier } from './util/stringifyIdentifier.js';
 import type { Token } from './Token.js';
@@ -72,7 +73,7 @@ export class ClassBindingBuilder<T extends object>
 	extends BindingBuilder<T>
 	implements interfaces.ClassBindingBuilder<T>
 {
-	public to: interfaces.ClassBindingBuilder<T>['to'] = (ctr: interfaces.Constructor<T>) => {
+	public to: interfaces.ClassBindingBuilder<T>['to'] = (ctr) => {
 		const binding: ConstructorBinding<T> = {
 			type: 'constructor',
 			id: this.id,
@@ -84,7 +85,7 @@ export class ClassBindingBuilder<T extends object>
 	};
 
 	public toSelf: interfaces.ClassBindingBuilder<T>['toSelf'] = () => {
-		if (typeof this.id !== 'function') {
+		if (!isConstructor(this.id)) {
 			throw new Error(`Invalid call of toSelf(): identifier is not a constructor: ${stringifyIdentifier(this.id)}`);
 		}
 
