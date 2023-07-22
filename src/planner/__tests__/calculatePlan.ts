@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import type { Binding } from '../../models/Binding.js';
 import { calculatePlan } from '../calculatePlan.js';
-import { injectable } from '../../index.js';
+import { injectable } from '../../decorators/injectable.js';
 import { Token } from '../../Token.js';
 
 const strToken = new Token<string>('str');

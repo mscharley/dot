@@ -4,13 +4,14 @@ import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';
 
 const nameToken = new Token<string>('name');
+const greetingToken = new Token<string>('greeting');
 
-@injectable(nameToken)
+@injectable(greetingToken, nameToken)
 class Test {
 	public readonly greeting;
 
-	public constructor(name: string) {
-		this.greeting = `Hello, ${name}`;
+	public constructor(greeting: string, name: string) {
+		this.greeting = `${greeting}, ${name}`;
 	}
 }
 
@@ -19,6 +20,7 @@ describe('ConstructorInjection', () => {
 
 	beforeEach(() => {
 		c = new Container();
+		c.bind(greetingToken).toConstantValue('Hello');
 		c.bind(nameToken).toConstantValue('John');
 		c.bind(Test).toSelf();
 	});

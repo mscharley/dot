@@ -53,17 +53,17 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 		});
 	};
 
-	public inSingletonScope: interfaces.BindingBuilder<T>['inSingletonScope'] = () => {
+	public inSingletonScope = (): this => {
 		this.scope = 'singleton';
 		return this;
 	};
 
-	public inTransientScope: interfaces.BindingBuilder<T>['inTransientScope'] = () => {
+	public inTransientScope = (): this => {
 		this.scope = 'transient';
 		return this;
 	};
 
-	public inRequestScope: interfaces.BindingBuilder<T>['inRequestScope'] = () => {
+	public inRequestScope = (): this => {
 		this.scope = 'request';
 		return this;
 	};
@@ -97,20 +97,5 @@ export class ClassBindingBuilder<T extends object>
 			ctr: this.id,
 		};
 		this.addBinding(this, binding as Binding<T>);
-	};
-
-	public override inSingletonScope: interfaces.ClassBindingBuilder<T>['inSingletonScope'] = () => {
-		this.scope = 'singleton';
-		return this;
-	};
-
-	public override inTransientScope: interfaces.ClassBindingBuilder<T>['inTransientScope'] = () => {
-		this.scope = 'transient';
-		return this;
-	};
-
-	public override inRequestScope: interfaces.ClassBindingBuilder<T>['inRequestScope'] = () => {
-		this.scope = 'request';
-		return this;
 	};
 }

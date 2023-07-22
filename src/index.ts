@@ -43,14 +43,12 @@
  *   }
  * }
  *
- * @injectable()
+ * @injectable(TYPES.Weapon, TYPES.ThrowableWeapon)
  * class Ninja implements Warrior {
- *   @inject(TYPES.Weapon)
- *   private readonly katana!: Weapon;
- *   @inject(TYPES.ThrowableWeapon)
- *   private readonly shuriken!: ThrowableWeapon;
- *
- *   public constructor() {
+ *   public constructor(
+ *     private readonly katana: Weapon,
+ *     private readonly shuriken: ThrowableWeapon,
+ *   ) {
  *     console.log('constructing:', this.katana, this.shuriken);
  *   }
  *
