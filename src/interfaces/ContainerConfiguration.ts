@@ -1,3 +1,4 @@
+import type { Logger, LoggerLevel } from './Logger.js';
 import type { ScopeOptions } from './ScopeOptions.js';
 
 /**
@@ -10,4 +11,14 @@ export interface ContainerConfiguration {
 	 * The default scope for all bindings in this container (default: `"transient"`)
 	 */
 	defaultScope: ScopeOptions;
+
+	/**
+	 * If provided, this will write trace logs
+	 */
+	logger: Logger;
+
+	/**
+	 * Level to log all messages at (default: `"debug"`)
+	 */
+	logLevel: LoggerLevel;
 }
