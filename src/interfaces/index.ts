@@ -9,6 +9,7 @@ export type { ContainerConfiguration } from './ContainerConfiguration.js';
 export type { AsyncContainerModule, ContainerModule, SyncContainerModule } from './ContainerModule.js';
 export type { BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions.js';
 export type { InjectOptions } from './InjectOptions.js';
+export type { Logger, LoggerLevel } from './Logger.js';
 export type { ObjectBinder } from './ObjectBinder.js';
 export type { ScopeOptions } from './ScopeOptions.js';
 export type { ServiceIdentifier } from './ServiceIdentifier.js';

@@ -6,6 +6,7 @@ import { ClassBindingBuilder } from './BindingBuilder.js';
 import { executePlan } from './planner/executePlan.js';
 import { getConstructorParameterInjections } from './decorators/registry.js';
 import { isNever } from './util/isNever.js';
+import { noop } from './util/noop.js';
 import type { Request } from './models/Request.js';
 import type { Token } from './Token.js';
 import { tokenForIdentifier } from './util/tokenForIdentifier.js';
@@ -21,14 +22,18 @@ export class Container implements interfaces.Container {
 	readonly #incompleteBindings = new Set<BindingBuilder<any>>();
 
 	#bindings: Array<Binding<unknown>> = [];
+	readonly #log: interfaces.Logger[interfaces.LoggerLevel];
 	readonly #singletonCache: Record<symbol, unknown> = {};
 	public readonly config: Readonly<interfaces.ContainerConfiguration>;
 
 	public constructor(config?: Partial<interfaces.ContainerConfiguration>) {
 		this.config = {
 			defaultScope: 'transient',
+			logLevel: 'debug',
+			logger: { info: noop, debug: noop, trace: noop },
 			...config,
 		};
+		this.#log = this.config.logger[this.config.logLevel];
 	}
 
 	public static resolve<T>(token: Token<T>): T {
@@ -130,6 +135,7 @@ export class Container implements interfaces.Container {
 			},
 			token,
 		});
+		this.#log({ id, options, plan }, 'Processing request');
 		const request: Request<T> = {
 			stack: {},
 			singletonCache: this.#singletonCache,
