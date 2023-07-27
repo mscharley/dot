@@ -1,3 +1,4 @@
+import type * as interfaces from '../interfaces/index.js';
 import type { Token } from '../Token.js';
 
 export interface FetchFromCache<T = unknown> {
@@ -21,7 +22,14 @@ export interface AggregateMultiple<T = unknown> {
 	count: number;
 }
 
-export type PlanStep = AggregateMultiple | CreateInstance | FetchFromCache;
+export interface ParentRequest<T = unknown> {
+	type: 'requestFromParent';
+	token: Token<T>;
+	parent: interfaces.Container;
+	options: interfaces.InjectOptions;
+}
+
+export type PlanStep = AggregateMultiple | CreateInstance | FetchFromCache | ParentRequest;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type Plan<T> = PlanStep[];

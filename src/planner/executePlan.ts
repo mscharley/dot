@@ -40,6 +40,10 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 				stepStack.push(value.flat());
 				break;
 			}
+			case 'requestFromParent':
+				// eslint-disable-next-line no-await-in-loop
+				stepStack.push(await step.parent.get(step.token, step.options));
+				break;
 			default:
 				return isNever(step, 'Invalid plan step');
 		}
