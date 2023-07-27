@@ -95,6 +95,10 @@ export class Container implements interfaces.Container {
 		return module(this.bind, this.unbind, this.has, this.rebind);
 	}) as interfaces.Container['load'];
 
+	public createChild: interfaces.Container['createChild'] = (options) => {
+		return new Container({ ...options, parent: this });
+	};
+
 	public addBinding = <T>(builder: BindingBuilder<T>, binding: Binding<T>): void => {
 		this.#incompleteBindings.delete(builder);
 		this.#bindings.push(binding as Binding<unknown>);
@@ -126,15 +130,20 @@ export class Container implements interfaces.Container {
 		this.#validateBindings();
 		const token = tokenForIdentifier(id);
 
-		const plan = calculatePlan<T>(this.#bindings, this.#resolveBinding, {
-			type: 'request',
-			options: {
-				multiple: false,
-				optional: false,
-				...options,
+		const plan = calculatePlan<T>(
+			this.#bindings,
+			this.#resolveBinding,
+			{
+				type: 'request',
+				options: {
+					multiple: false,
+					optional: false,
+					...options,
+				},
+				token,
 			},
-			token,
-		});
+			this.config.parent,
+		);
 		this.#log({ id, options, plan }, 'Processing request');
 		const request: Request<T> = {
 			stack: {},

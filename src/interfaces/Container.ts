@@ -1,5 +1,6 @@
 import type { AsyncContainerModule, SyncContainerModule } from './ContainerModule.js';
 import type { BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions.js';
+import type { ContainerConfiguration } from './ContainerConfiguration.js';
 import type { InjectOptions } from './InjectOptions.js';
 import type { ServiceIdentifier } from './ServiceIdentifier.js';
 
@@ -14,6 +15,7 @@ import type { ServiceIdentifier } from './ServiceIdentifier.js';
  * @public
  */
 export interface Container {
+	readonly config: ContainerConfiguration;
 	bind: BindFunction;
 	unbind: UnbindFunction;
 	rebind: RebindFunction;
@@ -22,6 +24,7 @@ export interface Container {
 		(module: AsyncContainerModule): Promise<void>;
 		(module: SyncContainerModule): void;
 	};
+	createChild: (options?: Partial<ContainerConfiguration>) => Container;
 
 	/**
 	 * Make a request from this container

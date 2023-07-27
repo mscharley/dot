@@ -76,6 +76,10 @@ export type ConstructorInjection<T> = interfaces.ServiceIdentifier<T> | [interfa
 interface Container {
     // (undocumented)
     bind: BindFunction;
+    // (undocumented)
+    readonly config: ContainerConfiguration;
+    // (undocumented)
+    createChild: (options?: Partial<ContainerConfiguration>) => Container;
     get: {
         <T>(id: ServiceIdentifier<T>, options: Partial<InjectOptions> & {
             multiple: true;
@@ -103,6 +107,8 @@ interface ContainerConfiguration {
     defaultScope: ScopeOptions;
     logger: Logger;
     logLevel: LoggerLevel;
+    // @internal
+    parent?: Container;
 }
 
 // @public

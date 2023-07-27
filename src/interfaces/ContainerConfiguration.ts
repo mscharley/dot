@@ -1,4 +1,5 @@
 import type { Logger, LoggerLevel } from './Logger.js';
+import type { Container } from './Container.js';
 import type { ScopeOptions } from './ScopeOptions.js';
 
 /**
@@ -21,4 +22,11 @@ export interface ContainerConfiguration {
 	 * Level to log all messages at (default: `"debug"`)
 	 */
 	logLevel: LoggerLevel;
+
+	/**
+	 * The parent of the current container
+	 *
+	 * @internal
+	 */
+	parent?: Container;
 }

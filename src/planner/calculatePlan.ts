@@ -1,3 +1,4 @@
+import type * as interfaces from '../interfaces/index.js';
 import type { FetchFromCache, Plan, PlanStep } from '../models/Plan.js';
 import type { Binding } from '../models/Binding.js';
 import { getInjections } from '../decorators/registry.js';
@@ -42,6 +43,7 @@ export const calculatePlan = <T>(
 	bindings: Array<Binding<unknown>>,
 	resolveBinding: <U>(binding: Binding<U>) => U | Promise<U>,
 	input: Injection<unknown>,
+	parent?: interfaces.Container,
 ): Plan<T> => {
 	const token = input.token;
 	const binds = bindings.filter((v) => v.token === token);
@@ -60,6 +62,8 @@ export const calculatePlan = <T>(
 					cache: undefined,
 				},
 			];
+		} else if (parent != null) {
+			return [{ type: 'requestFromParent', token, parent, options: input.options }];
 		} else {
 			throw new Error(`Unable to resolve token as no bindings exist: ${token.identifier.toString()}`);
 		}
