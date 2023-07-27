@@ -76,7 +76,15 @@ export type ConstructorInjection<T> = interfaces.ServiceIdentifier<T> | [interfa
 interface Container {
     // (undocumented)
     bind: BindFunction;
-    get: <T>(id: ServiceIdentifier<T>) => Promise<T>;
+    get: {
+        <T>(id: ServiceIdentifier<T>, options: Partial<InjectOptions> & {
+            multiple: true;
+        }): Promise<T[]>;
+        <T>(id: ServiceIdentifier<T>, options: Partial<InjectOptions> & {
+            optional: true;
+        }): Promise<T | undefined>;
+        <T>(id: ServiceIdentifier<T>, options?: Partial<InjectOptions>): Promise<T>;
+    };
     // (undocumented)
     has: IsBoundFunction;
     // (undocumented)
@@ -93,6 +101,8 @@ interface Container {
 // @public
 interface ContainerConfiguration {
     defaultScope: ScopeOptions;
+    logger: Logger;
+    logLevel: LoggerLevel;
 }
 
 // @public
@@ -173,6 +183,8 @@ declare namespace interfaces {
         RebindFunction,
         UnbindFunction,
         InjectOptions,
+        Logger,
+        LoggerLevel,
         ObjectBinder,
         ScopeOptions,
         ServiceIdentifier
@@ -182,6 +194,15 @@ export { interfaces }
 
 // @public (undocumented)
 type IsBoundFunction = <T>(id: ServiceIdentifier<T>) => boolean;
+
+// @public (undocumented)
+type Logger = Record<LoggerLevel, {
+    (obj: Record<string, unknown>, message: string): void;
+    (msg: string): void;
+}>;
+
+// @public (undocumented)
+type LoggerLevel = 'info' | 'debug' | 'trace';
 
 // @public (undocumented)
 interface ObjectBinder<in out T extends object> {
