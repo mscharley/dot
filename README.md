@@ -33,11 +33,11 @@ JavaScript should work out of the box with any JavaScript transpiler that suppor
 
 Known implementations:
 
-* [Babel](https://babeljs.io/docs/babel-plugin-proposal-decorators)
+- [Babel](https://babeljs.io/docs/babel-plugin-proposal-decorators)
 
 ## Usage
 
-[For usage examples, please see the documentation.](https://mscharley.github.io/ioc-deco/ioc-deco.html#example)
+[For usage examples, please see the documentation.](https://mscharley.github.io/ioc-deco/ioc.html#example)
 
 ## Inspiration
 
