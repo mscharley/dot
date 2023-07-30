@@ -9,6 +9,7 @@
  *
  * ```typescript
  * import { createContainer, injectable, inject } from "@mscharley/ioc";
+ * import type { interfaces } from "@mscharley/ioc";
  *
  * export interface Warrior {
  *   fight: () => string;
