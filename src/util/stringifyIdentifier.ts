@@ -2,7 +2,7 @@ import type * as interfaces from '../interfaces/index.js';
 import { Token } from '../Token.js';
 
 /**
- * Turn a service identifier into a string.
+ * Turn a service identifier into a string
  *
  * @public
  */

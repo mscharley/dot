@@ -13,7 +13,7 @@ export interface InjectDecoratorFactory {
 }
 
 /**
- * Typesafe definition of a class field decorator.
+ * Typesafe definition of a class field decorator
  *
  * @remarks
  *
@@ -29,7 +29,7 @@ export interface InjectDecorator<T> {
 }
 
 /**
- * Decorator for property injections.
+ * Decorator for property injections
  *
  * @example
  *

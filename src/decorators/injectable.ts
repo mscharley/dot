@@ -30,7 +30,7 @@ export type ArgsForTokens<Tokens extends [...Array<ConstructorInjection<unknown>
 } & { length: Tokens['length'] };
 
 /**
- * Typesafe definition of a class decorator.
+ * Typesafe definition of a class decorator
  *
  * @remarks
  *
@@ -54,7 +54,7 @@ export const addInjection = (injection: Injection<unknown>): void => {
 };
 
 /**
- * Decorator for classes to flag them as being usable with this library.
+ * Decorator for classes to flag them as being usable with this library
  *
  * @example
  *
