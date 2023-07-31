@@ -112,3 +112,4 @@ export type { TokenType } from './Token.js';
 export { inject } from './decorators/inject.js';
 export { injectable } from './decorators/injectable.js';
 export { Token } from './Token.js';
+export { stringifyIdentifier } from './util/stringifyIdentifier.js';

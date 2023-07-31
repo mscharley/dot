@@ -4,12 +4,16 @@ import { getPropertyInjections, registerInjection } from './registry.js';
 import { Container } from '../Container.js';
 import type { Injection } from '../models/Injection.js';
 
-/** @public */
+/**
+ * @public
+ */
 export type ConstructorInjection<T> =
 	| interfaces.ServiceIdentifier<T>
 	| [interfaces.ServiceIdentifier<T>, Partial<interfaces.InjectOptions>];
 
-/** @public */
+/**
+ * @public
+ */
 export type ConstructorInjectedType<T extends ConstructorInjection<unknown>> = T extends interfaces.ServiceIdentifier<
 	infer U
 >
@@ -18,17 +22,29 @@ export type ConstructorInjectedType<T extends ConstructorInjection<unknown>> = T
 	? U
 	: never;
 
-/** @public */
+/**
+ * @public
+ */
 export type ArgsForTokens<Tokens extends [...Array<ConstructorInjection<unknown>>]> = {
 	[Index in keyof Tokens]: ConstructorInjectedType<Tokens[Index]>;
 } & { length: Tokens['length'] };
 
-/** @public */
+/**
+ * Typesafe definition of a class decorator.
+ *
+ * @remarks
+ *
+ * See {@link injectable | @injectable}
+ *
+ * @public
+ */
 export interface InjectableDecorator<Args extends unknown[]> {
+	// TC39 definition
 	<T extends object>(
 		target: interfaces.Constructor<T, Args>,
 		context: ClassDecoratorContext<interfaces.Constructor<T, Args>>,
 	): undefined;
+	// experimental decorators definition
 	<T extends object>(target: interfaces.Constructor<T, Args>, context?: undefined): interfaces.Constructor<T, Args>;
 }
 
@@ -38,6 +54,31 @@ export const addInjection = (injection: Injection<unknown>): void => {
 };
 
 /**
+ * Decorator for classes to flag them as being usable with this library.
+ *
+ * @example
+ *
+ * ```typescript
+ * const Name = new Token<string>("name");
+ *
+ * @injectable(Name)
+ * class Greeter {
+ *   public constructor(name: string) {
+ *     console.log(`Hello, ${name}.`);
+ *   }
+ * }
+ *
+ * @injectable()
+ * class Greeter {
+ *   @inject(Name)
+ *   public readonly name: string;
+ *
+ *   public hello() {
+ *     console.log(`Hello, ${name}.`);
+ *   }
+ * }
+ * ```
+ *
  * @public
  */
 export const injectable = <Tokens extends [...Array<ConstructorInjection<unknown>>]>(

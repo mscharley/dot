@@ -122,13 +122,13 @@ export const createContainer: (config?: interfaces.ContainerConfiguration) => in
 // @public (undocumented)
 type FixedScopeBindingOptions = 'toConstantValue';
 
-// @public (undocumented)
+// @public
 export const inject: InjectDecoratorFactory;
 
-// @public (undocumented)
+// @public
 export const injectable: <Tokens extends ConstructorInjection<unknown>[]>(...constructorTokens: Tokens) => InjectableDecorator<ArgsForTokens<Tokens>>;
 
-// @public (undocumented)
+// @public
 export interface InjectableDecorator<Args extends unknown[]> {
     // (undocumented)
     <T extends object>(target: interfaces.Constructor<T, Args>, context: ClassDecoratorContext<interfaces.Constructor<T, Args>>): undefined;
@@ -136,13 +136,13 @@ export interface InjectableDecorator<Args extends unknown[]> {
     <T extends object>(target: interfaces.Constructor<T, Args>, context?: undefined): interfaces.Constructor<T, Args>;
 }
 
-// @public (undocumented)
+// @public
 export interface InjectDecorator<T> {
     // (undocumented)
     (target: undefined, context: ClassFieldDecoratorContext<unknown, T>): (originalValue: T | undefined) => T;
     // (undocumented)
     (target: {
-        constructor: Function;
+        constructor: () => unknown;
     }, propertyName: string | symbol): undefined;
 }
 
@@ -228,6 +228,9 @@ type ScopeOptions = 'transient' | 'request' | 'singleton';
 
 // @public
 type ServiceIdentifier<T> = Token<T> | (T extends object ? Constructor<T> : never);
+
+// @public
+export const stringifyIdentifier: <T>(id: interfaces.ServiceIdentifier<T>) => string;
 
 // @public
 type SyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound: IsBoundFunction, rebind: RebindFunction) => void;

@@ -3,22 +3,50 @@ import { addInjection } from './injectable.js';
 import { Container } from '../Container.js';
 import type { Token } from '../Token.js';
 
-/** @public */
+/**
+ * @public
+ */
 export interface InjectDecoratorFactory {
 	<T>(token: Token<T>, options: Partial<interfaces.InjectOptions> & { multiple: true }): InjectDecorator<T[]>;
 	<T>(token: Token<T>, options: Partial<interfaces.InjectOptions> & { optional: true }): InjectDecorator<T | undefined>;
 	<T>(token: Token<T>, options?: Partial<interfaces.InjectOptions>): InjectDecorator<T>;
 }
 
-/* eslint-disable @typescript-eslint/ban-types */
-/** @public */
+/**
+ * Typesafe definition of a class field decorator.
+ *
+ * @remarks
+ *
+ * See {@link inject | @inject}
+ *
+ * @public
+ */
 export interface InjectDecorator<T> {
+	// TC39 definition
 	(target: undefined, context: ClassFieldDecoratorContext<unknown, T>): (originalValue: T | undefined) => T;
-	(target: { constructor: Function }, propertyName: string | symbol): undefined;
+	// experimental decorators definition
+	(target: { constructor: () => unknown }, propertyName: string | symbol): undefined;
 }
-/* eslint-enable @typescript-eslint/ban-types */
 
 /**
+ * Decorator for property injections.
+ *
+ * @example
+ *
+ * ```typescript
+ * const Name = new Token<string>("name");
+ *
+ * @injectable()
+ * class Greeter {
+ *   @inject(Name)
+ *   public readonly name: string;
+ *
+ *   public hello() {
+ *     console.log(`Hello, ${name}.`);
+ *   }
+ * }
+ * ```
+ *
  * @public
  */
 export const inject: InjectDecoratorFactory = <T>(
