@@ -3,11 +3,13 @@ import type * as interfaces from '../interfaces/index.js';
 import { getPropertyInjections, registerInjection } from './registry.js';
 import { Container } from '../Container.js';
 import type { Injection } from '../models/Injection.js';
+import { Token } from '../Token.js';
 
 /**
  * @public
  */
 export type ConstructorInjection<T> =
+	| interfaces.DirectInjection<T>
 	| interfaces.ServiceIdentifier<T>
 	| [interfaces.ServiceIdentifier<T>, Partial<interfaces.InjectOptions>];
 
@@ -19,6 +21,8 @@ export type ConstructorInjectedType<T extends ConstructorInjection<unknown>> = T
 >
 	? U
 	: T extends [interfaces.ServiceIdentifier<infer U>]
+	? U
+	: T extends interfaces.DirectInjection<infer U>
 	? U
 	: never;
 
@@ -109,38 +113,64 @@ export const injectable = <Tokens extends [...Array<ConstructorInjection<unknown
 			constructorTokens.forEach((t, index) => {
 				const token = Array.isArray(t) ? t[0] : t;
 				const partialOpts = Array.isArray(t) ? t[1] : {};
-				registerInjection(klass, {
-					type: 'constructorParameter',
-					index,
-					token,
-					options: {
-						multiple: false,
-						optional: false,
-						...partialOpts,
-					},
-				});
+				if (token instanceof Token) {
+					registerInjection(klass, {
+						type: 'constructorParameter',
+						index,
+						token,
+						options: {
+							multiple: false,
+							optional: false,
+							...partialOpts,
+						},
+					});
+				} else {
+					registerInjection(klass, {
+						type: 'unmanagedConstructorParameter',
+						index,
+						token: token.token,
+						options: {
+							multiple: false,
+							optional: false,
+						},
+						value: token,
+					});
+				}
 			});
 
 			return klass;
 			/* c8 ignore end */
 		} else {
-			// tc39 - no op
+			// tc39
 			_injections.splice(0).forEach((injection) => {
 				registerInjection(target, injection);
 			});
 			constructorTokens.forEach((t, index) => {
 				const token = Array.isArray(t) ? t[0] : t;
 				const partialOpts = Array.isArray(t) ? t[1] : {};
-				registerInjection(target, {
-					type: 'constructorParameter',
-					index,
-					token,
-					options: {
-						multiple: false,
-						optional: false,
-						...partialOpts,
-					},
-				});
+				if (token instanceof Token) {
+					registerInjection(target, {
+						type: 'constructorParameter',
+						index,
+						token,
+						options: {
+							multiple: false,
+							optional: false,
+							...partialOpts,
+						},
+					});
+				} else {
+					registerInjection(target, {
+						type: 'unmanagedConstructorParameter',
+						index,
+						token: token.token,
+						options: {
+							multiple: false,
+							optional: false,
+						},
+						value: token,
+					});
+				}
 			});
 
 			return undefined;

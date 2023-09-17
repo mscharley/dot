@@ -114,7 +114,7 @@ export class Container implements interfaces.Container {
 				const args = getConstructorParameterInjections(binding.ctr)
 					// eslint-disable-next-line @typescript-eslint/no-magic-numbers
 					.sort((a, b) => (a.index < b.index ? -1 : 1))
-					.map(({ token }) => Container.resolve(token));
+					.map((i) => (i.type === 'unmanagedConstructorParameter' ? i.value.generator() : Container.resolve(i.token)));
 
 				return new binding.ctr(...args);
 			}
