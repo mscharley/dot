@@ -45,6 +45,10 @@ export const calculatePlan = <T>(
 	input: Injection<unknown>,
 	parent?: interfaces.Container,
 ): Plan<T> => {
+	if (input.type === 'unmanagedConstructorParameter') {
+		// Unmanaged constructor parameters are dealt with as static values and don't need any plan to resolve them.
+		return [];
+	}
 	const token = input.token;
 	const binds = bindings.filter((v) => v.token === token);
 	if (!input.options.multiple && binds.length > 1) {

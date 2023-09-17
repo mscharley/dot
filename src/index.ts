@@ -108,6 +108,7 @@ export type {
 	ConstructorInjection,
 	InjectableDecorator,
 } from './decorators/injectable.js';
+export { unmanaged } from './decorators/unmanaged.js';
 export type { TokenType } from './Token.js';
 export { inject } from './decorators/inject.js';
 export { injectable } from './decorators/injectable.js';

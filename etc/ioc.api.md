@@ -65,10 +65,10 @@ interface ClassBindingBuilder<in out T extends object> extends Binder<T>, Bindin
 type Constructor<out T extends object, in Args extends unknown[] = any> = new (...args: Args) => T;
 
 // @public (undocumented)
-export type ConstructorInjectedType<T extends ConstructorInjection<unknown>> = T extends interfaces.ServiceIdentifier<infer U> ? U : T extends [interfaces.ServiceIdentifier<infer U>] ? U : never;
+export type ConstructorInjectedType<T extends ConstructorInjection<unknown>> = T extends interfaces.ServiceIdentifier<infer U> ? U : T extends [interfaces.ServiceIdentifier<infer U>] ? U : T extends interfaces.DirectInjection<infer U> ? U : never;
 
 // @public (undocumented)
-export type ConstructorInjection<T> = interfaces.ServiceIdentifier<T> | [interfaces.ServiceIdentifier<T>, Partial<interfaces.InjectOptions>];
+export type ConstructorInjection<T> = interfaces.DirectInjection<T> | interfaces.ServiceIdentifier<T> | [interfaces.ServiceIdentifier<T>, Partial<interfaces.InjectOptions>];
 
 // Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
 //
@@ -118,6 +118,12 @@ type ContainerModule = AsyncContainerModule | SyncContainerModule;
 //
 // @public
 export const createContainer: (config?: interfaces.ContainerConfiguration) => interfaces.Container;
+
+// @public
+type DirectInjection<T> = {
+    token: Token<T>;
+    generator: () => T;
+};
 
 // @public (undocumented)
 type FixedScopeBindingOptions = 'toConstantValue';
@@ -184,6 +190,7 @@ declare namespace interfaces {
         AsyncContainerModule,
         ContainerModule,
         SyncContainerModule,
+        DirectInjection,
         BindFunction,
         IsBoundFunction,
         RebindFunction,
@@ -247,5 +254,8 @@ export type TokenType<T extends Token<unknown>> = T extends Token<infer U> ? U :
 
 // @public (undocumented)
 type UnbindFunction = <T>(id: ServiceIdentifier<T>) => void;
+
+// @public
+export const unmanaged: <T>(defaultValue: T, name?: string) => interfaces.DirectInjection<T>;
 
 ```

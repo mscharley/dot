@@ -1,9 +1,10 @@
 import type * as interfaces from '../interfaces/index.js';
 import type {
-	ConstructorParamaterInjection,
+	ConstructorParameterInjection,
 	Injection,
 	InjectionRegistry,
 	PropertyInjection,
+	UnmanagedConstructorParameterInjection,
 } from '../models/Injection.js';
 
 const registry: InjectionRegistry = new WeakMap();
@@ -30,7 +31,10 @@ export const getPropertyInjections = <T extends object>(klass: interfaces.Constr
 
 export const getConstructorParameterInjections = <T extends object>(
 	klass: interfaces.Constructor<T>,
-): ConstructorParamaterInjection[] => {
+): Array<ConstructorParameterInjection | UnmanagedConstructorParameterInjection> => {
 	const injections: Array<Injection<unknown>> = registry.get(klass) ?? [];
-	return [...injections].filter((i): i is ConstructorParamaterInjection => i.type === 'constructorParameter');
+	return [...injections].filter(
+		(i): i is ConstructorParameterInjection | UnmanagedConstructorParameterInjection =>
+			i.type === 'constructorParameter' || i.type === 'unmanagedConstructorParameter',
+	);
 };
