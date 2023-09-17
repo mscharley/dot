@@ -255,4 +255,7 @@ export type TokenType<T extends Token<unknown>> = T extends Token<infer U> ? U :
 // @public (undocumented)
 type UnbindFunction = <T>(id: ServiceIdentifier<T>) => void;
 
+// @public
+export const unmanaged: <T>(defaultValue: T, name?: string) => interfaces.DirectInjection<T>;
+
 ```
