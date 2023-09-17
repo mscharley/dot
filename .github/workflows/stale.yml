@@ -23,3 +23,4 @@ jobs:
       - uses: dessant/lock-threads@v4
         with:
           issue-inactive-days: '14'
+          pr-inactive-days: '28'
