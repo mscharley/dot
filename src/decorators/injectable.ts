@@ -57,6 +57,42 @@ export const addInjection = (injection: Injection<unknown>): void => {
 	_injections.push(injection);
 };
 
+const _configureInjectable = <T extends object, Tokens extends [...Array<ConstructorInjection<unknown>>]>(
+	klass: interfaces.Constructor<T, ArgsForTokens<Tokens>>,
+	constructorTokens: Tokens,
+): void => {
+	_injections.splice(0).forEach((injection) => {
+		registerInjection(klass, injection);
+	});
+	constructorTokens.forEach((t, index) => {
+		const token = Array.isArray(t) ? t[0] : t;
+		const partialOpts = Array.isArray(t) ? t[1] : {};
+		if (token instanceof Token) {
+			registerInjection(klass, {
+				type: 'constructorParameter',
+				index,
+				token,
+				options: {
+					multiple: false,
+					optional: false,
+					...partialOpts,
+				},
+			});
+		} else {
+			registerInjection(klass, {
+				type: 'unmanagedConstructorParameter',
+				index,
+				token: token.token,
+				options: {
+					multiple: false,
+					optional: false,
+				},
+				value: token,
+			});
+		}
+	});
+};
+
 /**
  * Decorator for classes to flag them as being usable with this library
  *
@@ -107,71 +143,13 @@ export const injectable = <Tokens extends [...Array<ConstructorInjection<unknown
 						});
 					}
 				})();
-			_injections.splice(0).forEach((injection) => {
-				registerInjection(klass, injection);
-			});
-			constructorTokens.forEach((t, index) => {
-				const token = Array.isArray(t) ? t[0] : t;
-				const partialOpts = Array.isArray(t) ? t[1] : {};
-				if (token instanceof Token) {
-					registerInjection(klass, {
-						type: 'constructorParameter',
-						index,
-						token,
-						options: {
-							multiple: false,
-							optional: false,
-							...partialOpts,
-						},
-					});
-				} else {
-					registerInjection(klass, {
-						type: 'unmanagedConstructorParameter',
-						index,
-						token: token.token,
-						options: {
-							multiple: false,
-							optional: false,
-						},
-						value: token,
-					});
-				}
-			});
+			_configureInjectable(klass, constructorTokens);
 
 			return klass;
 			/* c8 ignore end */
 		} else {
 			// tc39
-			_injections.splice(0).forEach((injection) => {
-				registerInjection(target, injection);
-			});
-			constructorTokens.forEach((t, index) => {
-				const token = Array.isArray(t) ? t[0] : t;
-				const partialOpts = Array.isArray(t) ? t[1] : {};
-				if (token instanceof Token) {
-					registerInjection(target, {
-						type: 'constructorParameter',
-						index,
-						token,
-						options: {
-							multiple: false,
-							optional: false,
-							...partialOpts,
-						},
-					});
-				} else {
-					registerInjection(target, {
-						type: 'unmanagedConstructorParameter',
-						index,
-						token: token.token,
-						options: {
-							multiple: false,
-							optional: false,
-						},
-						value: token,
-					});
-				}
-			});
+			_configureInjectable(target, constructorTokens);
 
 			return undefined;
 		}
