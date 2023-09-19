@@ -9,7 +9,7 @@
 	"checkers_comment": "Take a look at https://stryker-mutator.io/docs/stryker-js/typescript-checker/ for information about the typescript plugin.",
 	"coverageAnalysis": "perTest",
 	"ignorePatterns": ["/src/demo", "/src/index.ts"],
-	"tsconfigFile": "tsconfig.tc39.json",
+	"tsconfigFile": "tsconfig.json",
 	"thresholds": {
 		"high": 90,
 		"low": 75,
