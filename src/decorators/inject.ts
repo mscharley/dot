@@ -2,6 +2,7 @@ import type * as interfaces from '../interfaces/index.js';
 import { addInjection } from './injectable.js';
 import { Container } from '../Container.js';
 import type { Token } from '../Token.js';
+import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
 /**
  * @public
@@ -50,7 +51,7 @@ export interface InjectDecorator<T> {
  * @public
  */
 export const inject: InjectDecoratorFactory = <T>(
-	token: Token<T>,
+	id: interfaces.ServiceIdentifier<T>,
 	options?: Partial<interfaces.InjectOptions>,
 ): InjectDecorator<T> => {
 	const opts: interfaces.InjectOptions = {
@@ -58,6 +59,7 @@ export const inject: InjectDecoratorFactory = <T>(
 		optional: false,
 		...options,
 	};
+	const token = tokenForIdentifier(id);
 
 	return ((target, context) => {
 		/* c8 ignore start */
