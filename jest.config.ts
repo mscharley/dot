@@ -176,7 +176,7 @@ export default {
 			'ts-jest',
 			{
 				isolatedModules: true,
-				tsconfig: process.env.DECORATOR_TYPE === 'tc39' ? './tsconfig.tc39.json' : './tsconfig.experimental.json',
+				tsconfig: `./tsconfig.jest-${process.env.DECORATOR_TYPE}.json`,
 				useESM: true,
 			},
 		],
