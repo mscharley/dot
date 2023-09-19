@@ -4,6 +4,6 @@
 		"experimentalDecorators": true,
 		// Workaround for crash bugs in ts-jest: #4207 and #4198
 		"module": "ESNext",
-		"moduleResolution": "Classic"
+		"moduleResolution": "Node10"
 	}
 }
