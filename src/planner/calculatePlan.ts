@@ -55,12 +55,13 @@ export const calculatePlan = <T>(
 		return [];
 	}
 	const token = input.token;
+	if (resolutionPath.includes(token)) {
+		throw new ResolutionError('Recursive binding detected', [...resolutionPath, token]);
+	}
+
 	const binds = bindings.filter((v) => v.token === token);
 	if (!input.options.multiple && binds.length > 1) {
-		throw new ResolutionError(`Multiple bindings exist for token: ${token.identifier.toString()}`, [
-			...resolutionPath,
-			token,
-		]);
+		throw new ResolutionError('Multiple bindings exist for token', [...resolutionPath, token]);
 	}
 
 	if (binds.length === 0) {
@@ -78,10 +79,7 @@ export const calculatePlan = <T>(
 		} else if (parent != null) {
 			return [{ type: 'requestFromParent', token, parent, options: input.options }];
 		} else {
-			throw new ResolutionError(`Unable to resolve token as no bindings exist: ${token.identifier.toString()}`, [
-				...resolutionPath,
-				token,
-			]);
+			throw new ResolutionError('Unable to resolve token as no bindings exist', [...resolutionPath, token]);
 		}
 	} else if (binds.length === 1) {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion

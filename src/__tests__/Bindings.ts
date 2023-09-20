@@ -21,9 +21,10 @@ describe('Bindings', () => {
 	it('throws an error if no binding is found for a token', async () => {
 		const c = new Container();
 
-		await expect(async () => c.get(token)).rejects.toThrowErrorMatchingInlineSnapshot(
-			'"Unable to resolve token as no bindings exist: Symbol(test)"',
-		);
+		await expect(async () => c.get(token)).rejects.toMatchObject({
+			message: 'Unable to resolve token as no bindings exist',
+			resolutionPath: [token],
+		});
 	});
 
 	it('fails if attempting a resolution outside a request', () => {

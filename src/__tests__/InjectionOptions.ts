@@ -35,7 +35,10 @@ describe('InjectionOptions', () => {
 			const c = new Container();
 			c.bind(token).to(Token1);
 
-			await expect(c.get(token)).rejects.toThrow('Unable to resolve token as no bindings exist: Symbol(string)');
+			await expect(c.get(token)).rejects.toMatchObject({
+				message: 'Unable to resolve token as no bindings exist',
+				resolutionPath: [token, strToken],
+			});
 		});
 
 		it('resolves no bindings to an empty array if also an optional injection', async () => {
@@ -96,7 +99,10 @@ describe('InjectionOptions', () => {
 			c.bind(strToken).toConstantValue('Hello');
 			c.bind(strToken).toConstantValue('world');
 
-			await expect(c.get(token)).rejects.toThrowError('Multiple bindings exist for token: Symbol(string)');
+			await expect(c.get(token)).rejects.toMatchObject({
+				message: 'Multiple bindings exist for token',
+				resolutionPath: [token, strToken],
+			});
 		});
 	});
 });
