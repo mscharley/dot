@@ -13,6 +13,7 @@ docs/
 temp/
 .github/
 .vscode/
+.eslint*
 .nvmrc
 api-extractor.json
 tsconfig.*.json
