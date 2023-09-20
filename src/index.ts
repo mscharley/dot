@@ -97,7 +97,7 @@ import { Container } from './Container.js';
  *
  * @public
  */
-export const createContainer = (config?: interfaces.ContainerConfiguration): interfaces.Container =>
+export const createContainer = (config?: Partial<interfaces.ContainerConfiguration>): interfaces.Container =>
 	new Container(config);
 
 export type { interfaces };
@@ -114,3 +114,5 @@ export { inject } from './decorators/inject.js';
 export { injectable } from './decorators/injectable.js';
 export { Token } from './Token.js';
 export { stringifyIdentifier } from './util/stringifyIdentifier.js';
+export { IocError, ResolutionError, InvalidOperationError } from './Error.js';
+export type { ErrorCode } from './Error.js';

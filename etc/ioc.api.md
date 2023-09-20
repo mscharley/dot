@@ -125,6 +125,9 @@ type DirectInjection<T> = {
     generator: () => T;
 };
 
+// @public
+export type ErrorCode = 'RESOLUTION_ERROR' | 'INVALID_OPERATION';
+
 // @public (undocumented)
 type FixedScopeBindingOptions = 'toConstantValue';
 
@@ -205,6 +208,19 @@ declare namespace interfaces {
 }
 export { interfaces }
 
+// @public
+export class InvalidOperationError extends IocError {
+    constructor(msg: string, originalError?: Error);
+}
+
+// @public
+export abstract class IocError extends Error {
+    constructor(msg: string, code: ErrorCode, originalError?: Error);
+    readonly cause?: Error;
+    // (undocumented)
+    readonly code: ErrorCode;
+}
+
 // @public (undocumented)
 type IsBoundFunction = <T>(id: ServiceIdentifier<T>) => boolean;
 
@@ -229,6 +245,13 @@ interface ObjectBindingBuilder<in out T extends object> extends Binder<T>, Bindi
 
 // @public (undocumented)
 type RebindFunction = BindFunction;
+
+// @public
+export class ResolutionError extends IocError {
+    constructor(msg: string, resolutionPath: Array<Token<unknown>>, originalError?: Error);
+    // (undocumented)
+    readonly resolutionPath: Array<Token<unknown>>;
+}
 
 // @public (undocumented)
 type ScopeOptions = 'transient' | 'request' | 'singleton';

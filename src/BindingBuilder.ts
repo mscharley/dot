@@ -1,5 +1,6 @@
 import type * as interfaces from './interfaces/index.js';
 import type { Binding, ConstructorBinding } from './models/Binding.js';
+import { InvalidOperationError } from './Error.js';
 import { isConstructor } from './util/isConstructor.js';
 import { isPromise } from './util/isPromise.js';
 import { stringifyIdentifier } from './util/stringifyIdentifier.js';
@@ -86,7 +87,9 @@ export class ClassBindingBuilder<T extends object>
 
 	public toSelf: interfaces.ClassBindingBuilder<T>['toSelf'] = () => {
 		if (!isConstructor(this.id)) {
-			throw new Error(`Invalid call of toSelf(): identifier is not a constructor: ${stringifyIdentifier(this.id)}`);
+			throw new InvalidOperationError(
+				`Invalid call of toSelf(): identifier is not a constructor: ${stringifyIdentifier(this.id)}`,
+			);
 		}
 
 		const binding: ConstructorBinding<T> = {

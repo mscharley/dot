@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals';
+import { describe, expect, it, jest } from '@jest/globals';
 import type { Binding } from '../../models/Binding.js';
 import { calculatePlan } from '../calculatePlan.js';
 import { injectable } from '../../decorators/injectable.js';
@@ -10,10 +10,10 @@ const strToken = new Token<string>('str');
 class Test {
 	public constructor(public readonly name: string) {}
 }
+const testToken = new Token<Test>('test');
 
 describe('calculatePlan', () => {
 	it('should return a single step for constantValue injections of classes with injections', () => {
-		const testToken = new Token<Test>('test');
 		const bob = new Test('Bob');
 
 		const plan = calculatePlan(
@@ -35,6 +35,7 @@ describe('calculatePlan', () => {
 					optional: false,
 				},
 			},
+			[],
 		);
 
 		expect(plan).toMatchObject([
@@ -49,7 +50,39 @@ describe('calculatePlan', () => {
 				expectedTokensUsed: [],
 				token: testToken,
 				type: 'createClass',
+				resolutionPath: [testToken],
 			},
 		]);
+	});
+
+	it('should not call any functions to create elements in order to generate the plan', () => {
+		const generator = jest.fn();
+		const resolveBinding = jest.fn();
+
+		calculatePlan(
+			[
+				{
+					type: 'dynamic',
+					generator,
+					id: testToken,
+					token: testToken,
+					scope: 'request',
+				},
+			],
+			// eslint-disable-next-line @typescript-eslint/no-magic-numbers
+			resolveBinding as Parameters<typeof calculatePlan>[1],
+			{
+				type: 'request',
+				token: testToken,
+				options: {
+					multiple: false,
+					optional: false,
+				},
+			},
+			[],
+		);
+
+		expect(generator).not.toBeCalled();
+		expect(resolveBinding).not.toBeCalled();
 	});
 });

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from '@jest/globals';
 import { Container } from '../Container.js';
 import { inject } from '../decorators/inject.js';
 import { injectable } from '../decorators/injectable.js';
+import { tc39 } from '../__utils__/DecoratorTypes.js';
 import { Token } from '../Token.js';
 
 const prop = new Token<string>('bar');
@@ -33,14 +34,10 @@ describe('PropertyAccess', () => {
 		expect(n.prop).toBe('Hello world!');
 	});
 
-	if (process.env.DECORATOR_TYPE === 'tc39') {
-		it('can access injected properties from the constructor', async () => {
-			const n = await c.get(foo);
-			expect(n.constructorValue).toBe('Hello world!');
-		});
-	} else {
-		it.todo('can access injected properties from the constructor');
-	}
+	tc39.it('can access injected properties from the constructor', async () => {
+		const n = await c.get(foo);
+		expect(n.constructorValue).toBe('Hello world!');
+	});
 
 	it('can access injected properties from other methods', async () => {
 		const n = await c.get(foo);

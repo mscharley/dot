@@ -1,3 +1,4 @@
+import { InvalidOperationError, ResolutionError } from '../Error.js';
 import { isNever } from '../util/isNever.js';
 import type { Plan } from '../models/Plan.js';
 import type { Request } from '../models/Request.js';
@@ -24,18 +25,29 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 				}
 				break;
 			case 'createClass': {
-				// eslint-disable-next-line no-await-in-loop
-				const value = await step.generate();
-				stepStack.push(value);
-				if (step.cache != null) {
-					caches[step.cache][step.token.identifier] = value;
+				try {
+					// eslint-disable-next-line no-await-in-loop
+					const value = await step.generate();
+					stepStack.push(value);
+					if (step.cache != null) {
+						caches[step.cache][step.token.identifier] = value;
+					}
+				} catch (err: unknown) {
+					throw new ResolutionError(
+						'Encountered an error while creating a class',
+						step.resolutionPath,
+						err instanceof Error ? err : new Error(`${err}`),
+					);
 				}
 				break;
 			}
 			case 'aggregateMultiple': {
 				const value = stepStack.splice(-step.count);
 				if (value.length !== step.count) {
-					throw new Error(`Unable to load expected number of injected services: ${value.length} !== ${step.count}`);
+					throw new ResolutionError(
+						`Unable to load expected number of injected services: ${value.length} !== ${step.count}`,
+						step.resolutionPath,
+					);
 				}
 				stepStack.push(value.flat());
 				break;
@@ -52,7 +64,7 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 	}
 
 	if (!(token.identifier in stack)) {
-		throw new Error(`Unable to resolve final request: ${token.identifier.toString()}`);
+		throw new ResolutionError(`Unable to resolve final request: ${token.identifier.toString()}`, []);
 	}
 	const [returnValue] = (stack[token.identifier]?.splice(0, 1) ?? []) as T[];
 
@@ -62,7 +74,7 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 
 	const unresolved = Object.getOwnPropertySymbols(stack);
 	if (unresolved.length > 0) {
-		throw new Error(
+		throw new InvalidOperationError(
 			`Unresolved dependecies created, this is probably a bug. Please report this! Extra dependencies: ${unresolved
 				.map((i) => i.toString())
 				.join(', ')}`,
