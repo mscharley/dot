@@ -4,6 +4,8 @@ dist/
 # TypeScript tests
 src/demo
 src/**/__tests__
+src/**/__mocks__
+src/**/__utils__
 
 # Dev files
 reports/

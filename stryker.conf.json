@@ -8,7 +8,11 @@
 	"checkers": ["typescript"],
 	"checkers_comment": "Take a look at https://stryker-mutator.io/docs/stryker-js/typescript-checker/ for information about the typescript plugin.",
 	"coverageAnalysis": "perTest",
-	"ignorePatterns": ["/src/demo", "/src/index.ts"],
+	"mutate": [
+		"{src,lib}/**/!(*.+(s|S)pec|*.+(t|T)est).+(cjs|mjs|js|ts|jsx|tsx|html|vue)",
+		"!{src,lib}/**/+(__tests__|__utils__|__mocks__)/**/*.+(cjs|mjs|js|cts|mts|ts|jsx|tsx|html|vue)",
+		"!src/index.ts"
+	],
 	"tsconfigFile": "tsconfig.json",
 	"thresholds": {
 		"high": 90,

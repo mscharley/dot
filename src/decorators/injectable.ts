@@ -139,7 +139,7 @@ export const injectable = <Tokens extends [...Array<ConstructorInjection<unknown
 						super(...(args as never));
 						getPropertyInjections(klass).forEach(({ name, token }) => {
 							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-							(this as any)[name] = Container.resolve(token);
+							(this as any)[name] = Container.resolve(token, [token]);
 						});
 					}
 				})();

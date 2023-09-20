@@ -27,7 +27,7 @@ describe('Bindings', () => {
 	});
 
 	it('fails if attempting a resolution outside a request', () => {
-		expect(() => Container.resolve(token)).toThrowErrorMatchingInlineSnapshot(
+		expect(() => Container.resolve(token, [])).toThrowErrorMatchingInlineSnapshot(
 			'"Unable to resolve token as no container is currently making a request: Symbol(test)"',
 		);
 	});
@@ -120,7 +120,11 @@ describe('Bindings', () => {
 					});
 				c.bind(subrequest).toConstantValue('Hello world!');
 
-				await expect(c.get(token)).rejects.toThrow('Hello, world!');
+				await expect(c.get(token)).rejects.toMatchObject({
+					cause: {
+						message: 'Hello, world!',
+					},
+				});
 			});
 		});
 

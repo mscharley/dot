@@ -23,6 +23,7 @@ describe('executePlan', () => {
 						expectedTokensUsed: [],
 						token: strToken,
 						generate: (): string => 'Hello',
+						resolutionPath: [strToken],
 					},
 					{
 						type: 'createClass',
@@ -30,6 +31,7 @@ describe('executePlan', () => {
 						expectedTokensUsed: [],
 						token: numToken,
 						generate: (): number => 1,
+						resolutionPath: [numToken],
 					},
 					{
 						type: 'createClass',
@@ -37,6 +39,7 @@ describe('executePlan', () => {
 						expectedTokensUsed: [],
 						token: strToken,
 						generate: (): string => 'world',
+						resolutionPath: [strToken],
 					},
 				],
 				basicRequest(strToken),
@@ -62,11 +65,13 @@ describe('executePlan', () => {
 						expectedTokensUsed: [],
 						token: strToken,
 						generate: (): string => 'Hello world!',
+						resolutionPath: [strToken],
 					},
 					{
 						type: 'aggregateMultiple',
 						count: 2,
 						token: strToken,
+						resolutionPath: [],
 					},
 				],
 				basicRequest(strToken),

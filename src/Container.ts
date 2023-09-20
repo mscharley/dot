@@ -1,4 +1,5 @@
 import type * as interfaces from './interfaces/index.js';
+import { InvalidOperationError, ResolutionError } from './Error.js';
 import type { Binding } from './models/Binding.js';
 import type { BindingBuilder } from './BindingBuilder.js';
 import { calculatePlan } from './planner/calculatePlan.js';
@@ -36,15 +37,15 @@ export class Container implements interfaces.Container {
 		this.#log = this.config.logger[this.config.logLevel];
 	}
 
-	public static resolve<T>(token: Token<T>): T {
+	public static resolve<T>(token: Token<T>, resolutionPath: Array<Token<unknown>>): T {
 		if (this.#currentRequest == null) {
-			throw new Error(
+			throw new InvalidOperationError(
 				`Unable to resolve token as no container is currently making a request: ${token.identifier.toString()}`,
 			);
 		}
 
 		if (!(token.identifier in this.#currentRequest.stack)) {
-			throw new Error(`Token hasn't been created yet: ${token.identifier.toString()}`);
+			throw new ResolutionError(`Token hasn't been created yet: ${token.identifier.toString()}`, resolutionPath);
 		}
 		const tokenStack = this.#currentRequest.stack[token.identifier] as T[];
 		const [value] = tokenStack.splice(0, 1);
@@ -59,8 +60,9 @@ export class Container implements interfaces.Container {
 	#validateBindings = (): void => {
 		const values = [...this.#incompleteBindings.values()];
 		if (values.length > 0) {
-			throw new Error(
+			throw new ResolutionError(
 				`Some bindings were started but not completed: ${values.map((v) => v.token.identifier.toString()).join(', ')}`,
+				[],
 			);
 		}
 	};
@@ -104,7 +106,7 @@ export class Container implements interfaces.Container {
 		this.#bindings.push(binding as Binding<unknown>);
 	};
 
-	#resolveBinding = <T>(binding: Binding<T>): T | Promise<T> => {
+	#resolveBinding = <T>(binding: Binding<T>, resolutionPath: Array<Token<unknown>>): T | Promise<T> => {
 		switch (binding.type) {
 			case 'static':
 				return binding.value;
@@ -114,7 +116,11 @@ export class Container implements interfaces.Container {
 				const args = getConstructorParameterInjections(binding.ctr)
 					// eslint-disable-next-line @typescript-eslint/no-magic-numbers
 					.sort((a, b) => (a.index < b.index ? -1 : 1))
-					.map((i) => (i.type === 'unmanagedConstructorParameter' ? i.value.generator() : Container.resolve(i.token)));
+					.map((i) =>
+						i.type === 'unmanagedConstructorParameter'
+							? i.value.generator()
+							: Container.resolve(i.token, resolutionPath),
+					);
 
 				return new binding.ctr(...args);
 			}
@@ -142,6 +148,7 @@ export class Container implements interfaces.Container {
 				},
 				token,
 			},
+			[],
 			this.config.parent,
 		);
 		this.#log({ id, options, plan }, 'Processing request');

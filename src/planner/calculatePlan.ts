@@ -3,11 +3,14 @@ import type { FetchFromCache, Plan, PlanStep } from '../models/Plan.js';
 import type { Binding } from '../models/Binding.js';
 import { getInjections } from '../decorators/registry.js';
 import type { Injection } from '../models/Injection.js';
+import { ResolutionError } from '../Error.js';
+import type { Token } from '../Token.js';
 
 const planBinding = <T>(
 	binding: Binding<T>,
 	input: Injection<T>,
-	resolveBinding: <U>(binding: Binding<U>) => U | Promise<U>,
+	resolutionPath: Array<Token<unknown>>,
+	resolveBinding: <U>(binding: Binding<U>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
 	resolveInjection: (injection: Injection<unknown>) => PlanStep[],
 ): Plan<T> => {
 	const cache = binding.scope === 'transient' ? undefined : binding.scope;
@@ -29,20 +32,22 @@ const planBinding = <T>(
 		{
 			type: 'createClass',
 			generate: async (): Promise<unknown> => {
-				const value = await resolveBinding(binding);
+				const value = await resolveBinding(binding, resolutionPath);
 				return input.options.multiple ? [value] : value;
 			},
 			token: binding.token,
 			expectedTokensUsed: injections.map((i) => i.token),
 			cache,
+			resolutionPath,
 		},
 	];
 };
 
 export const calculatePlan = <T>(
 	bindings: Array<Binding<unknown>>,
-	resolveBinding: <U>(binding: Binding<U>) => U | Promise<U>,
+	resolveBinding: <U>(binding: Binding<U>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
 	input: Injection<unknown>,
+	resolutionPath: Array<Token<unknown>>,
 	parent?: interfaces.Container,
 ): Plan<T> => {
 	if (input.type === 'unmanagedConstructorParameter') {
@@ -52,7 +57,10 @@ export const calculatePlan = <T>(
 	const token = input.token;
 	const binds = bindings.filter((v) => v.token === token);
 	if (!input.options.multiple && binds.length > 1) {
-		throw new Error(`Multiple bindings exist for token: ${token.identifier.toString()}`);
+		throw new ResolutionError(`Multiple bindings exist for token: ${token.identifier.toString()}`, [
+			...resolutionPath,
+			token,
+		]);
 	}
 
 	if (binds.length === 0) {
@@ -64,24 +72,35 @@ export const calculatePlan = <T>(
 					token,
 					expectedTokensUsed: [],
 					cache: undefined,
+					resolutionPath: [...resolutionPath, token],
 				},
 			];
 		} else if (parent != null) {
 			return [{ type: 'requestFromParent', token, parent, options: input.options }];
 		} else {
-			throw new Error(`Unable to resolve token as no bindings exist: ${token.identifier.toString()}`);
+			throw new ResolutionError(`Unable to resolve token as no bindings exist: ${token.identifier.toString()}`, [
+				...resolutionPath,
+				token,
+			]);
 		}
 	} else if (binds.length === 1) {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const binding = binds[0]!;
-		return planBinding(binding, input, resolveBinding, (i) => calculatePlan(bindings, resolveBinding, i));
+		return planBinding(binding, input, [...resolutionPath, token], resolveBinding, (i) =>
+			calculatePlan(bindings, resolveBinding, i, [...resolutionPath, token]),
+		);
 	} else {
 		return [
-			...binds.flatMap((b) => planBinding(b, input, resolveBinding, (i) => calculatePlan(bindings, resolveBinding, i))),
+			...binds.flatMap((b) =>
+				planBinding(b, input, [...resolutionPath, token], resolveBinding, (i) =>
+					calculatePlan(bindings, resolveBinding, i, [...resolutionPath, token]),
+				),
+			),
 			{
 				type: 'aggregateMultiple',
 				count: binds.length,
 				token,
+				resolutionPath: [...resolutionPath, token],
 			},
 		];
 	}

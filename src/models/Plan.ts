@@ -14,12 +14,14 @@ export interface CreateInstance<T = unknown> {
 	generate: () => T | Promise<T>;
 	token: Token<T>;
 	expectedTokensUsed: Array<Token<unknown>>;
+	resolutionPath: Array<Token<unknown>>;
 }
 
 export interface AggregateMultiple<T = unknown> {
 	type: 'aggregateMultiple';
 	token: Token<T>;
 	count: number;
+	resolutionPath: Array<Token<unknown>>;
 }
 
 export interface ParentRequest<T = unknown> {

@@ -84,7 +84,7 @@ export const inject: InjectDecoratorFactory = <T>(
 			});
 
 			return (_originalValue: T | undefined): T => {
-				const value = Container.resolve<T>(token);
+				const value = Container.resolve<T>(token, [token]);
 
 				return value;
 			};
