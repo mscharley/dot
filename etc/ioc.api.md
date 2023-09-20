@@ -117,7 +117,7 @@ type ContainerModule = AsyncContainerModule | SyncContainerModule;
 // Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
 //
 // @public
-export const createContainer: (config?: interfaces.ContainerConfiguration) => interfaces.Container;
+export const createContainer: (config?: Partial<interfaces.ContainerConfiguration>) => interfaces.Container;
 
 // @public
 type DirectInjection<T> = {
