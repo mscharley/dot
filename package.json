@@ -53,7 +53,7 @@
 	},
 	"devDependencies": {
 		"@jest/globals": "29.7.0",
-		"@microsoft/api-documenter": "7.23.0",
+		"@microsoft/api-documenter": "7.23.1",
 		"@microsoft/api-extractor": "7.37.0",
 		"@mscharley/eslint-config": "2.0.4",
 		"@mscharley/prettier-config": "2.0.2",
