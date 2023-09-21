@@ -52,8 +52,14 @@ describe('Invalid decorator', () => {
 
 			await expect(c.get(node)).rejects.toMatchObject({
 				cause: {
-					message: "Token hasn't been created yet: Symbol(leaf)",
+					cause: {
+						message: "Token hasn't been created yet: Symbol(leaf)",
+					},
+					resolutionPath: [leaf],
+					message: 'Unable to find a value to inject',
 				},
+				resolutionPath: [node],
+				message: 'Encountered an error while creating a class',
 			});
 		},
 		experimental: async () => {

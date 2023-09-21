@@ -9,7 +9,7 @@ const token = new Token<string>('str');
 describe('Logging', () => {
 	it('can log things', async () => {
 		const log = jest.fn<Logger[LoggerLevel]>();
-		const logger = { info: noop, debug: noop, trace: log as unknown as Logger[LoggerLevel] };
+		const logger = { info: noop, debug: noop, trace: log as unknown as Logger[LoggerLevel], warn: noop };
 		const c = new Container({ logger, logLevel: 'trace' });
 
 		c.bind(token).toConstantValue('Hello world!');

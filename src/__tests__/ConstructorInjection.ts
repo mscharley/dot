@@ -48,7 +48,10 @@ describe('ConstructorInjection', () => {
 
 	it('fails for non-optional dependencies', async () => {
 		await expect(c.get(Test)).rejects.toMatchObject({
-			message: 'Unable to resolve token as no bindings exist',
+			cause: {
+				message: 'No bindings exist for token: Token<Symbol(greeting)>',
+			},
+			message: 'Unable to resolve token',
 			resolutionPath: [tokenForIdentifier(Test), greetingToken],
 		});
 	});

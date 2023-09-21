@@ -15,15 +15,29 @@ import type { ServiceIdentifier } from './ServiceIdentifier.js';
  * @public
  */
 export interface Container {
+	/**
+	 * The configuration used by this container
+	 */
 	readonly config: ContainerConfiguration;
+	/** {@inheritdoc interfaces.BindFunction} */
 	bind: BindFunction;
+	/** {@inheritdoc interfaces.UnbindFunction} */
 	unbind: UnbindFunction;
+	/** {@inheritdoc interfaces.RebindFunction} */
 	rebind: RebindFunction;
+	/** {@inheritdoc interfaces.IsBoundFunction} */
 	has: IsBoundFunction;
+
+	/**
+	 * Load a preconfigured module into this container
+	 */
 	load: {
 		(module: AsyncContainerModule): Promise<void>;
 		(module: SyncContainerModule): void;
 	};
+	/**
+	 * Create a child container
+	 */
 	createChild: (options?: Partial<ContainerConfiguration>) => Container;
 
 	/**

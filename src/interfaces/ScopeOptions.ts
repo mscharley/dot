@@ -1,2 +1,10 @@
-/** @public */
+/**
+ * A list of all valid scope options
+ *
+ * @remarks
+ *
+ * For more details about what each of these mean, see {@link interfaces.BindingScope | BindingScope}.
+ *
+ * @public
+ */
 export type ScopeOptions = 'transient' | 'request' | 'singleton';

@@ -5,6 +5,12 @@ import type { Token } from '../Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
 /**
+ * Type for the `@inject` decorator itself
+ *
+ * @remarks
+ *
+ * See {@link inject | @inject}
+ *
  * @public
  */
 export interface InjectDecoratorFactory {

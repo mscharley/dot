@@ -36,7 +36,10 @@ describe('InjectionOptions', () => {
 			c.bind(token).to(Token1);
 
 			await expect(c.get(token)).rejects.toMatchObject({
-				message: 'Unable to resolve token as no bindings exist',
+				cause: {
+					message: 'No bindings exist for token: Token<Symbol(string)>',
+				},
+				message: 'Unable to resolve token',
 				resolutionPath: [token, strToken],
 			});
 		});

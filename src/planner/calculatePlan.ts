@@ -1,9 +1,10 @@
 import type * as interfaces from '../interfaces/index.js';
 import type { FetchFromCache, Plan, PlanStep } from '../models/Plan.js';
+import { InvalidOperationError, RecursiveResolutionError, TokenResolutionError } from '../Error.js';
 import type { Binding } from '../models/Binding.js';
 import { getInjections } from '../decorators/registry.js';
 import type { Injection } from '../models/Injection.js';
-import { ResolutionError } from '../Error.js';
+import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 import type { Token } from '../Token.js';
 
 const planBinding = <T>(
@@ -56,12 +57,12 @@ export const calculatePlan = <T>(
 	}
 	const token = input.token;
 	if (resolutionPath.includes(token)) {
-		throw new ResolutionError('Recursive binding detected', [...resolutionPath, token]);
+		throw new RecursiveResolutionError('Recursive binding detected', [...resolutionPath, token]);
 	}
 
 	const binds = bindings.filter((v) => v.token === token);
 	if (!input.options.multiple && binds.length > 1) {
-		throw new ResolutionError('Multiple bindings exist for token', [...resolutionPath, token]);
+		throw new RecursiveResolutionError('Multiple bindings exist for token', [...resolutionPath, token]);
 	}
 
 	if (binds.length === 0) {
@@ -79,7 +80,11 @@ export const calculatePlan = <T>(
 		} else if (parent != null) {
 			return [{ type: 'requestFromParent', token, parent, options: input.options }];
 		} else {
-			throw new ResolutionError('Unable to resolve token as no bindings exist', [...resolutionPath, token]);
+			throw new TokenResolutionError(
+				'Unable to resolve token',
+				[...resolutionPath, token],
+				new InvalidOperationError(`No bindings exist for token: ${stringifyIdentifier(token)}`),
+			);
 		}
 	} else if (binds.length === 1) {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion

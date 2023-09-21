@@ -1,7 +1,7 @@
 import type { Token } from '../Token.js';
 
 /**
- * A simple way to deal with direct injections.
+ * A way to allow for injections that don't involve a container, eg. unmanaged dependencies
  *
  * @public
  */

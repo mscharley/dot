@@ -22,7 +22,10 @@ describe('Bindings', () => {
 		const c = new Container();
 
 		await expect(async () => c.get(token)).rejects.toMatchObject({
-			message: 'Unable to resolve token as no bindings exist',
+			cause: {
+				message: 'No bindings exist for token: Token<Symbol(test)>',
+			},
+			message: 'Unable to resolve token',
 			resolutionPath: [token],
 		});
 	});
