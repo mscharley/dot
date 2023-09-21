@@ -14,7 +14,10 @@ describe('ChildContainers', () => {
 
 	it('fails if not bound anywhere', async () => {
 		const child = container.createChild();
-		await expect(child.get(token)).rejects.toThrow('Unable to resolve token as no bindings exist: Symbol(str)');
+		await expect(child.get(token)).rejects.toMatchObject({
+			message: 'Unable to resolve token as no bindings exist',
+			resolutionPath: [token],
+		});
 	});
 
 	it('can request things from the parent', async () => {

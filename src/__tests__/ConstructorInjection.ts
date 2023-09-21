@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from '@jest/globals';
 import { Container } from '../Container.js';
 import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';
+import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 import { unmanaged } from '../decorators/unmanaged.js';
 
 const nameToken = new Token<string>('name');
@@ -46,7 +47,10 @@ describe('ConstructorInjection', () => {
 	});
 
 	it('fails for non-optional dependencies', async () => {
-		await expect(c.get(Test)).rejects.toThrow('Unable to resolve token as no bindings exist: Symbol(greeting)');
+		await expect(c.get(Test)).rejects.toMatchObject({
+			message: 'Unable to resolve token as no bindings exist',
+			resolutionPath: [tokenForIdentifier(Test), greetingToken],
+		});
 	});
 
 	it('can handle unmanaged dependencies', async () => {
