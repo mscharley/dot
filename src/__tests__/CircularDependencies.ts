@@ -32,8 +32,9 @@ describe('CircularDependencies', () => {
 		});
 	});
 
-	it.skip('throws an error for recursion across dynamic bindings', async () => {
+	it('throws an error for recursion across dynamic bindings', async () => {
 		const c = new Container();
+
 		c.bind(t1).toDynamicValue(async ({ container }) => {
 			const { name } = await container.get(t2);
 			return { id: 0, name };
@@ -44,8 +45,16 @@ describe('CircularDependencies', () => {
 		});
 
 		await expect(c.get(t1)).rejects.toMatchObject({
-			message: 'Recursive binding detected',
-			resolutionPath: [t1, t2, t1],
+			cause: {
+				cause: {
+					message: 'Recursive request detected',
+					resolutionPath: [t1],
+				},
+				message: 'Encountered an error while creating a class',
+				resolutionPath: [t2],
+			},
+			message: 'Encountered an error while creating a class',
+			resolutionPath: [t1],
 		});
 	});
 

@@ -1,9 +1,11 @@
 import { describe, expect, it } from '@jest/globals';
+import { Container } from '../../Container.js';
 import { executePlan } from '../executePlan.js';
 import type { Request } from '../../models/Request.js';
 import { Token } from '../../Token.js';
 
 const basicRequest = <T>(token: Token<T>): Request<T> => ({
+	container: new Container(),
 	singletonCache: {},
 	stack: {},
 	token,

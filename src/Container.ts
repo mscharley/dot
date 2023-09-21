@@ -13,6 +13,7 @@ import type { Token } from './Token.js';
 import { tokenForIdentifier } from './util/tokenForIdentifier.js';
 
 export class Container implements interfaces.Container {
+	static #runningRequests: Set<Request<unknown>> = new Set();
 	static #currentRequest: Request<unknown> | undefined;
 
 	public static get isProcessingRequest(): boolean {
@@ -135,6 +136,9 @@ export class Container implements interfaces.Container {
 	): Promise<T> => {
 		this.#validateBindings();
 		const token = tokenForIdentifier(id);
+		if ([...Container.#runningRequests.values()].find((v) => v.token === token && v.container === this) != null) {
+			throw new ResolutionError('Recursive request detected', [token]);
+		}
 
 		const plan = calculatePlan<T>(
 			this.#bindings,
@@ -153,17 +157,19 @@ export class Container implements interfaces.Container {
 		);
 		this.#log({ id, options, plan }, 'Processing request');
 		const request: Request<T> = {
+			container: this,
 			stack: {},
 			singletonCache: this.#singletonCache,
 			token,
 		};
 
 		const lastRequest = Container.#currentRequest;
+		Container.#currentRequest = request;
+		Container.#runningRequests.add(request);
 		try {
-			Container.#currentRequest = request;
 			return await executePlan(plan, request);
 		} finally {
-			// eslint-disable-next-line require-atomic-updates
+			Container.#runningRequests.delete(request);
 			Container.#currentRequest = lastRequest;
 		}
 	};
