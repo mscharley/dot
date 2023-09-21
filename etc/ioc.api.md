@@ -4,7 +4,7 @@
 
 ```ts
 
-// @public (undocumented)
+// @public
 export type ArgsForTokens<Tokens extends [...Array<ConstructorInjection<unknown>>]> = {
     [Index in keyof Tokens]: ConstructorInjectedType<Tokens[Index]>;
 } & {
@@ -14,71 +14,66 @@ export type ArgsForTokens<Tokens extends [...Array<ConstructorInjection<unknown>
 // @public
 type AsyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound: IsBoundFunction, rebind: RebindFunction) => Promise<void>;
 
-// @public (undocumented)
+// @public
 interface Binder<in out T> {
-    // (undocumented)
     toConstantValue: ((v: T) => void) & ((v: Promise<T>) => Promise<void>);
-    // (undocumented)
     toDynamicValue: (fn: (context: BindingContext<T>) => T | Promise<T>) => void;
 }
 
-// @public (undocumented)
+// @public
 type BindFunction = {
     <T extends object>(id: Constructor<T>): ClassBindingBuilder<T>;
     <T extends object>(id: ServiceIdentifier<T>): ObjectBindingBuilder<T>;
     <T>(id: ServiceIdentifier<T>): BindingBuilder<T>;
 };
 
-// @public (undocumented)
+// @public
 interface BindingBuilder<in out T> extends Binder<T>, BindingScope<T, BindingBuilder<T>> {
 }
 
-// @public (undocumented)
+// @public
 interface BindingContext<out T> {
-    // (undocumented)
     container: Container;
-    // (undocumented)
     id: ServiceIdentifier<T>;
 }
 
-// @public (undocumented)
+// @public
 interface BindingScope<in T, out Builder> {
     // (undocumented)
-    inRequestScope: () => Omit<Builder, FixedScopeBindingOptions | keyof BindingScope<T, unknown>>;
+    inRequestScope: () => Omit<Builder, ImplicitScopeBindingOptions | keyof BindingScope<T, unknown>>;
     // (undocumented)
-    inSingletonScope: () => Omit<Builder, FixedScopeBindingOptions | keyof BindingScope<T, unknown>>;
+    inSingletonScope: () => Omit<Builder, ImplicitScopeBindingOptions | keyof BindingScope<T, unknown>>;
     // (undocumented)
-    inTransientScope: () => Omit<Builder, FixedScopeBindingOptions | keyof BindingScope<T, unknown>>;
+    inTransientScope: () => Omit<Builder, ImplicitScopeBindingOptions | keyof BindingScope<T, unknown>>;
 }
 
-// @public (undocumented)
+// @public
 interface ClassBinder<in T> {
-    // (undocumented)
     toSelf: () => void;
 }
 
-// @public (undocumented)
+// @public
 interface ClassBindingBuilder<in out T extends object> extends Binder<T>, BindingScope<T, ClassBindingBuilder<T>>, ObjectBinder<T>, ClassBinder<T> {
 }
 
 // @public
 type Constructor<out T extends object, in Args extends unknown[] = any> = new (...args: Args) => T;
 
-// @public (undocumented)
+// @public
 export type ConstructorInjectedType<T extends ConstructorInjection<unknown>> = T extends interfaces.ServiceIdentifier<infer U> ? U : T extends [interfaces.ServiceIdentifier<infer U>] ? U : T extends interfaces.DirectInjection<infer U> ? U : never;
 
-// @public (undocumented)
+// @public
 export type ConstructorInjection<T> = interfaces.DirectInjection<T> | interfaces.ServiceIdentifier<T> | [interfaces.ServiceIdentifier<T>, Partial<interfaces.InjectOptions>];
 
 // Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
 //
 // @public
 interface Container {
+    // Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: This type of declaration is not supported yet by the resolver
+    //
     // (undocumented)
     bind: BindFunction;
-    // (undocumented)
     readonly config: ContainerConfiguration;
-    // (undocumented)
     createChild: (options?: Partial<ContainerConfiguration>) => Container;
     get: {
         <T>(id: ServiceIdentifier<T>, options: Partial<InjectOptions> & {
@@ -89,26 +84,31 @@ interface Container {
         }): Promise<T | undefined>;
         <T>(id: ServiceIdentifier<T>, options?: Partial<InjectOptions>): Promise<T>;
     };
+    // Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: This type of declaration is not supported yet by the resolver
+    //
     // (undocumented)
     has: IsBoundFunction;
-    // (undocumented)
     load: {
         (module: AsyncContainerModule): Promise<void>;
         (module: SyncContainerModule): void;
     };
+    // Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: This type of declaration is not supported yet by the resolver
+    //
     // (undocumented)
     rebind: RebindFunction;
+    // Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: This type of declaration is not supported yet by the resolver
+    //
     // (undocumented)
     unbind: UnbindFunction;
 }
 
 // @public
 interface ContainerConfiguration {
-    defaultScope: ScopeOptions;
-    logger: Logger;
-    logLevel: LoggerLevel;
+    readonly defaultScope: ScopeOptions;
+    readonly logger: Logger;
+    readonly logLevel: LoggerLevel;
     // @internal
-    parent?: Container;
+    readonly parent?: Container;
 }
 
 // @public
@@ -126,10 +126,12 @@ type DirectInjection<T> = {
 };
 
 // @public
-export type ErrorCode = 'RESOLUTION_ERROR' | 'INVALID_OPERATION';
+export type ErrorCode = 'RECURSIVE_RESOLUTION' | 'TOKEN_RESOLUTION' | 'INVALID_OPERATION';
 
-// @public (undocumented)
-type FixedScopeBindingOptions = 'toConstantValue';
+// Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
+//
+// @public
+type ImplicitScopeBindingOptions = 'toConstantValue';
 
 // @public
 export const inject: InjectDecoratorFactory;
@@ -155,7 +157,7 @@ export interface InjectDecorator<T> {
     }, propertyName: string | symbol): undefined;
 }
 
-// @public (undocumented)
+// @public
 export interface InjectDecoratorFactory {
     // (undocumented)
     <T>(token: Token<T>, options: Partial<interfaces.InjectOptions> & {
@@ -169,18 +171,16 @@ export interface InjectDecoratorFactory {
     <T>(token: Token<T>, options?: Partial<interfaces.InjectOptions>): InjectDecorator<T>;
 }
 
-// @public (undocumented)
+// @public
 interface InjectOptions {
-    // (undocumented)
     multiple: boolean;
-    // (undocumented)
     optional: boolean;
 }
 
 declare namespace interfaces {
     export {
         Binder,
-        FixedScopeBindingOptions,
+        ImplicitScopeBindingOptions,
         BindingBuilder,
         ClassBindingBuilder,
         ObjectBindingBuilder,
@@ -200,6 +200,7 @@ declare namespace interfaces {
         UnbindFunction,
         InjectOptions,
         Logger,
+        LoggerFn,
         LoggerLevel,
         ObjectBinder,
         ScopeOptions,
@@ -217,43 +218,50 @@ export class InvalidOperationError extends IocError {
 export abstract class IocError extends Error {
     constructor(msg: string, code: ErrorCode, originalError?: Error);
     readonly cause?: Error;
-    // (undocumented)
     readonly code: ErrorCode;
 }
 
-// @public (undocumented)
+// @public
 type IsBoundFunction = <T>(id: ServiceIdentifier<T>) => boolean;
 
-// @public (undocumented)
-type Logger = Record<LoggerLevel, {
-    (obj: Record<string, unknown>, message: string): void;
-    (msg: string): void;
-}>;
+// @public
+type Logger = Record<LoggerLevel, LoggerFn>;
 
-// @public (undocumented)
-type LoggerLevel = 'info' | 'debug' | 'trace';
+// @public
+type LoggerFn = {
+    (obj: Record<string, unknown>, message?: string): void;
+    (message: string): void;
+};
 
-// @public (undocumented)
+// @public
+type LoggerLevel = 'warn' | 'info' | 'debug' | 'trace';
+
+// @public
 interface ObjectBinder<in out T extends object> {
-    // (undocumented)
     to: (fn: Constructor<T>) => void;
 }
 
-// @public (undocumented)
+// @public
 interface ObjectBindingBuilder<in out T extends object> extends Binder<T>, BindingScope<T, ObjectBindingBuilder<T>>, ObjectBinder<T> {
 }
 
-// @public (undocumented)
+// @public
 type RebindFunction = BindFunction;
 
 // @public
-export class ResolutionError extends IocError {
-    constructor(msg: string, resolutionPath: Array<Token<unknown>>, originalError?: Error);
-    // (undocumented)
+export class RecursiveResolutionError extends ResolutionError {
+    constructor(msg: string, resolutionPath: Array<Token<unknown>>);
+}
+
+// @public
+export abstract class ResolutionError extends IocError {
+    constructor(msg: string, code: ErrorCode, resolutionPath: Array<Token<unknown>>, originalError?: Error);
     readonly resolutionPath: Array<Token<unknown>>;
 }
 
-// @public (undocumented)
+// Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
+//
+// @public
 type ScopeOptions = 'transient' | 'request' | 'singleton';
 
 // @public
@@ -268,14 +276,20 @@ type SyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound:
 // @public
 export class Token<out T> {
     constructor(name: string);
-    // @internal (undocumented)
+    // @internal
     readonly identifier: symbol;
+}
+
+// @public
+export class TokenResolutionError extends ResolutionError {
+    constructor(msg: string, resolutionPath: Array<Token<unknown>>, originalError: Error);
+    readonly cause: Error;
 }
 
 // @public
 export type TokenType<T extends Token<unknown>> = T extends Token<infer U> ? U : never;
 
-// @public (undocumented)
+// @public
 type UnbindFunction = <T>(id: ServiceIdentifier<T>) => void;
 
 // @public

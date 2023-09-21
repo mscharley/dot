@@ -1,4 +1,4 @@
-export type { Binder, FixedScopeBindingOptions } from './Binder.js';
+export type { Binder, ImplicitScopeBindingOptions } from './Binder.js';
 export type { BindingBuilder, ClassBindingBuilder, ObjectBindingBuilder } from './BindingBuilder.js';
 export type { BindingContext } from './BindingContext.js';
 export type { BindingScope } from './BindingScope.js';
@@ -10,7 +10,7 @@ export type { AsyncContainerModule, ContainerModule, SyncContainerModule } from 
 export type { DirectInjection } from './DirectInjection.js';
 export type { BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions.js';
 export type { InjectOptions } from './InjectOptions.js';
-export type { Logger, LoggerLevel } from './Logger.js';
+export type { Logger, LoggerFn, LoggerLevel } from './Logger.js';
 export type { ObjectBinder } from './ObjectBinder.js';
 export type { ScopeOptions } from './ScopeOptions.js';
 export type { ServiceIdentifier } from './ServiceIdentifier.js';

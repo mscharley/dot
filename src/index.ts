@@ -114,5 +114,11 @@ export { inject } from './decorators/inject.js';
 export { injectable } from './decorators/injectable.js';
 export { Token } from './Token.js';
 export { stringifyIdentifier } from './util/stringifyIdentifier.js';
-export { IocError, ResolutionError, InvalidOperationError } from './Error.js';
+export {
+	IocError,
+	InvalidOperationError,
+	RecursiveResolutionError,
+	ResolutionError,
+	TokenResolutionError,
+} from './Error.js';
 export type { ErrorCode } from './Error.js';

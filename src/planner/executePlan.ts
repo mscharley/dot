@@ -1,4 +1,4 @@
-import { InvalidOperationError, ResolutionError } from '../Error.js';
+import { InvalidOperationError, TokenResolutionError } from '../Error.js';
 import { isNever } from '../util/isNever.js';
 import type { Plan } from '../models/Plan.js';
 import type { Request } from '../models/Request.js';
@@ -33,7 +33,7 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 						caches[step.cache][step.token.identifier] = value;
 					}
 				} catch (err: unknown) {
-					throw new ResolutionError(
+					throw new TokenResolutionError(
 						'Encountered an error while creating a class',
 						step.resolutionPath,
 						err instanceof Error ? err : new Error(`${err}`),
@@ -44,9 +44,10 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 			case 'aggregateMultiple': {
 				const value = stepStack.splice(-step.count);
 				if (value.length !== step.count) {
-					throw new ResolutionError(
-						`Unable to load expected number of injected services: ${value.length} !== ${step.count}`,
+					throw new TokenResolutionError(
+						'Unable to load injected services',
 						step.resolutionPath,
+						new InvalidOperationError(`Unexpected number of services: ${value.length} !== ${step.count}`),
 					);
 				}
 				stepStack.push(value.flat());
@@ -64,7 +65,7 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 	}
 
 	if (!(token.identifier in stack)) {
-		throw new ResolutionError(`Unable to resolve final request: ${token.identifier.toString()}`, []);
+		throw new InvalidOperationError(`Unable to resolve final request: ${token.identifier.toString()}`);
 	}
 	const [returnValue] = (stack[token.identifier]?.splice(0, 1) ?? []) as T[];
 

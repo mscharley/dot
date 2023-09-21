@@ -73,11 +73,17 @@ describe('executePlan', () => {
 						type: 'aggregateMultiple',
 						count: 2,
 						token: strToken,
-						resolutionPath: [],
+						resolutionPath: [strToken],
 					},
 				],
 				basicRequest(strToken),
 			),
-		).rejects.toThrow('Unable to load expected number of injected services: 1 !== 2');
+		).rejects.toMatchObject({
+			cause: {
+				message: 'Unexpected number of services: 1 !== 2',
+			},
+			message: 'Unable to load injected services',
+			resolutionPath: [strToken],
+		});
 	});
 });

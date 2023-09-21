@@ -11,22 +11,22 @@ export interface ContainerConfiguration {
 	/**
 	 * The default scope for all bindings in this container (default: `"transient"`)
 	 */
-	defaultScope: ScopeOptions;
+	readonly defaultScope: ScopeOptions;
 
 	/**
 	 * If provided, this will write trace logs
 	 */
-	logger: Logger;
+	readonly logger: Logger;
 
 	/**
 	 * Level to log all messages at (default: `"debug"`)
 	 */
-	logLevel: LoggerLevel;
+	readonly logLevel: LoggerLevel;
 
 	/**
 	 * The parent of the current container
 	 *
 	 * @internal
 	 */
-	parent?: Container;
+	readonly parent?: Container;
 }

@@ -6,6 +6,8 @@ import type { Injection } from '../models/Injection.js';
 import { Token } from '../Token.js';
 
 /**
+ * Valid options for parameters into the `@injectable` decorator
+ *
  * @public
  */
 export type ConstructorInjection<T> =
@@ -14,6 +16,8 @@ export type ConstructorInjection<T> =
 	| [interfaces.ServiceIdentifier<T>, Partial<interfaces.InjectOptions>];
 
 /**
+ * Helper type which is used to map a {@link ConstructorInjection | ConstructorInjection} into the type that will be injected
+ *
  * @public
  */
 export type ConstructorInjectedType<T extends ConstructorInjection<unknown>> = T extends interfaces.ServiceIdentifier<
@@ -27,6 +31,8 @@ export type ConstructorInjectedType<T extends ConstructorInjection<unknown>> = T
 	: never;
 
 /**
+ * Mapped type to convert the parameters to the `@injectable` decorator into the parameters for the constructor
+ *
  * @public
  */
 export type ArgsForTokens<Tokens extends [...Array<ConstructorInjection<unknown>>]> = {

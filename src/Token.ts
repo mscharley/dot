@@ -1,11 +1,23 @@
 /**
  * A simple identifier that has a reference to a type that can be injected
  *
+ * @remarks
+ *
+ * Tokens are generated in such a way that each token refers to a unique binding, even if the token is given the same
+ * string name. If you use the same name in multiple places then some logs may become a little more confusing but this
+ * design prevents name collisions between two potential codebases which may not necessarily know about each other.
+ * This allows for libraries which export a ContainerModule and set of tokens as the primary way to interact with the
+ * library.
+ *
  * @public
  */
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export class Token<out T> {
-	/** @internal */
+	/**
+	 * The Symbol used as the unique identifier for this token
+	 *
+	 * @internal
+	 */
 	public readonly identifier: symbol;
 
 	public constructor(name: string) {

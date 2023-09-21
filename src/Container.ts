@@ -1,5 +1,5 @@
 import type * as interfaces from './interfaces/index.js';
-import { InvalidOperationError, ResolutionError } from './Error.js';
+import { InvalidOperationError, RecursiveResolutionError, TokenResolutionError } from './Error.js';
 import type { Binding } from './models/Binding.js';
 import type { BindingBuilder } from './BindingBuilder.js';
 import { calculatePlan } from './planner/calculatePlan.js';
@@ -32,7 +32,7 @@ export class Container implements interfaces.Container {
 		this.config = {
 			defaultScope: 'transient',
 			logLevel: 'debug',
-			logger: { info: noop, debug: noop, trace: noop },
+			logger: { debug: noop, info: noop, trace: noop, warn: noop },
 			...config,
 		};
 		this.#log = this.config.logger[this.config.logLevel];
@@ -46,7 +46,11 @@ export class Container implements interfaces.Container {
 		}
 
 		if (!(token.identifier in this.#currentRequest.stack)) {
-			throw new ResolutionError(`Token hasn't been created yet: ${token.identifier.toString()}`, resolutionPath);
+			throw new TokenResolutionError(
+				'Unable to find a value to inject',
+				resolutionPath,
+				new InvalidOperationError(`Token hasn't been created yet: ${token.identifier.toString()}`),
+			);
 		}
 		const tokenStack = this.#currentRequest.stack[token.identifier] as T[];
 		const [value] = tokenStack.splice(0, 1);
@@ -61,9 +65,8 @@ export class Container implements interfaces.Container {
 	#validateBindings = (): void => {
 		const values = [...this.#incompleteBindings.values()];
 		if (values.length > 0) {
-			throw new ResolutionError(
+			throw new InvalidOperationError(
 				`Some bindings were started but not completed: ${values.map((v) => v.token.identifier.toString()).join(', ')}`,
-				[],
 			);
 		}
 	};
@@ -137,7 +140,7 @@ export class Container implements interfaces.Container {
 		this.#validateBindings();
 		const token = tokenForIdentifier(id);
 		if ([...Container.#runningRequests.values()].find((v) => v.token === token && v.container === this) != null) {
-			throw new ResolutionError('Recursive request detected', [token]);
+			throw new RecursiveResolutionError('Recursive request detected', [token]);
 		}
 
 		const plan = calculatePlan<T>(
