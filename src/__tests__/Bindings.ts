@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { describe, expect, it, jest } from '@jest/globals';
 import { Container } from '../container/Container.js';
 import { injectable } from '../decorators/injectable.js';

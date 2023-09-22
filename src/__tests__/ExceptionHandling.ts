@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 
 import { describe, expect, it } from '@jest/globals';
 import { Container } from '../container/Container.js';

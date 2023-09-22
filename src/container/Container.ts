@@ -6,13 +6,13 @@ import { calculatePlan } from '../planner/calculatePlan.js';
 import { ClassBindingBuilder } from './BindingBuilder.js';
 import { executePlan } from '../planner/executePlan.js';
 import { getConstructorParameterInjections } from '../decorators/registry.js';
+import type { Injection } from '../models/Injection.js';
 import { isNever } from '../util/isNever.js';
 import { noop } from '../util/noop.js';
 import type { Request } from '../models/Request.js';
 import { ResolutionCache } from './ResolutionCache.js';
 import type { Token } from '../Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
-import type { Injection } from '../models/Injection.js';
 
 export class Container implements interfaces.Container {
 	static #runningRequests: Set<Request<unknown>> = new Set();

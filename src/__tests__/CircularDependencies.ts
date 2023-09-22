@@ -12,7 +12,7 @@ describe('CircularDependencies', () => {
 		@injectable(t2)
 		class Id {
 			public constructor(public readonly name: { name: string }) {}
-			// eslint-disable-next-line @typescript-eslint/no-magic-numbers
+
 			public id = 10;
 		}
 
@@ -57,7 +57,7 @@ describe('CircularDependencies', () => {
 		class Id {
 			@inject(t2)
 			public readonly name!: { name: string };
-			// eslint-disable-next-line @typescript-eslint/no-magic-numbers
+
 			public id = 10;
 		}
 

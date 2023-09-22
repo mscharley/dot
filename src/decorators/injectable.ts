@@ -2,7 +2,6 @@ import type * as interfaces from '../interfaces/index.js';
 import { getPropertyInjections, registerInjection } from './registry.js';
 import { Container } from '../container/Container.js';
 import type { Injection } from '../models/Injection.js';
-import { Token } from '../Token.js';
 import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
 
 /**

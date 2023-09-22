@@ -1,12 +1,12 @@
 import type * as interfaces from '../interfaces/index.js';
 import type { Binding, ConstructorBinding, DynamicBinding } from '../models/Binding.js';
+import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
 import { InvalidOperationError } from '../Error.js';
 import { isConstructor } from '../util/isConstructor.js';
 import { isPromise } from '../util/isPromise.js';
 import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 import type { Token } from '../Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
-import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
 
 export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 	protected scope: interfaces.ScopeOptions;
