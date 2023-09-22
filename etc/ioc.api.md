@@ -160,7 +160,7 @@ export interface InjectDecoratorFactory {
     <T>(token: Token<T>, options?: Partial<interfaces.InjectOptions>): InjectDecorator<T>;
 }
 
-// Warning: (ae-unresolved-link) The @link reference could not be resolved: The package "@mscharley/ioc" does not have an export "InjectionIdentifier"
+// Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
 //
 // @public
 type InjectedType<T extends InjectionIdentifier<unknown>> = T extends ServiceIdentifier<infer U> ? U : T extends [ServiceIdentifier<infer U>] ? U : T extends DirectInjection<infer U> ? U : never;

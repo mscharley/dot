@@ -13,7 +13,7 @@ export type InjectionIdentifier<T> =
 	| [ServiceIdentifier<T>, Partial<InjectOptions>];
 
 /**
- * Helper type which is used to map a {@link InjectionIdentifier | ConstructorInjection} into the type that will be injected
+ * Helper type which is used to map an {@link interfaces.InjectionIdentifier | InjectionIdentifier} into the type that will be injected
  *
  * @public
  */
