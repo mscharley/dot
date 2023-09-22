@@ -12,6 +12,7 @@ import type { Request } from '../models/Request.js';
 import { ResolutionCache } from './ResolutionCache.js';
 import type { Token } from '../Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
+import type { Injection } from '../models/Injection.js';
 
 export class Container implements interfaces.Container {
 	static #runningRequests: Set<Request<unknown>> = new Set();
@@ -130,27 +131,25 @@ export class Container implements interfaces.Container {
 	#resolveBinding =
 		(request: Request<unknown>) =>
 		<T>(binding: Binding<T>, resolutionPath: Array<Token<unknown>>): T | Promise<T> => {
-			switch (binding.type) {
-				case 'static':
-					return binding.value;
-				case 'dynamic': {
-					const args = binding.injections.map((i) =>
+			const getArgsForParameterInjections = (injections: Array<Injection<unknown>>): unknown[] =>
+				injections
+					// eslint-disable-next-line @typescript-eslint/no-magic-numbers
+					.sort((a, b) => ('index' in a && 'index' in b ? (a.index < b.index ? -1 : 1) : 0))
+					.map((i) =>
 						i.type === 'unmanagedConstructorParameter'
 							? i.value.generator()
 							: this.resolve(i.token, request, resolutionPath),
 					);
+
+			switch (binding.type) {
+				case 'static':
+					return binding.value;
+				case 'dynamic': {
+					const args = getArgsForParameterInjections(binding.injections);
 					return binding.generator(...args);
 				}
 				case 'constructor': {
-					const args = getConstructorParameterInjections(binding.ctr)
-						// eslint-disable-next-line @typescript-eslint/no-magic-numbers
-						.sort((a, b) => (a.index < b.index ? -1 : 1))
-						.map((i) =>
-							i.type === 'unmanagedConstructorParameter'
-								? i.value.generator()
-								: this.resolve(i.token, request, resolutionPath),
-						);
-
+					const args = getArgsForParameterInjections(getConstructorParameterInjections(binding.ctr));
 					return new binding.ctr(...args);
 				}
 				default:
