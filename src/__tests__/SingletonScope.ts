@@ -48,13 +48,25 @@ describe('singleton scope', () => {
 		expect(vs[0]).not.toBe(vs[1]);
 	});
 
-	it('unbinding a token clears it from the cache', async () => {
-		const node = await c.get(NodeToken);
+	describe('caching', () => {
+		it('unbinding a token clears it from the cache', async () => {
+			const node = await c.get(NodeToken);
 
-		c.rebind(NodeToken).inSingletonScope().to(Node);
-		const node2 = await c.get(NodeToken);
+			c.rebind(NodeToken).inSingletonScope().to(Node);
+			const node2 = await c.get(NodeToken);
 
-		expect(node).not.toBe(node2);
-		expect(node.left).toBe(node2.left);
+			expect(node).not.toBe(node2);
+			expect(node.left).toBe(node2.left);
+		});
+
+		it.skip('unbinding a token clears anything that depends on it from the cache', async () => {
+			const node = await c.get(NodeToken);
+
+			c.rebind(LeafToken).inSingletonScope().to(Leaf);
+			const node2 = await c.get(NodeToken);
+
+			expect(node).not.toBe(node2);
+			expect(node.left).not.toBe(node2.left);
+		});
 	});
 });
