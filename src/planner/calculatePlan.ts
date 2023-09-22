@@ -1,5 +1,5 @@
 import type * as interfaces from '../interfaces/index.js';
-import type { FetchFromCache, Plan, PlanStep } from '../models/Plan.js';
+import type { AggregateMultiple, CreateInstance, FetchFromCache, Plan, PlanStep } from '../models/Plan.js';
 import { InvalidOperationError, RecursiveResolutionError, TokenResolutionError } from '../Error.js';
 import type { Binding } from '../models/Binding.js';
 import { getInjections } from '../decorators/registry.js';
@@ -16,38 +16,40 @@ const planBinding = <T>(
 ): Plan<T> => {
 	const cache = binding.scope === 'transient' ? undefined : binding.scope;
 	const injections = binding.type === 'constructor' ? getInjections(binding.ctr) : [];
-	const injectionSteps = injections.flatMap(resolveInjection);
-	const fetchFromCache: FetchFromCache | null =
+	const injectionSteps = injections.flatMap(resolveInjection) as Plan<T>;
+	const fetchFromCache: FetchFromCache<T> | null =
 		cache == null
 			? null
-			: {
+			: ({
 					type: 'fetchFromCache',
 					cache,
+					binding: binding,
 					token: binding.token,
 					skipStepsIfFound: injectionSteps.length + 1,
-			  };
+			  } satisfies FetchFromCache<T>);
 
 	return [
 		...(fetchFromCache == null ? [] : [fetchFromCache]),
 		...injectionSteps,
 		{
 			type: 'createClass',
-			generate: async (): Promise<unknown> => {
+			generate: async (): Promise<T> => {
 				const value = await resolveBinding(binding, resolutionPath);
-				return input.options.multiple ? [value] : value;
+				return input.options.multiple ? ([value] as T) : value;
 			},
 			token: binding.token,
 			expectedTokensUsed: injections.map((i) => i.token),
 			cache,
+			binding,
 			resolutionPath,
-		},
+		} satisfies CreateInstance<T>,
 	];
 };
 
 export const calculatePlan = <T>(
 	bindings: Array<Binding<unknown>>,
 	resolveBinding: <U>(binding: Binding<U>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
-	input: Injection<unknown>,
+	input: Injection<T>,
 	resolutionPath: Array<Token<unknown>>,
 	parent?: interfaces.Container,
 ): Plan<T> => {
@@ -70,8 +72,9 @@ export const calculatePlan = <T>(
 			return [
 				{
 					type: 'createClass',
-					generate: () => (input.options.multiple ? [] : undefined),
+					generate: () => (input.options.multiple ? [] : undefined) as T,
 					token,
+					binding: undefined,
 					expectedTokensUsed: [],
 					cache: undefined,
 					resolutionPath: [...resolutionPath, token],
@@ -91,20 +94,20 @@ export const calculatePlan = <T>(
 		const binding = binds[0]!;
 		return planBinding(binding, input, [...resolutionPath, token], resolveBinding, (i) =>
 			calculatePlan(bindings, resolveBinding, i, [...resolutionPath, token]),
-		);
+		) as Plan<T>;
 	} else {
 		return [
-			...binds.flatMap((b) =>
+			...(binds.flatMap((b) =>
 				planBinding(b, input, [...resolutionPath, token], resolveBinding, (i) =>
 					calculatePlan(bindings, resolveBinding, i, [...resolutionPath, token]),
 				),
-			),
+			) as Plan<T>),
 			{
 				type: 'aggregateMultiple',
 				count: binds.length,
 				token,
 				resolutionPath: [...resolutionPath, token],
-			},
+			} satisfies AggregateMultiple<T>,
 		];
 	}
 };

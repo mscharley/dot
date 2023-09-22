@@ -1,5 +1,6 @@
+import type * as interfaces from '../interfaces/index.js';
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { Container } from '../Container.js';
+import { Container } from '../container/Container.js';
 import { inject } from '../decorators/inject.js';
 import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';
@@ -18,7 +19,7 @@ class Node {
 }
 
 describe('transient scope', () => {
-	let c: Container;
+	let c: interfaces.Container;
 
 	beforeEach(() => {
 		c = new Container({ defaultScope: 'transient' });
@@ -46,5 +47,15 @@ describe('transient scope', () => {
 		const node = await c.get(NodeToken);
 
 		expect(node.left).not.toBe(node.right);
+	});
+
+	it('returns multiple values bound to the same token as transient scope', async () => {
+		c.unbind(NodeToken);
+		c.bind(NodeToken).inTransientScope().to(Node);
+		c.bind(NodeToken).inTransientScope().to(Node);
+
+		const vs = await c.get(NodeToken, { multiple: true });
+		expect(vs.length).toBe(2);
+		expect(vs[0]).not.toBe(vs[1]);
 	});
 });

@@ -1,5 +1,6 @@
+import type * as interfaces from '../interfaces/index.js';
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { Container } from '../Container.js';
+import { Container } from '../container/Container.js';
 import { inject } from '../decorators/inject.js';
 import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';
@@ -18,12 +19,12 @@ class Node {
 }
 
 describe('singleton scope', () => {
-	let c: Container;
+	let c: interfaces.Container;
 
 	beforeEach(() => {
 		c = new Container({ defaultScope: 'transient' });
 		c.bind(LeafToken).inSingletonScope().to(Leaf);
-		c.bind(NodeToken).to(Node);
+		c.bind(NodeToken).inSingletonScope().to(Node);
 	});
 
 	it('returns the same thing in two requests', async () => {
@@ -37,5 +38,23 @@ describe('singleton scope', () => {
 		const node = await c.get(NodeToken);
 
 		expect(node.left).toBe(node.right);
+	});
+
+	it('returns multiple values bound to the same token as singleton scope', async () => {
+		c.bind(NodeToken).inSingletonScope().to(Node);
+
+		const vs = await c.get(NodeToken, { multiple: true });
+		expect(vs.length).toBe(2);
+		expect(vs[0]).not.toBe(vs[1]);
+	});
+
+	it('unbinding a token clears it from the cache', async () => {
+		const node = await c.get(NodeToken);
+
+		c.rebind(NodeToken).inSingletonScope().to(Node);
+		const node2 = await c.get(NodeToken);
+
+		expect(node).not.toBe(node2);
+		expect(node.left).toBe(node2.left);
 	});
 });

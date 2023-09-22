@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { describe, expect, it, jest } from '@jest/globals';
-import { Container } from '../Container.js';
+import { Container } from '../container/Container.js';
 import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';
 import type { TokenType } from '../Token.js';

@@ -1,16 +1,17 @@
-import type * as interfaces from './interfaces/index.js';
-import { InvalidOperationError, RecursiveResolutionError, TokenResolutionError } from './Error.js';
-import type { Binding } from './models/Binding.js';
+import type * as interfaces from '../interfaces/index.js';
+import { InvalidOperationError, RecursiveResolutionError, TokenResolutionError } from '../Error.js';
+import type { Binding } from '../models/Binding.js';
 import type { BindingBuilder } from './BindingBuilder.js';
-import { calculatePlan } from './planner/calculatePlan.js';
+import { calculatePlan } from '../planner/calculatePlan.js';
 import { ClassBindingBuilder } from './BindingBuilder.js';
-import { executePlan } from './planner/executePlan.js';
-import { getConstructorParameterInjections } from './decorators/registry.js';
-import { isNever } from './util/isNever.js';
-import { noop } from './util/noop.js';
-import type { Request } from './models/Request.js';
-import type { Token } from './Token.js';
-import { tokenForIdentifier } from './util/tokenForIdentifier.js';
+import { executePlan } from '../planner/executePlan.js';
+import { getConstructorParameterInjections } from '../decorators/registry.js';
+import { isNever } from '../util/isNever.js';
+import { noop } from '../util/noop.js';
+import type { Request } from '../models/Request.js';
+import { ResolutionCache } from './ResolutionCache.js';
+import type { Token } from '../Token.js';
+import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
 export class Container implements interfaces.Container {
 	static #runningRequests: Set<Request<unknown>> = new Set();
@@ -26,7 +27,7 @@ export class Container implements interfaces.Container {
 	#bindings: Array<Binding<unknown>> = [];
 	readonly #log: interfaces.LoggerFn;
 	readonly #warn: interfaces.LoggerFn;
-	readonly #singletonCache: Record<symbol, unknown> = {};
+	readonly #singletonCache = new ResolutionCache();
 	public readonly config: Readonly<interfaces.ContainerConfiguration>;
 
 	public constructor(config?: Partial<interfaces.ContainerConfiguration>) {
@@ -87,6 +88,7 @@ export class Container implements interfaces.Container {
 
 	public unbind: interfaces.UnbindFunction = (id) => {
 		const token = tokenForIdentifier(id);
+		this.#singletonCache.flushToken(token);
 		const bindings = this.#bindings.flatMap((b) => (b.token.identifier === token.identifier ? [token.identifier] : []));
 		if (bindings.length === 0) {
 			throw new Error(`Unable to unbind token because it is not bound: ${token.identifier.toString()}`);

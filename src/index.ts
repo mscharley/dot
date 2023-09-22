@@ -84,7 +84,7 @@
  */
 
 import type * as interfaces from './interfaces/index.js';
-import { Container } from './Container.js';
+import { Container } from './container/Container.js';
 
 /**
  * Create a new empty container

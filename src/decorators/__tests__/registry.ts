@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import { getInjections, getPropertyInjections, registerInjection } from '../registry.js';
-import { Container } from '../../Container.js';
+import { Container } from '../../container/Container.js';
 import { inject } from '../inject.js';
 import { injectable } from '../injectable.js';
 import { Token } from '../../Token.js';

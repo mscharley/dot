@@ -1,6 +1,6 @@
 import type * as interfaces from '../interfaces/index.js';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { Container } from '../Container.js';
+import { Container } from '../container/Container.js';
 import { Token } from '../Token.js';
 
 const token = new Token<string>('str');

@@ -2,11 +2,12 @@ import { InvalidOperationError, TokenResolutionError } from '../Error.js';
 import { isNever } from '../util/isNever.js';
 import type { Plan } from '../models/Plan.js';
 import type { Request } from '../models/Request.js';
+import { ResolutionCache } from '../container/ResolutionCache.js';
 
 export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, token }: Request<T>): Promise<T> => {
-	const caches: Record<'singleton' | 'request', Record<symbol, unknown>> = {
+	const caches: Record<'singleton' | 'request', ResolutionCache> = {
 		singleton: singletonCache,
-		request: {},
+		request: new ResolutionCache(),
 	};
 
 	let skip = 0;
@@ -19,8 +20,8 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 		const stepStack = stack[step.token.identifier] ?? [];
 		switch (step.type) {
 			case 'fetchFromCache':
-				if (step.token.identifier in caches[step.cache]) {
-					stepStack.push(caches[step.cache][step.token.identifier]);
+				if (caches[step.cache].has(step.binding)) {
+					stepStack.push(caches[step.cache].get(step.binding));
 					skip = step.skipStepsIfFound;
 				}
 				break;
@@ -29,8 +30,8 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 					// eslint-disable-next-line no-await-in-loop
 					const value = await step.generate();
 					stepStack.push(value);
-					if (step.cache != null) {
-						caches[step.cache][step.token.identifier] = value;
+					if (step.cache != null && step.binding != null) {
+						caches[step.cache].set(step.binding, value);
 					}
 				} catch (err: unknown) {
 					throw new TokenResolutionError(
