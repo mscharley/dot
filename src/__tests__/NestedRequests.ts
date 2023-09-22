@@ -19,7 +19,10 @@ describe('Nested requests', () => {
 	it('can handle nested requests without loosing track', async () => {
 		const container = new Container();
 		container.bind(numberToken).toConstantValue(10);
-		container.bind(stringToken).toDynamicValue(async ({ container: c }) => (await c.get(numberToken)).toFixed(2));
+		container
+			.bind(stringToken)
+			.inTransientScope()
+			.toDynamicValue(async ({ container: c }) => (await c.get(numberToken)).toFixed(2));
 		container.bind(classToken).to(TestClass);
 
 		await expect(container.get(classToken)).resolves.toMatchObject({ test: '10.00' });

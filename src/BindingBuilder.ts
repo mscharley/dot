@@ -9,12 +9,14 @@ import { tokenForIdentifier } from './util/tokenForIdentifier.js';
 
 export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 	protected scope: interfaces.ScopeOptions;
+	protected explicitScope = false;
 	protected readonly addBinding: (builder: BindingBuilder<T>, binding: Binding<T>) => void;
 	public readonly token: Token<T>;
 
 	public constructor(
 		public readonly id: interfaces.ServiceIdentifier<T>,
 		containerConfiguration: interfaces.ContainerConfiguration,
+		protected readonly warn: interfaces.LoggerFn,
 		addBinding: (builder: BindingBuilder<T>, binding: Binding<T>) => void,
 	) {
 		this.token = tokenForIdentifier(id);
@@ -45,6 +47,13 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 	}) as interfaces.BindingBuilder<T>['toConstantValue'];
 
 	public toDynamicValue: interfaces.BindingBuilder<T>['toDynamicValue'] = (factory) => {
+		if (!this.explicitScope) {
+			this.warn(
+				{ id: stringifyIdentifier(this.id) },
+				'Using toDynamicValue() without an explicit scope can lead to performance issues. See https://github.com/mscharley/ioc-deco/discussions/80 for details.',
+			);
+		}
+
 		this.addBinding(this, {
 			type: 'dynamic',
 			id: this.id,
@@ -56,16 +65,19 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 
 	public inSingletonScope = (): this => {
 		this.scope = 'singleton';
+		this.explicitScope = true;
 		return this;
 	};
 
 	public inTransientScope = (): this => {
 		this.scope = 'transient';
+		this.explicitScope = true;
 		return this;
 	};
 
 	public inRequestScope = (): this => {
 		this.scope = 'request';
+		this.explicitScope = true;
 		return this;
 	};
 }

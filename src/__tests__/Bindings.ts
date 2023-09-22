@@ -39,10 +39,12 @@ describe('Bindings', () => {
 	describe('isProcessingRequest', () => {
 		it('can display if a request is running', async () => {
 			const c = new Container();
-			c.bind(token).toDynamicValue(() => {
-				expect(Container.isProcessingRequest).toBe(true);
-				return { id: 10 };
-			});
+			c.bind(token)
+				.inTransientScope()
+				.toDynamicValue(() => {
+					expect(Container.isProcessingRequest).toBe(true);
+					return { id: 10 };
+				});
 			await expect(c.get(token)).resolves.toMatchObject({ id: 10 });
 		});
 
