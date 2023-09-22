@@ -35,14 +35,18 @@ describe('CircularDependencies', () => {
 	it('throws an error for recursion across dynamic bindings', async () => {
 		const c = new Container();
 
-		c.bind(t1).toDynamicValue(async ({ container }) => {
-			const { name } = await container.get(t2);
-			return { id: 0, name };
-		});
-		c.bind(t2).toDynamicValue(async ({ container }) => {
-			const { id } = await container.get(t1);
-			return { id, name: 'world' };
-		});
+		c.bind(t1)
+			.inTransientScope()
+			.toDynamicValue(async ({ container }) => {
+				const { name } = await container.get(t2);
+				return { id: 0, name };
+			});
+		c.bind(t2)
+			.inTransientScope()
+			.toDynamicValue(async ({ container }) => {
+				const { id } = await container.get(t1);
+				return { id, name: 'world' };
+			});
 
 		await expect(c.get(t1)).rejects.toMatchObject({
 			cause: {

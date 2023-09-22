@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/no-magic-numbers */
+
 import { createContainer, injectable, Token } from '../index.js';
 import { describe, expect, it } from '@jest/globals';
 
@@ -27,9 +29,11 @@ describe('ExceptionHandling', () => {
 
 		it('dynamic value', async () => {
 			const c = createContainer();
-			c.bind(token).toDynamicValue(() => {
-				throw new Error('Oops, something bad happened.');
-			});
+			c.bind(token)
+				.inTransientScope()
+				.toDynamicValue(() => {
+					throw new Error('Oops, something bad happened.');
+				});
 
 			await expect(c.get(token)).rejects.toMatchObject({
 				cause: {
@@ -41,10 +45,12 @@ describe('ExceptionHandling', () => {
 
 		it('async dynamic value', async () => {
 			const c = createContainer();
-			// eslint-disable-next-line @typescript-eslint/require-await
-			c.bind(token).toDynamicValue(async () => {
-				throw new Error('Oops, something bad happened.');
-			});
+
+			c.bind(token)
+				.inTransientScope()
+				.toDynamicValue(async () => {
+					throw new Error('Oops, something bad happened.');
+				});
 
 			await expect(c.get(token)).rejects.toMatchObject({
 				cause: {
@@ -80,7 +86,9 @@ describe('ExceptionHandling', () => {
 			const greeterToken = new Token<Greeter>('greeter');
 
 			c.bind(token).to(Test);
-			c.bind(nameToken).toDynamicValue(async (ctx) => `dummy-${(await ctx.container.get(token)).id}`);
+			c.bind(nameToken)
+				.inTransientScope()
+				.toDynamicValue(async (ctx) => `dummy-${(await ctx.container.get(token)).id}`);
 			c.bind(greeterToken).to(Greeter);
 
 			await expect(c.get(greeterToken)).rejects.toMatchObject({

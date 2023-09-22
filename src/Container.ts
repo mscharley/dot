@@ -24,7 +24,8 @@ export class Container implements interfaces.Container {
 	readonly #incompleteBindings = new Set<BindingBuilder<any>>();
 
 	#bindings: Array<Binding<unknown>> = [];
-	readonly #log: interfaces.Logger[interfaces.LoggerLevel];
+	readonly #log: interfaces.LoggerFn;
+	readonly #warn: interfaces.LoggerFn;
 	readonly #singletonCache: Record<symbol, unknown> = {};
 	public readonly config: Readonly<interfaces.ContainerConfiguration>;
 
@@ -35,7 +36,8 @@ export class Container implements interfaces.Container {
 			logger: { debug: noop, info: noop, trace: noop, warn: noop },
 			...config,
 		};
-		this.#log = this.config.logger[this.config.logLevel];
+		this.#log = this.config.logger[this.config.logLevel].bind(this.config.logger);
+		this.#warn = this.config.logger.warn.bind(this.config.logger);
 	}
 
 	public static resolve<T>(token: Token<T>, resolutionPath: Array<Token<unknown>>): T {
@@ -75,6 +77,7 @@ export class Container implements interfaces.Container {
 		const binding = new ClassBindingBuilder(
 			id as interfaces.ServiceIdentifier<object>,
 			this.config,
+			this.#warn,
 			this.addBinding,
 		) as unknown as BindingBuilder<T>;
 		this.#incompleteBindings.add(binding);
