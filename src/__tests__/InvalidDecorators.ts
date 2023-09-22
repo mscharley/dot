@@ -1,6 +1,6 @@
 import { describe, expect } from '@jest/globals';
 import { experimental, forDecoratorsIt, tc39 } from '../__utils__/DecoratorTypes.js';
-import { Container } from '../Container.js';
+import { Container } from '../container/Container.js';
 import { inject } from '../decorators/inject.js';
 import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';

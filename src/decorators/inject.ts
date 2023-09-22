@@ -1,6 +1,6 @@
 import type * as interfaces from '../interfaces/index.js';
 import { addInjection } from './injectable.js';
-import { Container } from '../Container.js';
+import { Container } from '../container/Container.js';
 import type { Token } from '../Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 

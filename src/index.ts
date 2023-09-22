@@ -84,7 +84,7 @@
  */
 
 import type * as interfaces from './interfaces/index.js';
-import { Container } from './Container.js';
+import { Container } from './container/Container.js';
 
 /**
  * Create a new empty container
@@ -102,12 +102,7 @@ export const createContainer = (config?: Partial<interfaces.ContainerConfigurati
 
 export type { interfaces };
 export type { InjectDecorator, InjectDecoratorFactory } from './decorators/inject.js';
-export type {
-	ArgsForTokens,
-	ConstructorInjectedType,
-	ConstructorInjection,
-	InjectableDecorator,
-} from './decorators/injectable.js';
+export type { InjectableDecorator } from './decorators/injectable.js';
 export { unmanaged } from './decorators/unmanaged.js';
 export type { TokenType } from './Token.js';
 export { inject } from './decorators/inject.js';

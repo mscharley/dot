@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
-
 import { describe, expect, it } from '@jest/globals';
-import { Container } from '../Container.js';
+import { Container } from '../container/Container.js';
 import { inject } from '../decorators/inject.js';
 import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';
@@ -22,7 +20,7 @@ describe('Nested requests', () => {
 		container
 			.bind(stringToken)
 			.inTransientScope()
-			.toDynamicValue(async ({ container: c }) => (await c.get(numberToken)).toFixed(2));
+			.toDynamicValue([numberToken], (n) => n.toFixed(2));
 		container.bind(classToken).to(TestClass);
 
 		await expect(container.get(classToken)).resolves.toMatchObject({ test: '10.00' });

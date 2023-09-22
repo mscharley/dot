@@ -1,6 +1,21 @@
 import type { BindingBuilder, ClassBindingBuilder, ObjectBindingBuilder } from './BindingBuilder.js';
-import type { Constructor } from './Constructor.js';
 import type { ServiceIdentifier } from './ServiceIdentifier.js';
+
+/**
+ * A constructor for a class
+ *
+ * @public
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Constructor<out T extends object, in Args extends unknown[] = any> = new (...args: Args) => T;
+
+/**
+ * Helper for defining functions
+ *
+ * @public
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type Fn<out T, in Args extends unknown[] = any> = (...args: Args) => T;
 
 /**
  * A function that allows for creating new bindings in a container

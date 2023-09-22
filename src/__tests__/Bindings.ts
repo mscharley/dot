@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { describe, expect, it, jest } from '@jest/globals';
-import { Container } from '../Container.js';
+import { Container } from '../container/Container.js';
 import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';
 import type { TokenType } from '../Token.js';
@@ -41,7 +40,7 @@ describe('Bindings', () => {
 			const c = new Container();
 			c.bind(token)
 				.inTransientScope()
-				.toDynamicValue(() => {
+				.toDynamicValue([], () => {
 					expect(Container.isProcessingRequest).toBe(true);
 					return { id: 10 };
 				});
@@ -85,7 +84,7 @@ describe('Bindings', () => {
 			it('transient scope will always run the function', async () => {
 				const c = new Container();
 				const fn = jest.fn<() => TokenType<typeof token>>().mockImplementation(() => ({ id: 10 }));
-				c.bind(token).inTransientScope().toDynamicValue(fn);
+				c.bind(token).inTransientScope().toDynamicValue([], fn);
 
 				expect(await c.get(token)).not.toBe(await c.get(token));
 				expect(fn.mock.calls.length).toBe(2);
@@ -94,7 +93,7 @@ describe('Bindings', () => {
 			it('singleton scope will only run the function once', async () => {
 				const c = new Container();
 				const fn = jest.fn<() => TokenType<typeof token>>().mockImplementation(() => ({ id: 10 }));
-				c.bind(token).inSingletonScope().toDynamicValue(fn);
+				c.bind(token).inSingletonScope().toDynamicValue([], fn);
 
 				const resolved = await c.get(token);
 				expect(resolved).toMatchObject({ id: 10 });
@@ -107,8 +106,8 @@ describe('Bindings', () => {
 				const subrequest = new Token<string>('subrequest');
 				c.bind(token)
 					.inSingletonScope()
-					.toDynamicValue(async ({ container }) => {
-						await expect(container.get(subrequest)).resolves.toBe('Hello world!');
+					.toDynamicValue([subrequest], (subreq) => {
+						expect(subreq).toBe('Hello world!');
 						return { id: 10 };
 					});
 				c.bind(subrequest).toConstantValue('Hello world!');
@@ -121,7 +120,7 @@ describe('Bindings', () => {
 				const subrequest = new Token<string>('subrequest');
 				c.bind(token)
 					.inSingletonScope()
-					.toDynamicValue(async (): Promise<{ id: number }> => {
+					.toDynamicValue([], async (): Promise<{ id: number }> => {
 						return Promise.reject(new Error('Hello, world!'));
 					});
 				c.bind(subrequest).toConstantValue('Hello world!');

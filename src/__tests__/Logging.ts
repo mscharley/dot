@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import type { Logger, LoggerLevel } from '../interfaces/Logger.js';
-import { Container } from '../Container.js';
+import { Container } from '../container/Container.js';
 import { noop } from '../util/noop.js';
 import { Token } from '../Token.js';
 
@@ -25,6 +25,17 @@ describe('Logging', () => {
 		      "options": undefined,
 		      "plan": [
 		        {
+		          "binding": {
+		            "id": Token {
+		              "identifier": Symbol(str),
+		            },
+		            "scope": "transient",
+		            "token": Token {
+		              "identifier": Symbol(str),
+		            },
+		            "type": "static",
+		            "value": "Hello world!",
+		          },
 		          "cache": undefined,
 		          "expectedTokensUsed": [],
 		          "generate": [Function],

@@ -1,11 +1,12 @@
-import type * as interfaces from './interfaces/index.js';
-import type { Binding, ConstructorBinding } from './models/Binding.js';
-import { InvalidOperationError } from './Error.js';
-import { isConstructor } from './util/isConstructor.js';
-import { isPromise } from './util/isPromise.js';
-import { stringifyIdentifier } from './util/stringifyIdentifier.js';
-import type { Token } from './Token.js';
-import { tokenForIdentifier } from './util/tokenForIdentifier.js';
+import type * as interfaces from '../interfaces/index.js';
+import type { Binding, ConstructorBinding, DynamicBinding } from '../models/Binding.js';
+import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
+import { InvalidOperationError } from '../Error.js';
+import { isConstructor } from '../util/isConstructor.js';
+import { isPromise } from '../util/isPromise.js';
+import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
+import type { Token } from '../Token.js';
+import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
 export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 	protected scope: interfaces.ScopeOptions;
@@ -46,7 +47,12 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 		}
 	}) as interfaces.BindingBuilder<T>['toConstantValue'];
 
-	public toDynamicValue: interfaces.BindingBuilder<T>['toDynamicValue'] = (factory) => {
+	public toDynamicValue: interfaces.BindingBuilder<T>['toDynamicValue'] = <
+		Tokens extends Array<interfaces.InjectionIdentifier<unknown>>,
+	>(
+		dependencies: Tokens,
+		factory: (...args: interfaces.ArgsForInjectionIdentifiers<Tokens>) => T | Promise<T>,
+	) => {
 		if (!this.explicitScope) {
 			this.warn(
 				{ id: stringifyIdentifier(this.id) },
@@ -59,8 +65,9 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 			id: this.id,
 			token: this.token,
 			scope: this.scope,
-			generator: factory,
-		});
+			injections: dependencies.map((dep, index) => injectionFromIdentifier(dep, index)),
+			generator: factory as DynamicBinding<T>['generator'],
+		} satisfies DynamicBinding<T>);
 	};
 
 	public inSingletonScope = (): this => {

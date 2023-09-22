@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/require-await */
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 
-import { createContainer, injectable, Token } from '../index.js';
 import { describe, expect, it } from '@jest/globals';
+import { Container } from '../container/Container.js';
+import { injectable } from '../decorators/injectable.js';
+import { Token } from '../Token.js';
 
 const token = new Token<{ id: number }>('error-handling');
 class Test {
@@ -16,7 +17,7 @@ class Test {
 describe('ExceptionHandling', () => {
 	describe('should allow errors from client code to be accessible to client code', () => {
 		it('class constructor', async () => {
-			const c = createContainer();
+			const c = new Container();
 			c.bind(token).to(Test);
 
 			await expect(c.get(token)).rejects.toMatchObject({
@@ -28,10 +29,10 @@ describe('ExceptionHandling', () => {
 		});
 
 		it('dynamic value', async () => {
-			const c = createContainer();
+			const c = new Container();
 			c.bind(token)
 				.inTransientScope()
-				.toDynamicValue(() => {
+				.toDynamicValue([], () => {
 					throw new Error('Oops, something bad happened.');
 				});
 
@@ -44,11 +45,11 @@ describe('ExceptionHandling', () => {
 		});
 
 		it('async dynamic value', async () => {
-			const c = createContainer();
+			const c = new Container();
 
 			c.bind(token)
 				.inTransientScope()
-				.toDynamicValue(async () => {
+				.toDynamicValue([], async () => {
 					throw new Error('Oops, something bad happened.');
 				});
 
@@ -63,7 +64,7 @@ describe('ExceptionHandling', () => {
 
 	describe('resolution errors should include a path to where the error happened', () => {
 		it('should return a simple error', async () => {
-			const c = createContainer();
+			const c = new Container();
 			c.bind(token).to(Test);
 
 			await expect(c.get(token)).rejects.toMatchObject({
@@ -75,7 +76,7 @@ describe('ExceptionHandling', () => {
 		});
 
 		it('nested requests should include the full tree of errors', async () => {
-			const c = createContainer();
+			const c = new Container();
 			const nameToken = new Token<string>('name');
 			@injectable(nameToken)
 			class Greeter {
@@ -88,19 +89,15 @@ describe('ExceptionHandling', () => {
 			c.bind(token).to(Test);
 			c.bind(nameToken)
 				.inTransientScope()
-				.toDynamicValue(async (ctx) => `dummy-${(await ctx.container.get(token)).id}`);
+				.toDynamicValue([token], ({ id }) => `dummy-${id}`);
 			c.bind(greeterToken).to(Greeter);
 
 			await expect(c.get(greeterToken)).rejects.toMatchObject({
 				cause: {
-					cause: {
-						message: 'Oops, something bad happened.',
-					},
-					message: 'Encountered an error while creating a class',
-					resolutionPath: [token],
+					message: 'Oops, something bad happened.',
 				},
 				message: 'Encountered an error while creating a class',
-				resolutionPath: [greeterToken, nameToken],
+				resolutionPath: [greeterToken, nameToken, token],
 			});
 		});
 	});

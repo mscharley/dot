@@ -1,4 +1,5 @@
 import type * as interfaces from '../interfaces/index.js';
+import type { Injection } from './Injection.js';
 import type { Token } from '../Token.js';
 
 export interface ConstructorBinding<out T extends object> {
@@ -22,7 +23,8 @@ export interface DynamicBinding<in out T> {
 	id: interfaces.ServiceIdentifier<T>;
 	token: Token<T>;
 	scope: interfaces.ScopeOptions;
-	generator: (context: interfaces.BindingContext<T>) => T | Promise<T>;
+	injections: Array<Injection<unknown>>;
+	generator: (...args: unknown[]) => T | Promise<T>;
 }
 
 export type Binding<T = object> =

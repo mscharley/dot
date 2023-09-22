@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { Container } from '../Container.js';
+import { Container } from '../container/Container.js';
 import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';

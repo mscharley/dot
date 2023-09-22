@@ -64,6 +64,7 @@ describe('calculatePlan', () => {
 				{
 					type: 'dynamic',
 					generator,
+					injections: [],
 					id: testToken,
 					token: testToken,
 					scope: 'request',

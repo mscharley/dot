@@ -1,12 +1,14 @@
+import type { CreateInstance, PlanStep } from '../../models/Plan.js';
 import { describe, expect, it } from '@jest/globals';
-import { Container } from '../../Container.js';
+import { Container } from '../../container/Container.js';
 import { executePlan } from '../executePlan.js';
 import type { Request } from '../../models/Request.js';
+import { ResolutionCache } from '../../container/ResolutionCache.js';
 import { Token } from '../../Token.js';
 
 const basicRequest = <T>(token: Token<T>): Request<T> => ({
 	container: new Container(),
-	singletonCache: {},
+	singletonCache: new ResolutionCache(),
 	stack: {},
 	token,
 });
@@ -22,27 +24,30 @@ describe('executePlan', () => {
 					{
 						type: 'createClass',
 						cache: undefined,
+						binding: undefined,
 						expectedTokensUsed: [],
 						token: strToken,
 						generate: (): string => 'Hello',
 						resolutionPath: [strToken],
-					},
+					} satisfies CreateInstance<string>,
 					{
 						type: 'createClass',
 						cache: undefined,
+						binding: undefined,
 						expectedTokensUsed: [],
 						token: numToken,
 						generate: (): number => 1,
 						resolutionPath: [numToken],
-					},
+					} satisfies CreateInstance<number> as unknown as PlanStep<string>,
 					{
 						type: 'createClass',
 						cache: undefined,
+						binding: undefined,
 						expectedTokensUsed: [],
 						token: strToken,
 						generate: (): string => 'world',
 						resolutionPath: [strToken],
-					},
+					} satisfies CreateInstance<string>,
 				],
 				basicRequest(strToken),
 			),
@@ -64,11 +69,12 @@ describe('executePlan', () => {
 					{
 						type: 'createClass',
 						cache: undefined,
+						binding: undefined,
 						expectedTokensUsed: [],
 						token: strToken,
 						generate: (): string => 'Hello world!',
 						resolutionPath: [strToken],
-					},
+					} satisfies CreateInstance<string>,
 					{
 						type: 'aggregateMultiple',
 						count: 2,

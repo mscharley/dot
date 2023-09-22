@@ -1,6 +1,6 @@
 import type * as interfaces from '../interfaces/index.js';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { Container } from '../Container.js';
+import { Container } from '../container/Container.js';
 import { Token } from '../Token.js';
 
 const token = new Token<string>('str');
@@ -32,7 +32,7 @@ describe('ChildContainers', () => {
 
 	it('can cache things in the parent container', async () => {
 		const factory = jest.fn<() => string>(() => 'Hello world!');
-		container.bind(token).inSingletonScope().toDynamicValue(factory);
+		container.bind(token).inSingletonScope().toDynamicValue([], factory);
 
 		const child1 = container.createChild();
 		await expect(child1.get(token)).resolves.toBe('Hello world!');

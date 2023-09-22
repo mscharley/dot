@@ -5,10 +5,8 @@
 ```ts
 
 // @public
-export type ArgsForTokens<Tokens extends [...Array<ConstructorInjection<unknown>>]> = {
-    [Index in keyof Tokens]: ConstructorInjectedType<Tokens[Index]>;
-} & {
-    length: Tokens['length'];
+type ArgsForInjectionIdentifiers<Tokens extends Array<InjectionIdentifier<unknown>>> = {
+    [Index in keyof Tokens]: InjectedType<Tokens[Index]>;
 };
 
 // @public
@@ -17,7 +15,7 @@ type AsyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound
 // @public
 interface Binder<in out T> {
     toConstantValue: ((v: T) => void) & ((v: Promise<T>) => Promise<void>);
-    toDynamicValue: (fn: (context: BindingContext<T>) => T | Promise<T>) => void;
+    toDynamicValue: <Tokens extends Array<InjectionIdentifier<unknown>>>(dependencies: Tokens, fn: Fn<T | Promise<T>, ArgsForInjectionIdentifiers<Tokens>>) => void;
 }
 
 // @public
@@ -29,12 +27,6 @@ type BindFunction = {
 
 // @public
 interface BindingBuilder<in out T> extends Binder<T>, BindingScope<T, BindingBuilder<T>> {
-}
-
-// @public
-interface BindingContext<out T> {
-    container: Container;
-    id: ServiceIdentifier<T>;
 }
 
 // @public
@@ -58,12 +50,6 @@ interface ClassBindingBuilder<in out T extends object> extends Binder<T>, Bindin
 
 // @public
 type Constructor<out T extends object, in Args extends unknown[] = any> = new (...args: Args) => T;
-
-// @public
-export type ConstructorInjectedType<T extends ConstructorInjection<unknown>> = T extends interfaces.ServiceIdentifier<infer U> ? U : T extends [interfaces.ServiceIdentifier<infer U>] ? U : T extends interfaces.DirectInjection<infer U> ? U : never;
-
-// @public
-export type ConstructorInjection<T> = interfaces.DirectInjection<T> | interfaces.ServiceIdentifier<T> | [interfaces.ServiceIdentifier<T>, Partial<interfaces.InjectOptions>];
 
 // Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
 //
@@ -128,6 +114,9 @@ type DirectInjection<T> = {
 // @public
 export type ErrorCode = 'RECURSIVE_RESOLUTION' | 'TOKEN_RESOLUTION' | 'INVALID_OPERATION';
 
+// @public
+type Fn<out T, in Args extends unknown[] = any> = (...args: Args) => T;
+
 // Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
 //
 // @public
@@ -137,7 +126,7 @@ type ImplicitScopeBindingOptions = 'toConstantValue';
 export const inject: InjectDecoratorFactory;
 
 // @public
-export const injectable: <Tokens extends ConstructorInjection<unknown>[]>(...constructorTokens: Tokens) => InjectableDecorator<ArgsForTokens<Tokens>>;
+export const injectable: <Tokens extends interfaces.InjectionIdentifier<unknown>[]>(...constructorTokens: Tokens) => InjectableDecorator<interfaces.ArgsForInjectionIdentifiers<Tokens>>;
 
 // @public
 export interface InjectableDecorator<Args extends unknown[]> {
@@ -171,6 +160,14 @@ export interface InjectDecoratorFactory {
     <T>(token: Token<T>, options?: Partial<interfaces.InjectOptions>): InjectDecorator<T>;
 }
 
+// Warning: (ae-unresolved-link) The @link reference could not be resolved: The package "@mscharley/ioc" does not have an export "InjectionIdentifier"
+//
+// @public
+type InjectedType<T extends InjectionIdentifier<unknown>> = T extends ServiceIdentifier<infer U> ? U : T extends [ServiceIdentifier<infer U>] ? U : T extends DirectInjection<infer U> ? U : never;
+
+// @public
+type InjectionIdentifier<T> = DirectInjection<T> | ServiceIdentifier<T> | [ServiceIdentifier<T>, Partial<InjectOptions>];
+
 // @public
 interface InjectOptions {
     multiple: boolean;
@@ -184,20 +181,23 @@ declare namespace interfaces {
         BindingBuilder,
         ClassBindingBuilder,
         ObjectBindingBuilder,
-        BindingContext,
         BindingScope,
         ClassBinder,
-        Constructor,
         Container,
         ContainerConfiguration,
         AsyncContainerModule,
         ContainerModule,
         SyncContainerModule,
         DirectInjection,
+        Constructor,
+        Fn,
         BindFunction,
         IsBoundFunction,
         RebindFunction,
         UnbindFunction,
+        ArgsForInjectionIdentifiers,
+        InjectedType,
+        InjectionIdentifier,
         InjectOptions,
         Logger,
         LoggerFn,
