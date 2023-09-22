@@ -15,7 +15,8 @@ const planBinding = <T>(
 	resolveInjection: (injection: Injection<unknown>) => PlanStep[],
 ): Plan<T> => {
 	const cache = binding.scope === 'transient' ? undefined : binding.scope;
-	const injections = binding.type === 'constructor' ? getInjections(binding.ctr) : [];
+	const injections: Array<Injection<unknown>> =
+		binding.type === 'constructor' ? getInjections(binding.ctr) : binding.type === 'dynamic' ? binding.injections : [];
 	const injectionSteps = injections.flatMap(resolveInjection) as Plan<T>;
 	const fetchFromCache: FetchFromCache<T> | null =
 		cache == null

@@ -37,28 +37,18 @@ describe('CircularDependencies', () => {
 
 		c.bind(t1)
 			.inTransientScope()
-			.toDynamicValue(async ({ container }) => {
-				const { name } = await container.get(t2);
+			.toDynamicValue([t2], ({ name }) => {
 				return { id: 0, name };
 			});
 		c.bind(t2)
 			.inTransientScope()
-			.toDynamicValue(async ({ container }) => {
-				const { id } = await container.get(t1);
+			.toDynamicValue([t1], ({ id }) => {
 				return { id, name: 'world' };
 			});
 
 		await expect(c.get(t1)).rejects.toMatchObject({
-			cause: {
-				cause: {
-					message: 'Recursive request detected',
-					resolutionPath: [t1],
-				},
-				message: 'Encountered an error while creating a class',
-				resolutionPath: [t2],
-			},
-			message: 'Encountered an error while creating a class',
-			resolutionPath: [t1],
+			message: 'Recursive binding detected',
+			resolutionPath: [t1, t2, t1],
 		});
 	});
 

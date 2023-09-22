@@ -22,7 +22,7 @@ describe('Nested requests', () => {
 		container
 			.bind(stringToken)
 			.inTransientScope()
-			.toDynamicValue(async ({ container: c }) => (await c.get(numberToken)).toFixed(2));
+			.toDynamicValue([numberToken], (n) => n.toFixed(2));
 		container.bind(classToken).to(TestClass);
 
 		await expect(container.get(classToken)).resolves.toMatchObject({ test: '10.00' });

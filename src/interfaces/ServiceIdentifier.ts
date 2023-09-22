@@ -1,4 +1,4 @@
-import type { Constructor } from './Constructor.js';
+import type { Constructor } from './Functions.js';
 import type { Token } from '../Token.js';
 
 /**

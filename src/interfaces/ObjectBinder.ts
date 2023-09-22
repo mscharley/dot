@@ -1,4 +1,4 @@
-import type { Constructor } from './Constructor.js';
+import type { Constructor } from './Functions.js';
 
 /**
  * Partial interface for building bindings that contains options for types which are some kind of object type

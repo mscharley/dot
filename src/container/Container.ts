@@ -41,6 +41,14 @@ export class Container implements interfaces.Container {
 		this.#warn = this.config.logger.warn.bind(this.config.logger);
 	}
 
+	/**
+	 * Attempt to resolve a token using the currently executing request.
+	 *
+	 * @deprecated
+	 *
+	 * This function assumes there is only ever one running request at a time, but this is not a given since
+	 * all requests are processed asynchronously.
+	 */
 	public static resolve<T>(token: Token<T>, resolutionPath: Array<Token<unknown>>): T {
 		if (this.#currentRequest == null) {
 			throw new InvalidOperationError(
@@ -48,17 +56,21 @@ export class Container implements interfaces.Container {
 			);
 		}
 
-		if (!(token.identifier in this.#currentRequest.stack)) {
+		return (this.#currentRequest.container as Container).resolve(token, this.#currentRequest, resolutionPath);
+	}
+
+	public resolve<T>(token: Token<T>, request: Request<unknown>, resolutionPath: Array<Token<unknown>>): T {
+		if (!(token.identifier in request.stack)) {
 			throw new TokenResolutionError(
 				'Unable to find a value to inject',
 				resolutionPath,
 				new InvalidOperationError(`Token hasn't been created yet: ${token.identifier.toString()}`),
 			);
 		}
-		const tokenStack = this.#currentRequest.stack[token.identifier] as T[];
+		const tokenStack = request.stack[token.identifier] as T[];
 		const [value] = tokenStack.splice(0, 1);
 		if (tokenStack.length === 0) {
-			delete this.#currentRequest.stack[token.identifier];
+			delete request.stack[token.identifier];
 		}
 
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -115,28 +127,36 @@ export class Container implements interfaces.Container {
 		this.#bindings.push(binding as Binding<unknown>);
 	};
 
-	#resolveBinding = <T>(binding: Binding<T>, resolutionPath: Array<Token<unknown>>): T | Promise<T> => {
-		switch (binding.type) {
-			case 'static':
-				return binding.value;
-			case 'dynamic':
-				return binding.generator({ container: this, id: binding.id });
-			case 'constructor': {
-				const args = getConstructorParameterInjections(binding.ctr)
-					// eslint-disable-next-line @typescript-eslint/no-magic-numbers
-					.sort((a, b) => (a.index < b.index ? -1 : 1))
-					.map((i) =>
+	#resolveBinding =
+		(request: Request<unknown>) =>
+		<T>(binding: Binding<T>, resolutionPath: Array<Token<unknown>>): T | Promise<T> => {
+			switch (binding.type) {
+				case 'static':
+					return binding.value;
+				case 'dynamic': {
+					const args = binding.injections.map((i) =>
 						i.type === 'unmanagedConstructorParameter'
 							? i.value.generator()
-							: Container.resolve(i.token, resolutionPath),
+							: this.resolve(i.token, request, resolutionPath),
 					);
+					return binding.generator(...args);
+				}
+				case 'constructor': {
+					const args = getConstructorParameterInjections(binding.ctr)
+						// eslint-disable-next-line @typescript-eslint/no-magic-numbers
+						.sort((a, b) => (a.index < b.index ? -1 : 1))
+						.map((i) =>
+							i.type === 'unmanagedConstructorParameter'
+								? i.value.generator()
+								: this.resolve(i.token, request, resolutionPath),
+						);
 
-				return new binding.ctr(...args);
+					return new binding.ctr(...args);
+				}
+				default:
+					return isNever(binding, 'Unknown binding found');
 			}
-			default:
-				return isNever(binding, 'Unknown binding found');
-		}
-	};
+		};
 
 	public get = async <T>(
 		id: interfaces.ServiceIdentifier<T>,
@@ -148,9 +168,15 @@ export class Container implements interfaces.Container {
 			throw new RecursiveResolutionError('Recursive request detected', [token]);
 		}
 
+		const request: Request<T> = {
+			container: this,
+			stack: {},
+			singletonCache: this.#singletonCache,
+			token,
+		};
 		const plan = calculatePlan<T>(
 			this.#bindings,
-			this.#resolveBinding,
+			this.#resolveBinding(request),
 			{
 				type: 'request',
 				options: {
@@ -164,12 +190,6 @@ export class Container implements interfaces.Container {
 			this.config.parent,
 		);
 		this.#log({ id, options, plan }, 'Processing request');
-		const request: Request<T> = {
-			container: this,
-			stack: {},
-			singletonCache: this.#singletonCache,
-			token,
-		};
 
 		const lastRequest = Container.#currentRequest;
 		Container.#currentRequest = request;

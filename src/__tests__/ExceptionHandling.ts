@@ -33,7 +33,7 @@ describe('ExceptionHandling', () => {
 			const c = new Container();
 			c.bind(token)
 				.inTransientScope()
-				.toDynamicValue(() => {
+				.toDynamicValue([], () => {
 					throw new Error('Oops, something bad happened.');
 				});
 
@@ -50,7 +50,7 @@ describe('ExceptionHandling', () => {
 
 			c.bind(token)
 				.inTransientScope()
-				.toDynamicValue(async () => {
+				.toDynamicValue([], async () => {
 					throw new Error('Oops, something bad happened.');
 				});
 
@@ -90,19 +90,15 @@ describe('ExceptionHandling', () => {
 			c.bind(token).to(Test);
 			c.bind(nameToken)
 				.inTransientScope()
-				.toDynamicValue(async (ctx) => `dummy-${(await ctx.container.get(token)).id}`);
+				.toDynamicValue([token], ({ id }) => `dummy-${id}`);
 			c.bind(greeterToken).to(Greeter);
 
 			await expect(c.get(greeterToken)).rejects.toMatchObject({
 				cause: {
-					cause: {
-						message: 'Oops, something bad happened.',
-					},
-					message: 'Encountered an error while creating a class',
-					resolutionPath: [token],
+					message: 'Oops, something bad happened.',
 				},
 				message: 'Encountered an error while creating a class',
-				resolutionPath: [greeterToken, nameToken],
+				resolutionPath: [greeterToken, nameToken, token],
 			});
 		});
 	});
