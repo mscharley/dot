@@ -1,5 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 import { Container } from '../container/Container.js';
+import type { ErrorCode } from '../Error.js';
 import { inject } from '../decorators/inject.js';
 import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';
@@ -27,6 +28,7 @@ describe('CircularDependencies', () => {
 		c.bind(t2).to(Name);
 
 		await expect(c.get(t1)).rejects.toMatchObject({
+			code: 'RECURSIVE_RESOLUTION' satisfies ErrorCode,
 			message: 'Recursive binding detected',
 			resolutionPath: [t1, t2, t1],
 		});
@@ -47,6 +49,7 @@ describe('CircularDependencies', () => {
 			});
 
 		await expect(c.get(t1)).rejects.toMatchObject({
+			code: 'RECURSIVE_RESOLUTION' satisfies ErrorCode,
 			message: 'Recursive binding detected',
 			resolutionPath: [t1, t2, t1],
 		});
@@ -73,6 +76,7 @@ describe('CircularDependencies', () => {
 		c.bind(t2).to(Name);
 
 		await expect(c.get(t1)).rejects.toMatchObject({
+			code: 'RECURSIVE_RESOLUTION' satisfies ErrorCode,
 			message: 'Recursive binding detected',
 			resolutionPath: [t1, t2, t1],
 		});

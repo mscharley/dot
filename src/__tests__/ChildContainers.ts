@@ -1,6 +1,7 @@
 import type * as interfaces from '../interfaces/index.js';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { Container } from '../container/Container.js';
+import type { ErrorCode } from '../Error.js';
 import { Token } from '../Token.js';
 
 const token = new Token<string>('str');
@@ -16,8 +17,10 @@ describe('ChildContainers', () => {
 		const child = container.createChild();
 		await expect(child.get(token)).rejects.toMatchObject({
 			cause: {
+				code: 'INVALID_OPERATION' satisfies ErrorCode,
 				message: 'No bindings exist for token: Token<Symbol(str)>',
 			},
+			code: 'TOKEN_RESOLUTION' satisfies ErrorCode,
 			message: 'Unable to resolve token',
 			resolutionPath: [token],
 		});

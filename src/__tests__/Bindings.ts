@@ -1,5 +1,6 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { Container } from '../container/Container.js';
+import type { ErrorCode } from '../Error.js';
 import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';
 import type { TokenType } from '../Token.js';
@@ -12,9 +13,10 @@ describe('Bindings', () => {
 		c.bind(token);
 		c.bind(new Token('foo'));
 
-		await expect(async () => c.get(token)).rejects.toThrowErrorMatchingInlineSnapshot(
-			'"Some bindings were started but not completed: Symbol(test), Symbol(foo)"',
-		);
+		await expect(async () => c.get(token)).rejects.toMatchObject({
+			code: 'INVALID_OPERATION' satisfies ErrorCode,
+			message: 'Some bindings were started but not completed: Symbol(test), Symbol(foo)',
+		});
 	});
 
 	it('throws an error if no binding is found for a token', async () => {
@@ -22,8 +24,10 @@ describe('Bindings', () => {
 
 		await expect(async () => c.get(token)).rejects.toMatchObject({
 			cause: {
+				code: 'INVALID_OPERATION' satisfies ErrorCode,
 				message: 'No bindings exist for token: Token<Symbol(test)>',
 			},
+			code: 'TOKEN_RESOLUTION' satisfies ErrorCode,
 			message: 'Unable to resolve token',
 			resolutionPath: [token],
 		});

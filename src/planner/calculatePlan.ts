@@ -65,7 +65,11 @@ export const calculatePlan = <T>(
 
 	const binds = bindings.filter((v) => v.token === token);
 	if (!input.options.multiple && binds.length > 1) {
-		throw new RecursiveResolutionError('Multiple bindings exist for token', [...resolutionPath, token]);
+		throw new TokenResolutionError(
+			'Unable to resolve token',
+			[...resolutionPath, token],
+			new InvalidOperationError('Multiple bindings exist for this token but multiple injection was not allowed'),
+		);
 	}
 
 	if (binds.length === 0) {

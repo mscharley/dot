@@ -1,5 +1,6 @@
 import { describe, expect, it } from '@jest/globals';
 import { Container } from '../container/Container.js';
+import type { ErrorCode } from '../Error.js';
 import { inject } from '../decorators/inject.js';
 import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';
@@ -37,8 +38,10 @@ describe('InjectionOptions', () => {
 
 			await expect(c.get(token)).rejects.toMatchObject({
 				cause: {
+					code: 'INVALID_OPERATION' satisfies ErrorCode,
 					message: 'No bindings exist for token: Token<Symbol(string)>',
 				},
+				code: 'TOKEN_RESOLUTION' satisfies ErrorCode,
 				message: 'Unable to resolve token',
 				resolutionPath: [token, strToken],
 			});
@@ -103,7 +106,12 @@ describe('InjectionOptions', () => {
 			c.bind(strToken).toConstantValue('world');
 
 			await expect(c.get(token)).rejects.toMatchObject({
-				message: 'Multiple bindings exist for token',
+				cause: {
+					code: 'INVALID_OPERATION' satisfies ErrorCode,
+					message: 'Multiple bindings exist for this token but multiple injection was not allowed',
+				},
+				code: 'TOKEN_RESOLUTION' satisfies ErrorCode,
+				message: 'Unable to resolve token',
 				resolutionPath: [token, strToken],
 			});
 		});
