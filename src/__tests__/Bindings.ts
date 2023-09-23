@@ -1,6 +1,9 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import { Container } from '../container/Container.js';
+import type { ErrorCode } from '../Error.js';
 import { injectable } from '../decorators/injectable.js';
+import type { LoggerFn } from '../interfaces/Logger.js';
+import { noop } from '../util/noop.js';
 import { Token } from '../Token.js';
 import type { TokenType } from '../Token.js';
 
@@ -12,9 +15,10 @@ describe('Bindings', () => {
 		c.bind(token);
 		c.bind(new Token('foo'));
 
-		await expect(async () => c.get(token)).rejects.toThrowErrorMatchingInlineSnapshot(
-			'"Some bindings were started but not completed: Symbol(test), Symbol(foo)"',
-		);
+		await expect(async () => c.get(token)).rejects.toMatchObject({
+			code: 'INVALID_OPERATION' satisfies ErrorCode,
+			message: 'Some bindings were started but not completed: Symbol(test), Symbol(foo)',
+		});
 	});
 
 	it('throws an error if no binding is found for a token', async () => {
@@ -22,36 +26,19 @@ describe('Bindings', () => {
 
 		await expect(async () => c.get(token)).rejects.toMatchObject({
 			cause: {
+				code: 'INVALID_OPERATION' satisfies ErrorCode,
 				message: 'No bindings exist for token: Token<Symbol(test)>',
 			},
+			code: 'TOKEN_RESOLUTION' satisfies ErrorCode,
 			message: 'Unable to resolve token',
 			resolutionPath: [token],
 		});
 	});
 
 	it('fails if attempting a resolution outside a request', () => {
-		expect(() => Container.resolve(token, [])).toThrowErrorMatchingInlineSnapshot(
+		expect(() => Container.resolvePropertyInjection(token, [])).toThrowErrorMatchingInlineSnapshot(
 			'"Unable to resolve token as no container is currently making a request: Symbol(test)"',
 		);
-	});
-
-	describe('isProcessingRequest', () => {
-		it('can display if a request is running', async () => {
-			const c = new Container();
-			c.bind(token)
-				.inTransientScope()
-				.toDynamicValue([], () => {
-					expect(Container.isProcessingRequest).toBe(true);
-					return { id: 10 };
-				});
-			await expect(c.get(token)).resolves.toMatchObject({ id: 10 });
-		});
-
-		it('properly ends the current request if it fails', async () => {
-			const c = new Container();
-			await expect(async () => c.get(token)).rejects.toThrowError();
-			expect(Container.isProcessingRequest).toBe(false);
-		});
 	});
 
 	describe('bind()', () => {
@@ -101,20 +88,6 @@ describe('Bindings', () => {
 				expect(fn.mock.calls.length).toBe(1);
 			});
 
-			it('can handle nested requests', async () => {
-				const c = new Container();
-				const subrequest = new Token<string>('subrequest');
-				c.bind(token)
-					.inSingletonScope()
-					.toDynamicValue([subrequest], (subreq) => {
-						expect(subreq).toBe('Hello world!');
-						return { id: 10 };
-					});
-				c.bind(subrequest).toConstantValue('Hello world!');
-
-				await expect(c.get(token)).resolves.toMatchObject({ id: 10 });
-			});
-
 			it('can handle async errors', async () => {
 				const c = new Container();
 				const subrequest = new Token<string>('subrequest');
@@ -130,6 +103,45 @@ describe('Bindings', () => {
 						message: 'Hello, world!',
 					},
 				});
+			});
+
+			it("doesn't print warnings if used with any kind of explicit scope", () => {
+				const warn = jest.fn<LoggerFn>();
+				const c = new Container({
+					logger: { warn: warn as unknown as LoggerFn, debug: noop, info: noop, trace: noop },
+				});
+
+				c.bind(token)
+					.inTransientScope()
+					.toDynamicValue([], () => ({ id: 10 }));
+				c.bind(token)
+					.inRequestScope()
+					.toDynamicValue([], () => ({ id: 10 }));
+				c.bind(token)
+					.inSingletonScope()
+					.toDynamicValue([], () => ({ id: 10 }));
+
+				expect(warn).toHaveBeenCalledTimes(0);
+			});
+
+			it('prints a warning if used without an explicit scope', async () => {
+				const warn = jest.fn<LoggerFn>();
+				const c = new Container({
+					logger: { warn: warn as unknown as LoggerFn, debug: noop, info: noop, trace: noop },
+				});
+				c.bind(token).toDynamicValue([], () => ({
+					id: 10,
+				}));
+
+				expect(warn).toHaveBeenCalledTimes(1);
+				expect(warn).toBeCalledWith(
+					{ id: 'Token<Symbol(test)>' },
+					'Using toDynamicValue() without an explicit scope can lead to performance issues. See https://github.com/mscharley/ioc-deco/discussions/80 for details.',
+				);
+
+				await c.get(token);
+
+				expect(warn).toHaveBeenCalledTimes(1);
 			});
 		});
 

@@ -2,6 +2,7 @@
 
 import { describe, expect, it } from '@jest/globals';
 import { Container } from '../container/Container.js';
+import type { ErrorCode } from '../Error.js';
 import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';
 
@@ -24,6 +25,7 @@ describe('ExceptionHandling', () => {
 				cause: {
 					message: 'Oops, something bad happened.',
 				},
+				code: 'TOKEN_RESOLUTION' satisfies ErrorCode,
 				message: 'Encountered an error while creating a class',
 			});
 		});
@@ -40,6 +42,7 @@ describe('ExceptionHandling', () => {
 				cause: {
 					message: 'Oops, something bad happened.',
 				},
+				code: 'TOKEN_RESOLUTION' satisfies ErrorCode,
 				message: 'Encountered an error while creating a class',
 			});
 		});
@@ -57,6 +60,7 @@ describe('ExceptionHandling', () => {
 				cause: {
 					message: 'Oops, something bad happened.',
 				},
+				code: 'TOKEN_RESOLUTION' satisfies ErrorCode,
 				message: 'Encountered an error while creating a class',
 			});
 		});
@@ -71,6 +75,7 @@ describe('ExceptionHandling', () => {
 				cause: {
 					message: 'Oops, something bad happened.',
 				},
+				code: 'TOKEN_RESOLUTION' satisfies ErrorCode,
 				resolutionPath: [token],
 			});
 		});
@@ -96,6 +101,7 @@ describe('ExceptionHandling', () => {
 				cause: {
 					message: 'Oops, something bad happened.',
 				},
+				code: 'TOKEN_RESOLUTION' satisfies ErrorCode,
 				message: 'Encountered an error while creating a class',
 				resolutionPath: [greeterToken, nameToken, token],
 			});

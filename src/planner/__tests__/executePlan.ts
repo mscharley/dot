@@ -51,15 +51,16 @@ describe('executePlan', () => {
 				],
 				basicRequest(strToken),
 			),
-		).rejects.toThrow(
-			'Unresolved dependecies created, this is probably a bug. Please report this! Extra dependencies: Symbol(string), Symbol(number)',
-		);
+		).rejects.toMatchObject({
+			message:
+				'Unresolved dependecies created, this is probably a bug. Please report this! Extra dependencies: Symbol(string), Symbol(number)',
+		});
 	});
 
 	it("throws an error if the plan doesn't generate the type of thing it is supposed to", async () => {
-		await expect(async () => executePlan([], basicRequest(strToken))).rejects.toThrow(
-			'Unable to resolve final request: Symbol(string)',
-		);
+		await expect(async () => executePlan([], basicRequest(strToken))).rejects.toMatchObject({
+			message: 'Unable to resolve final request: Symbol(string)',
+		});
 	});
 
 	it("throws an error if there aren't enough services in the stack", async () => {

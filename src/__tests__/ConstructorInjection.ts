@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import { Container } from '../container/Container.js';
+import type { ErrorCode } from '../Error.js';
 import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
@@ -49,8 +50,10 @@ describe('ConstructorInjection', () => {
 	it('fails for non-optional dependencies', async () => {
 		await expect(c.get(Test)).rejects.toMatchObject({
 			cause: {
+				code: 'INVALID_OPERATION' satisfies ErrorCode,
 				message: 'No bindings exist for token: Token<Symbol(greeting)>',
 			},
+			code: 'TOKEN_RESOLUTION' satisfies ErrorCode,
 			message: 'Unable to resolve token',
 			resolutionPath: [tokenForIdentifier(Test), greetingToken],
 		});

@@ -1,6 +1,7 @@
 import { describe, expect } from '@jest/globals';
 import { experimental, forDecoratorsIt, tc39 } from '../__utils__/DecoratorTypes.js';
 import { Container } from '../container/Container.js';
+import type { ErrorCode } from '../Error.js';
 import { inject } from '../decorators/inject.js';
 import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';
@@ -53,11 +54,14 @@ describe('Invalid decorator', () => {
 			await expect(c.get(node)).rejects.toMatchObject({
 				cause: {
 					cause: {
+						code: 'INVALID_OPERATION' as ErrorCode,
 						message: "Token hasn't been created yet: Symbol(leaf)",
 					},
+					code: 'TOKEN_RESOLUTION' as ErrorCode,
 					resolutionPath: [leaf],
 					message: 'Unable to find a value to inject',
 				},
+				code: 'TOKEN_RESOLUTION' as ErrorCode,
 				resolutionPath: [node],
 				message: 'Encountered an error while creating a class',
 			});
