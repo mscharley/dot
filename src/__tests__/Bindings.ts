@@ -34,28 +34,9 @@ describe('Bindings', () => {
 	});
 
 	it('fails if attempting a resolution outside a request', () => {
-		expect(() => Container.resolve(token, [])).toThrowErrorMatchingInlineSnapshot(
+		expect(() => Container.resolvePropertyInjection(token, [])).toThrowErrorMatchingInlineSnapshot(
 			'"Unable to resolve token as no container is currently making a request: Symbol(test)"',
 		);
-	});
-
-	describe('isProcessingRequest', () => {
-		it('can display if a request is running', async () => {
-			const c = new Container();
-			c.bind(token)
-				.inTransientScope()
-				.toDynamicValue([], () => {
-					expect(Container.isProcessingRequest).toBe(true);
-					return { id: 10 };
-				});
-			await expect(c.get(token)).resolves.toMatchObject({ id: 10 });
-		});
-
-		it('properly ends the current request if it fails', async () => {
-			const c = new Container();
-			await expect(async () => c.get(token)).rejects.toThrowError();
-			expect(Container.isProcessingRequest).toBe(false);
-		});
 	});
 
 	describe('bind()', () => {

@@ -1,5 +1,5 @@
 import type * as interfaces from '../interfaces/index.js';
-import { InvalidOperationError, RecursiveResolutionError, TokenResolutionError } from '../Error.js';
+import { InvalidOperationError, TokenResolutionError } from '../Error.js';
 import type { Binding } from '../models/Binding.js';
 import type { BindingBuilder } from './BindingBuilder.js';
 import { calculatePlan } from '../planner/calculatePlan.js';
@@ -15,12 +15,7 @@ import type { Token } from '../Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
 export class Container implements interfaces.Container {
-	static #runningRequests: Set<Request<unknown>> = new Set();
 	static #currentRequest: Request<unknown> | undefined;
-
-	public static get isProcessingRequest(): boolean {
-		return this.#currentRequest != null;
-	}
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	readonly #incompleteBindings = new Set<BindingBuilder<any>>();
@@ -43,14 +38,15 @@ export class Container implements interfaces.Container {
 	}
 
 	/**
-	 * Attempt to resolve a token using the currently executing request.
+	 * Attempt to resolve a token using the currently executing request
 	 *
-	 * @deprecated
+	 * @remarks
 	 *
-	 * This function assumes there is only ever one running request at a time, but this is not a given since
-	 * all requests are processed asynchronously.
+	 * There is only a brief window where this is valid, while synchronously constructing a class. Because this relies on
+	 * only synchronous processing there is no chance of a race condition in JavaScript despite this relying on some
+	 * static shenanigans.
 	 */
-	public static resolve<T>(token: Token<T>, resolutionPath: Array<Token<unknown>>): T {
+	public static resolvePropertyInjection<T>(token: Token<T>, resolutionPath: Array<Token<unknown>>): T {
 		if (this.#currentRequest == null) {
 			throw new InvalidOperationError(
 				`Unable to resolve token as no container is currently making a request: ${token.identifier.toString()}`,
@@ -150,7 +146,13 @@ export class Container implements interfaces.Container {
 				}
 				case 'constructor': {
 					const args = getArgsForParameterInjections(getConstructorParameterInjections(binding.ctr));
-					return new binding.ctr(...args);
+
+					Container.#currentRequest = request;
+					try {
+						return new binding.ctr(...args);
+					} finally {
+						Container.#currentRequest = undefined;
+					}
 				}
 				default:
 					return isNever(binding, 'Unknown binding found');
@@ -163,9 +165,6 @@ export class Container implements interfaces.Container {
 	): Promise<T> => {
 		this.#validateBindings();
 		const token = tokenForIdentifier(id);
-		if ([...Container.#runningRequests.values()].find((v) => v.token === token && v.container === this) != null) {
-			throw new RecursiveResolutionError('Recursive request detected', [token]);
-		}
 
 		const request: Request<T> = {
 			container: this,
@@ -190,15 +189,7 @@ export class Container implements interfaces.Container {
 		);
 		this.#log({ id, options, plan }, 'Processing request');
 
-		const lastRequest = Container.#currentRequest;
-		Container.#currentRequest = request;
-		Container.#runningRequests.add(request);
-		try {
-			return await executePlan(plan, request);
-		} finally {
-			Container.#runningRequests.delete(request);
-			Container.#currentRequest = lastRequest;
-		}
+		return executePlan(plan, request);
 	};
 
 	public has: interfaces.IsBoundFunction = (id) => {
