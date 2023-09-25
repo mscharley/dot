@@ -9,17 +9,31 @@ import type { ScopeOptions } from './ScopeOptions.js';
  */
 export interface ContainerConfiguration {
 	/**
+	 * Whether to automatically bind class to themselves in this container (default: `false`)
+	 *
+	 * @remarks
+	 *
+	 * This still requires the `@injectable` annotation on the class in order to be considered a valid thing to be
+	 * injected. Otherwise this is the same as calling `bind(MyClass).toSelf()` on all classes.
+	 */
+	readonly autobindClasses: boolean;
+
+	/**
 	 * The default scope for all bindings in this container (default: `"transient"`)
 	 */
 	readonly defaultScope: ScopeOptions;
 
 	/**
-	 * If provided, this will write trace logs
+	 * If provided, the container will write logs using this interface
 	 */
 	readonly logger: Logger;
 
 	/**
-	 * Level to log all messages at (default: `"debug"`)
+	 * Level to log most messages at (default: `"debug"`)
+	 *
+	 * @remarks
+	 *
+	 * There are some cases where other levels will be used, like warn for any warnings.
 	 */
 	readonly logLevel: LoggerLevel;
 

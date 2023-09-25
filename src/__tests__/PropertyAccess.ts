@@ -6,6 +6,7 @@ import { tc39 } from '../__utils__/DecoratorTypes.js';
 import { Token } from '../Token.js';
 
 const prop = new Token<string>('bar');
+
 @injectable()
 class Foo {
 	@inject(prop)

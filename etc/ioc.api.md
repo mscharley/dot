@@ -5,7 +5,14 @@
 ```ts
 
 // @public
-type ArgsForInjectionIdentifiers<Tokens extends Array<InjectionIdentifier<unknown>>> = {
+type ArgsForConstructorIdentifiers<Tokens extends [...Array<InjectionIdentifier<unknown>>]> = {
+    [Index in keyof Tokens]: InjectedType<Tokens[Index]>;
+} & {
+    length: Tokens['length'];
+};
+
+// @public
+type ArgsForFnIdentifiers<Tokens extends [...Array<InjectionIdentifier<unknown>>]> = {
     [Index in keyof Tokens]: InjectedType<Tokens[Index]>;
 };
 
@@ -15,7 +22,7 @@ type AsyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound
 // @public
 interface Binder<in out T> {
     toConstantValue: ((v: T) => void) & ((v: Promise<T>) => Promise<void>);
-    toDynamicValue: <Tokens extends Array<InjectionIdentifier<unknown>>>(dependencies: Tokens, fn: Fn<T | Promise<T>, ArgsForInjectionIdentifiers<Tokens>>) => void;
+    toDynamicValue: <Tokens extends Array<InjectionIdentifier<unknown>>>(dependencies: Tokens, fn: Fn<T | Promise<T>, ArgsForFnIdentifiers<Tokens>>) => void;
 }
 
 // @public
@@ -49,7 +56,7 @@ interface ClassBindingBuilder<in out T extends object> extends Binder<T>, Bindin
 }
 
 // @public
-type Constructor<out T extends object, in Args extends unknown[] = any> = new (...args: Args) => T;
+type Constructor<out T, in Args extends unknown[] = any> = new (...args: Args) => T;
 
 // Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
 //
@@ -90,6 +97,7 @@ interface Container {
 
 // @public
 interface ContainerConfiguration {
+    readonly autobindClasses: boolean;
     readonly defaultScope: ScopeOptions;
     readonly logger: Logger;
     readonly logLevel: LoggerLevel;
@@ -126,7 +134,7 @@ type ImplicitScopeBindingOptions = 'toConstantValue';
 export const inject: InjectDecoratorFactory;
 
 // @public
-export const injectable: <Tokens extends interfaces.InjectionIdentifier<unknown>[]>(...constructorTokens: Tokens) => InjectableDecorator<interfaces.ArgsForInjectionIdentifiers<Tokens>>;
+export const injectable: <Tokens extends interfaces.InjectionIdentifier<unknown>[]>(...constructorTokens: Tokens) => InjectableDecorator<interfaces.ArgsForConstructorIdentifiers<Tokens>>;
 
 // @public
 export interface InjectableDecorator<Args extends unknown[]> {
@@ -166,7 +174,7 @@ export interface InjectDecoratorFactory {
 type InjectedType<T extends InjectionIdentifier<unknown>> = T extends ServiceIdentifier<infer U> ? U : T extends [ServiceIdentifier<infer U>] ? U : T extends DirectInjection<infer U> ? U : never;
 
 // @public
-type InjectionIdentifier<T> = DirectInjection<T> | ServiceIdentifier<T> | [ServiceIdentifier<T>, Partial<InjectOptions>];
+type InjectionIdentifier<T> = ServiceIdentifier<T> | [ServiceIdentifier<T>, Partial<InjectOptions>] | DirectInjection<T>;
 
 // @public
 interface InjectOptions {
@@ -195,7 +203,8 @@ declare namespace interfaces {
         IsBoundFunction,
         RebindFunction,
         UnbindFunction,
-        ArgsForInjectionIdentifiers,
+        ArgsForConstructorIdentifiers,
+        ArgsForFnIdentifiers,
         InjectedType,
         InjectionIdentifier,
         InjectOptions,
@@ -265,7 +274,7 @@ export abstract class ResolutionError extends IocError {
 type ScopeOptions = 'transient' | 'request' | 'singleton';
 
 // @public
-type ServiceIdentifier<T> = Token<T> | (T extends object ? Constructor<T> : never);
+type ServiceIdentifier<T> = Token<T> | Constructor<T>;
 
 // @public
 export const stringifyIdentifier: <T>(id: interfaces.ServiceIdentifier<T>) => string;

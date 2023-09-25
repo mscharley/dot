@@ -1,7 +1,6 @@
 import type * as interfaces from '../interfaces/index.js';
 import type { Injection } from '../models/Injection.js';
 import { Token } from '../Token.js';
-import { tokenForIdentifier } from './tokenForIdentifier.js';
 
 export const injectionFromIdentifier = <T>(id: interfaces.InjectionIdentifier<T>, index: number): Injection<T> => {
 	const token = Array.isArray(id) ? id[0] : id;
@@ -10,7 +9,7 @@ export const injectionFromIdentifier = <T>(id: interfaces.InjectionIdentifier<T>
 		return {
 			type: 'constructorParameter',
 			index,
-			token: tokenForIdentifier(token),
+			id: token,
 			options: {
 				multiple: false,
 				optional: false,
@@ -21,7 +20,7 @@ export const injectionFromIdentifier = <T>(id: interfaces.InjectionIdentifier<T>
 		return {
 			type: 'unmanagedConstructorParameter',
 			index,
-			token: token.token,
+			id: token.token,
 			options: {
 				multiple: false,
 				optional: false,

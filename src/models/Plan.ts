@@ -14,6 +14,7 @@ export interface CreateInstance<T = unknown> {
 	type: 'createClass';
 	cache: 'singleton' | 'request' | undefined;
 	generate: () => T | Promise<T>;
+	id: interfaces.ServiceIdentifier<T>;
 	token: Token<T>;
 	binding: Binding<T> | undefined;
 	expectedTokensUsed: Array<Token<unknown>>;

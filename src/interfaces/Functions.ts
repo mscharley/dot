@@ -7,7 +7,7 @@ import type { ServiceIdentifier } from './ServiceIdentifier.js';
  * @public
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Constructor<out T extends object, in Args extends unknown[] = any> = new (...args: Args) => T;
+export type Constructor<out T, in Args extends unknown[] = any> = new (...args: Args) => T;
 
 /**
  * Helper for defining functions

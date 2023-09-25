@@ -39,6 +39,9 @@ describe('Logging', () => {
 		          "cache": undefined,
 		          "expectedTokensUsed": [],
 		          "generate": [Function],
+		          "id": Token {
+		            "identifier": Symbol(str),
+		          },
 		          "resolutionPath": [
 		            Token {
 		              "identifier": Symbol(str),

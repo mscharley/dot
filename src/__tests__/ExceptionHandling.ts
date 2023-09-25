@@ -7,6 +7,7 @@ import { injectable } from '../decorators/injectable.js';
 import { Token } from '../Token.js';
 
 const token = new Token<{ id: number }>('error-handling');
+@injectable()
 class Test {
 	public constructor() {
 		throw new Error('Oops, something bad happened.');

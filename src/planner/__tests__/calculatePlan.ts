@@ -17,19 +17,20 @@ describe('calculatePlan', () => {
 		const bob = new Test('Bob');
 
 		const plan = calculatePlan(
-			[
-				{
-					type: 'static',
-					token: testToken,
-					id: Test,
-					scope: 'request',
-					value: bob,
-				} satisfies Binding<Test> as unknown as Binding<unknown>,
-			],
+			<T>(): Array<Binding<T>> =>
+				[
+					{
+						type: 'static',
+						token: testToken,
+						id: Test,
+						scope: 'request',
+						value: bob,
+					} satisfies Binding<Test>,
+				] as unknown as Array<Binding<T>>,
 			() => bob as never,
 			{
 				type: 'request',
-				token: testToken,
+				id: testToken,
 				options: {
 					multiple: false,
 					optional: false,
@@ -56,25 +57,26 @@ describe('calculatePlan', () => {
 	});
 
 	it('should not call any functions to create elements in order to generate the plan', () => {
-		const generator = jest.fn();
+		const generator = jest.fn<() => Test>();
 		const resolveBinding = jest.fn();
 
 		calculatePlan(
-			[
-				{
-					type: 'dynamic',
-					generator,
-					injections: [],
-					id: testToken,
-					token: testToken,
-					scope: 'request',
-				},
-			],
+			<T>(): Array<Binding<T>> =>
+				[
+					{
+						type: 'dynamic',
+						generator,
+						injections: [],
+						id: testToken,
+						token: testToken,
+						scope: 'request',
+					} satisfies Binding<Test>,
+				] as unknown as Array<Binding<T>>,
 			// eslint-disable-next-line @typescript-eslint/no-magic-numbers
 			resolveBinding as Parameters<typeof calculatePlan>[1],
 			{
 				type: 'request',
-				token: testToken,
+				id: testToken,
 				options: {
 					multiple: false,
 					optional: false,

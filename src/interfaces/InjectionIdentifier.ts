@@ -8,9 +8,9 @@ import type { ServiceIdentifier } from './ServiceIdentifier.js';
  * @public
  */
 export type InjectionIdentifier<T> =
-	| DirectInjection<T>
 	| ServiceIdentifier<T>
-	| [ServiceIdentifier<T>, Partial<InjectOptions>];
+	| [ServiceIdentifier<T>, Partial<InjectOptions>]
+	| DirectInjection<T>;
 
 /**
  * Helper type which is used to map an {@link interfaces.InjectionIdentifier | InjectionIdentifier} into the type that will be injected
@@ -26,10 +26,19 @@ export type InjectedType<T extends InjectionIdentifier<unknown>> = T extends Ser
 	: never;
 
 /**
- * Mapped type to convert the parameters to the `@injectable` decorator into the parameters for the constructor
+ * Mapped type to convert the a list of injection parameters into a list of injectable values
  *
  * @public
  */
-export type ArgsForInjectionIdentifiers<Tokens extends Array<InjectionIdentifier<unknown>>> = {
+export type ArgsForConstructorIdentifiers<Tokens extends [...Array<InjectionIdentifier<unknown>>]> = {
+	[Index in keyof Tokens]: InjectedType<Tokens[Index]>;
+} & { length: Tokens['length'] };
+
+/**
+ * Mapped type to convert the a list of injection parameters into a list of injectable values
+ *
+ * @public
+ */
+export type ArgsForFnIdentifiers<Tokens extends [...Array<InjectionIdentifier<unknown>>]> = {
 	[Index in keyof Tokens]: InjectedType<Tokens[Index]>;
 };
