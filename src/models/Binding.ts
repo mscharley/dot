@@ -2,7 +2,7 @@ import type * as interfaces from '../interfaces/index.js';
 import type { Injection } from './Injection.js';
 import type { Token } from '../Token.js';
 
-export interface ConstructorBinding<out T extends object> {
+export interface ConstructorBinding<out T> {
 	type: 'constructor';
 	id: interfaces.ServiceIdentifier<T>;
 	token: Token<T>;
@@ -18,7 +18,7 @@ export interface StaticBinding<out T> {
 	value: T;
 }
 
-export interface DynamicBinding<in out T> {
+export interface DynamicBinding<out T> {
 	type: 'dynamic';
 	id: interfaces.ServiceIdentifier<T>;
 	token: Token<T>;
@@ -27,7 +27,4 @@ export interface DynamicBinding<in out T> {
 	generator: (...args: unknown[]) => T | Promise<T>;
 }
 
-export type Binding<T = object> =
-	| (T extends object ? ConstructorBinding<T> : never)
-	| StaticBinding<T>
-	| DynamicBinding<T>;
+export type Binding<T> = ConstructorBinding<T> | StaticBinding<T> | DynamicBinding<T>;

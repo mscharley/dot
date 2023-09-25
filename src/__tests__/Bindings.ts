@@ -147,14 +147,13 @@ describe('Bindings', () => {
 
 		describe('to()', () => {
 			it('constructs a new instance', async () => {
+				@injectable()
+				class Test {
+					public id = 10;
+				}
+
 				const c = new Container();
-				c.bind(token)
-					.inSingletonScope()
-					.to(
-						class {
-							public id = 10;
-						},
-					);
+				c.bind(token).inSingletonScope().to(Test);
 
 				const resolved = await c.get(token);
 				expect(resolved).toMatchObject({ id: 10 });

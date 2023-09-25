@@ -1,4 +1,4 @@
-import type { ArgsForInjectionIdentifiers, InjectionIdentifier } from './InjectionIdentifier.js';
+import type { ArgsForFnIdentifiers, InjectionIdentifier } from './InjectionIdentifier.js';
 import type { Fn } from './Functions.js';
 
 /**
@@ -34,6 +34,6 @@ export interface Binder<in out T> {
 	 */
 	toDynamicValue: <Tokens extends Array<InjectionIdentifier<unknown>>>(
 		dependencies: Tokens,
-		fn: Fn<T | Promise<T>, ArgsForInjectionIdentifiers<Tokens>>,
+		fn: Fn<T | Promise<T>, ArgsForFnIdentifiers<Tokens>>,
 	) => void;
 }

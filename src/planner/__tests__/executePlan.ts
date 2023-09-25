@@ -11,6 +11,7 @@ const basicRequest = <T>(token: Token<T>): Request<T> => ({
 	singletonCache: new ResolutionCache(),
 	stack: {},
 	token,
+	id: token,
 });
 
 const strToken = new Token<string>('string');
@@ -26,6 +27,7 @@ describe('executePlan', () => {
 						cache: undefined,
 						binding: undefined,
 						expectedTokensUsed: [],
+						id: strToken,
 						token: strToken,
 						generate: (): string => 'Hello',
 						resolutionPath: [strToken],
@@ -35,6 +37,7 @@ describe('executePlan', () => {
 						cache: undefined,
 						binding: undefined,
 						expectedTokensUsed: [],
+						id: numToken,
 						token: numToken,
 						generate: (): number => 1,
 						resolutionPath: [numToken],
@@ -44,6 +47,7 @@ describe('executePlan', () => {
 						cache: undefined,
 						binding: undefined,
 						expectedTokensUsed: [],
+						id: strToken,
 						token: strToken,
 						generate: (): string => 'world',
 						resolutionPath: [strToken],
@@ -72,6 +76,7 @@ describe('executePlan', () => {
 						cache: undefined,
 						binding: undefined,
 						expectedTokensUsed: [],
+						id: strToken,
 						token: strToken,
 						generate: (): string => 'Hello world!',
 						resolutionPath: [strToken],

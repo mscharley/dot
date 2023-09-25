@@ -1,6 +1,6 @@
 import type * as interfaces from '../interfaces/index.js';
+import type { Binding, ConstructorBinding } from '../models/Binding.js';
 import { InvalidOperationError, TokenResolutionError } from '../Error.js';
-import type { Binding } from '../models/Binding.js';
 import type { BindingBuilder } from './BindingBuilder.js';
 import { calculatePlan } from '../planner/calculatePlan.js';
 import { ClassBindingBuilder } from './BindingBuilder.js';
@@ -28,6 +28,7 @@ export class Container implements interfaces.Container {
 
 	public constructor(config?: Partial<interfaces.ContainerConfiguration>) {
 		this.config = {
+			autobindClasses: false,
 			defaultScope: 'transient',
 			logLevel: 'debug',
 			logger: { debug: noop, info: noop, trace: noop, warn: noop },
@@ -124,6 +125,25 @@ export class Container implements interfaces.Container {
 		this.#bindings.push(binding as Binding<unknown>);
 	};
 
+	#getBindings = <T>(id: interfaces.ServiceIdentifier<T>): Array<Binding<T>> => {
+		const token = tokenForIdentifier(id);
+		const explicitBindings = this.#bindings.filter((b) => b.token.identifier === token.identifier) as Array<Binding<T>>;
+
+		if (this.config.autobindClasses && explicitBindings.length === 0 && typeof id === 'function') {
+			return [
+				{
+					type: 'constructor',
+					ctr: id,
+					id,
+					token: tokenForIdentifier(id),
+					scope: this.config.defaultScope,
+				} satisfies ConstructorBinding<T>,
+			];
+		}
+
+		return explicitBindings;
+	};
+
 	#resolveBinding =
 		(request: Request<unknown>) =>
 		<T>(binding: Binding<T>, resolutionPath: Array<Token<unknown>>): T | Promise<T> => {
@@ -134,7 +154,7 @@ export class Container implements interfaces.Container {
 					.map((i) =>
 						i.type === 'unmanagedConstructorParameter'
 							? i.value.generator()
-							: this.resolve(i.token, request, resolutionPath),
+							: this.resolve(tokenForIdentifier(i.id), request, resolutionPath),
 					);
 
 			switch (binding.type) {
@@ -164,16 +184,16 @@ export class Container implements interfaces.Container {
 		options?: Partial<interfaces.InjectOptions>,
 	): Promise<T> => {
 		this.#validateBindings();
-		const token = tokenForIdentifier(id);
 
 		const request: Request<T> = {
 			container: this,
 			stack: {},
 			singletonCache: this.#singletonCache,
-			token,
+			id,
+			token: tokenForIdentifier(id),
 		};
 		const plan = calculatePlan<T>(
-			this.#bindings,
+			this.#getBindings,
 			this.#resolveBinding(request),
 			{
 				type: 'request',
@@ -182,7 +202,7 @@ export class Container implements interfaces.Container {
 					optional: false,
 					...options,
 				},
-				token,
+				id,
 			},
 			[],
 			this.config.parent,

@@ -11,4 +11,4 @@ import type { Token } from '../Token.js';
  *
  * @public
  */
-export type ServiceIdentifier<T> = Token<T> | (T extends object ? Constructor<T> : never);
+export type ServiceIdentifier<T> = Token<T> | Constructor<T>;

@@ -74,7 +74,7 @@ export const inject: InjectDecoratorFactory = <T>(
 			addInjection({
 				type: 'property',
 				name: context as Exclude<typeof context, ClassFieldDecoratorContext<unknown, T>>,
-				token,
+				id: id,
 				options: opts,
 			});
 
@@ -85,7 +85,7 @@ export const inject: InjectDecoratorFactory = <T>(
 			addInjection({
 				type: 'property',
 				name: (context as ClassFieldDecoratorContext<unknown, T>).name,
-				token,
+				id: id,
 				options: opts,
 			});
 

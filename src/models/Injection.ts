@@ -1,17 +1,16 @@
 import type * as interfaces from '../interfaces/index.js';
-import type { Token } from '../Token.js';
 
 export interface PropertyInjection<T = unknown> {
 	type: 'property';
 	name: string | symbol;
-	token: Token<T>;
+	id: interfaces.ServiceIdentifier<T>;
 	options: interfaces.InjectOptions;
 }
 
 export interface UnmanagedConstructorParameterInjection<T = unknown> {
 	type: 'unmanagedConstructorParameter';
 	index: number;
-	token: Token<T>;
+	id: interfaces.ServiceIdentifier<T>;
 	value: interfaces.DirectInjection<T>;
 	options: interfaces.InjectOptions;
 }
@@ -19,13 +18,13 @@ export interface UnmanagedConstructorParameterInjection<T = unknown> {
 export interface ConstructorParameterInjection<T = unknown> {
 	type: 'constructorParameter';
 	index: number;
-	token: Token<T>;
+	id: interfaces.ServiceIdentifier<T>;
 	options: interfaces.InjectOptions;
 }
 
 export interface RequestInjection<T = unknown> {
 	type: 'request';
-	token: Token<T>;
+	id: interfaces.ServiceIdentifier<T>;
 	options: interfaces.InjectOptions;
 }
 
@@ -35,4 +34,4 @@ export type Injection<T> =
 	| ConstructorParameterInjection<T>
 	| RequestInjection<T>;
 
-export type InjectionRegistry = WeakMap<interfaces.Constructor<object, unknown[]>, Array<Injection<unknown>>>;
+export type InjectionRegistry = WeakMap<interfaces.Constructor<unknown, unknown[]>, Array<Injection<unknown>>>;

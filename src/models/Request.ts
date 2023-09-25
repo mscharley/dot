@@ -1,3 +1,4 @@
+import type * as interfaces from '../interfaces/index.js';
 import type { Container } from '../interfaces/Container.js';
 import type { ResolutionCache } from '../container/ResolutionCache.js';
 import type { Token } from '../Token.js';
@@ -7,4 +8,5 @@ export interface Request<T> {
 	stack: Record<symbol, unknown[]>;
 	singletonCache: ResolutionCache;
 	token: Token<T>;
+	id: interfaces.ServiceIdentifier<T>;
 }

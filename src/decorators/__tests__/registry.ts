@@ -15,7 +15,7 @@ class TestClass {
 registerInjection(TestClass, {
 	type: 'request',
 	options: { multiple: false, optional: false },
-	token: new Token<TestClass>('registry.class'),
+	id: new Token<TestClass>('registry.class'),
 });
 
 describe('registry', () => {
@@ -31,8 +31,8 @@ describe('registry', () => {
 			expect(getInjections(TestClass)).toMatchSnapshot();
 		});
 
-		it('gets an empty array for a random class', () => {
-			expect(getInjections(class {})).toStrictEqual([]);
+		it('throws an error for a random class', () => {
+			expect(() => getInjections(class FirstTest {})).toThrowError('No @injectable() decorator for class: FirstTest');
 		});
 	});
 
@@ -41,8 +41,8 @@ describe('registry', () => {
 			expect(getPropertyInjections(TestClass)).toMatchSnapshot();
 		});
 
-		it('gets an empty array for a random class', () => {
-			expect(getPropertyInjections(class {})).toStrictEqual([]);
+		it('throws an error for a random class', () => {
+			expect(() => getInjections(class SecondTest {})).toThrowError('No @injectable() decorator for class: SecondTest');
 		});
 	});
 });

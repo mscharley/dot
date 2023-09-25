@@ -6,6 +6,7 @@ import { getInjections } from '../decorators/registry.js';
 import type { Injection } from '../models/Injection.js';
 import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 import type { Token } from '../Token.js';
+import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
 const planBinding = <T>(
 	binding: Binding<T>,
@@ -38,8 +39,9 @@ const planBinding = <T>(
 				const value = await resolveBinding(binding, resolutionPath);
 				return input.options.multiple ? ([value] as T) : value;
 			},
+			id: binding.id,
 			token: binding.token,
-			expectedTokensUsed: injections.map((i) => i.token),
+			expectedTokensUsed: injections.map((i) => tokenForIdentifier(i.id)),
 			cache,
 			binding,
 			resolutionPath,
@@ -48,7 +50,7 @@ const planBinding = <T>(
 };
 
 export const calculatePlan = <T>(
-	bindings: Array<Binding<unknown>>,
+	getBindings: <U>(id: interfaces.ServiceIdentifier<U>) => Array<Binding<U>>,
 	resolveBinding: <U>(binding: Binding<U>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
 	input: Injection<T>,
 	resolutionPath: Array<Token<unknown>>,
@@ -58,12 +60,13 @@ export const calculatePlan = <T>(
 		// Unmanaged constructor parameters are dealt with as static values and don't need any plan to resolve them.
 		return [];
 	}
-	const token = input.token;
+	const id = input.id;
+	const token = tokenForIdentifier(id);
 	if (resolutionPath.includes(token)) {
 		throw new RecursiveResolutionError('Recursive binding detected', [...resolutionPath, token]);
 	}
 
-	const binds = bindings.filter((v) => v.token === token);
+	const binds = getBindings(id);
 	if (!input.options.multiple && binds.length > 1) {
 		throw new TokenResolutionError(
 			'Unable to resolve token',
@@ -78,6 +81,7 @@ export const calculatePlan = <T>(
 				{
 					type: 'createClass',
 					generate: () => (input.options.multiple ? [] : undefined) as T,
+					id,
 					token,
 					binding: undefined,
 					expectedTokensUsed: [],
@@ -98,13 +102,13 @@ export const calculatePlan = <T>(
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const binding = binds[0]!;
 		return planBinding(binding, input, [...resolutionPath, token], resolveBinding, (i) =>
-			calculatePlan(bindings, resolveBinding, i, [...resolutionPath, token]),
+			calculatePlan(getBindings, resolveBinding, i, [...resolutionPath, token]),
 		) as Plan<T>;
 	} else {
 		return [
 			...(binds.flatMap((b) =>
 				planBinding(b, input, [...resolutionPath, token], resolveBinding, (i) =>
-					calculatePlan(bindings, resolveBinding, i, [...resolutionPath, token]),
+					calculatePlan(getBindings, resolveBinding, i, [...resolutionPath, token]),
 				),
 			) as Plan<T>),
 			{

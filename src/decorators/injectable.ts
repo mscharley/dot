@@ -1,8 +1,9 @@
 import type * as interfaces from '../interfaces/index.js';
-import { getPropertyInjections, registerInjection } from './registry.js';
+import { ensureRegistration, getPropertyInjections, registerInjection } from './registry.js';
 import { Container } from '../container/Container.js';
 import type { Injection } from '../models/Injection.js';
 import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
+import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
 /**
  * ConstructorTypesafe definition of a class decorator
@@ -24,14 +25,15 @@ export interface InjectableDecorator<Args extends unknown[]> {
 }
 
 const _injections: Array<Injection<unknown>> = [];
-export const addInjection = (injection: Injection<unknown>): void => {
+export const addInjection = <T>(injection: Injection<T>): void => {
 	_injections.push(injection);
 };
 
 const _configureInjectable = <T extends object, Tokens extends Array<interfaces.InjectionIdentifier<unknown>>>(
-	klass: interfaces.Constructor<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>,
+	klass: interfaces.Constructor<T, interfaces.ArgsForConstructorIdentifiers<Tokens>>,
 	constructorTokens: Tokens,
 ): void => {
+	ensureRegistration(klass);
 	_injections.splice(0).forEach((injection) => {
 		registerInjection(klass, injection);
 	});
@@ -70,13 +72,13 @@ const _configureInjectable = <T extends object, Tokens extends Array<interfaces.
  */
 export const injectable = <Tokens extends Array<interfaces.InjectionIdentifier<unknown>>>(
 	...constructorTokens: Tokens
-): InjectableDecorator<interfaces.ArgsForInjectionIdentifiers<Tokens>> =>
+): InjectableDecorator<interfaces.ArgsForConstructorIdentifiers<Tokens>> =>
 	(<T extends object>(
-		target: interfaces.Constructor<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>,
+		target: interfaces.Constructor<T, interfaces.ArgsForConstructorIdentifiers<Tokens>>,
 		context?:
 			| undefined
-			| ClassDecoratorContext<interfaces.Constructor<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>>,
-	): undefined | interfaces.Constructor<T, interfaces.ArgsForInjectionIdentifiers<Tokens>> => {
+			| ClassDecoratorContext<interfaces.Constructor<T, interfaces.ArgsForConstructorIdentifiers<Tokens>>>,
+	): undefined | interfaces.Constructor<T, interfaces.ArgsForConstructorIdentifiers<Tokens>> => {
 		/* c8 ignore start */
 		if (context == null) {
 			// experimental
@@ -84,9 +86,10 @@ export const injectable = <Tokens extends Array<interfaces.InjectionIdentifier<u
 			const klass = ((): typeof target =>
 				// @ts-expect-error - TypeScript doesn't like this construct when using the generic interface types.
 				class extends target {
-					public constructor(...args: interfaces.ArgsForInjectionIdentifiers<Tokens>) {
+					public constructor(...args: interfaces.ArgsForConstructorIdentifiers<Tokens>) {
 						super(...(args as never));
-						getPropertyInjections(klass).forEach(({ name, token }) => {
+						getPropertyInjections(klass).forEach(({ name, id }) => {
+							const token = tokenForIdentifier(id);
 							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
 							(this as any)[name] = Container.resolvePropertyInjection(token, [token]);
 						});
@@ -102,4 +105,4 @@ export const injectable = <Tokens extends Array<interfaces.InjectionIdentifier<u
 
 			return undefined;
 		}
-	}) as InjectableDecorator<interfaces.ArgsForInjectionIdentifiers<Tokens>>;
+	}) as InjectableDecorator<interfaces.ArgsForConstructorIdentifiers<Tokens>>;
