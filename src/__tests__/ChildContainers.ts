@@ -33,6 +33,15 @@ describe('ChildContainers', () => {
 		await expect(child.get(token)).resolves.toBe('Hello world!');
 	});
 
+	it('can request things from the parent from a dynamic value', async () => {
+		const name = new Token<string>('name');
+		container.bind(name).toConstantValue('world');
+		const child = container.createChild();
+		child.bind(token).toDynamicValue([name], (n) => `Hello ${n}!`);
+
+		await expect(child.get(token)).resolves.toBe('Hello world!');
+	});
+
 	it('can cache things in the parent container', async () => {
 		const factory = jest.fn<() => string>(() => 'Hello world!');
 		container.bind(token).inSingletonScope().toDynamicValue([], factory);

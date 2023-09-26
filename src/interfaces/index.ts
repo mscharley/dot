@@ -6,6 +6,7 @@ export type { Container } from './Container.js';
 export type { ContainerConfiguration } from './ContainerConfiguration.js';
 export type { AsyncContainerModule, ContainerModule, SyncContainerModule } from './ContainerModule.js';
 export type { DirectInjection } from './DirectInjection.js';
+export type { FactoryContext } from './FactoryContext.js';
 export type { Constructor, Fn, BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions.js';
 export type {
 	ArgsForConstructorIdentifiers,

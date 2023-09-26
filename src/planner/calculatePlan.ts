@@ -102,13 +102,13 @@ export const calculatePlan = <T>(
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const binding = binds[0]!;
 		return planBinding(binding, input, [...resolutionPath, token], resolveBinding, (i) =>
-			calculatePlan(getBindings, resolveBinding, i, [...resolutionPath, token]),
+			calculatePlan(getBindings, resolveBinding, i, [...resolutionPath, token], parent),
 		) as Plan<T>;
 	} else {
 		return [
 			...(binds.flatMap((b) =>
 				planBinding(b, input, [...resolutionPath, token], resolveBinding, (i) =>
-					calculatePlan(getBindings, resolveBinding, i, [...resolutionPath, token]),
+					calculatePlan(getBindings, resolveBinding, i, [...resolutionPath, token], parent),
 				),
 			) as Plan<T>),
 			{
