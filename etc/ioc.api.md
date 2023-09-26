@@ -23,6 +23,7 @@ type AsyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound
 interface Binder<in out T> {
     toConstantValue: ((v: T) => void) & ((v: Promise<T>) => Promise<void>);
     toDynamicValue: <Tokens extends Array<InjectionIdentifier<unknown>>>(dependencies: Tokens, fn: Fn<T | Promise<T>, ArgsForFnIdentifiers<Tokens>>) => void;
+    toFactory: <Tokens extends Array<InjectionIdentifier<unknown>>>(dependencies: Tokens, fn: (context: FactoryContext) => Fn<T | Promise<T>, ArgsForFnIdentifiers<Tokens>>) => void;
 }
 
 // @public
@@ -123,6 +124,11 @@ type DirectInjection<T> = {
 export type ErrorCode = 'RECURSIVE_RESOLUTION' | 'TOKEN_RESOLUTION' | 'INVALID_OPERATION';
 
 // @public
+interface FactoryContext {
+    container: Pick<Container, 'createChild' | 'config'>;
+}
+
+// @public
 type Fn<out T, in Args extends unknown[] = any> = (...args: Args) => T;
 
 // Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
@@ -197,6 +203,7 @@ declare namespace interfaces {
         ContainerModule,
         SyncContainerModule,
         DirectInjection,
+        FactoryContext,
         Constructor,
         Fn,
         BindFunction,
