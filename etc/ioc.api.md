@@ -68,7 +68,7 @@ interface Container {
     // (undocumented)
     bind: BindFunction;
     readonly config: ContainerConfiguration;
-    createChild: (options?: Partial<ContainerConfiguration>) => Container;
+    createChild: ContainerFactory;
     get: {
         <T>(id: ServiceIdentifier<T>, options: Partial<InjectOptions> & {
             multiple: true;
@@ -107,12 +107,15 @@ interface ContainerConfiguration {
 }
 
 // @public
+type ContainerFactory = (options?: Partial<ContainerConfiguration>) => Container;
+
+// @public
 type ContainerModule = AsyncContainerModule | SyncContainerModule;
 
 // Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
 //
 // @public
-export const createContainer: (config?: Partial<interfaces.ContainerConfiguration>) => interfaces.Container;
+export const createContainer: interfaces.ContainerFactory;
 
 // @public
 type DirectInjection<T> = {
@@ -199,6 +202,7 @@ declare namespace interfaces {
         ClassBinder,
         Container,
         ContainerConfiguration,
+        ContainerFactory,
         AsyncContainerModule,
         ContainerModule,
         SyncContainerModule,

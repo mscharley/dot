@@ -1,6 +1,7 @@
 import type { AsyncContainerModule, SyncContainerModule } from './ContainerModule.js';
 import type { BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions.js';
 import type { ContainerConfiguration } from './ContainerConfiguration.js';
+import type { ContainerFactory } from './ContainerFactory.js';
 import type { InjectOptions } from './InjectOptions.js';
 import type { ServiceIdentifier } from './ServiceIdentifier.js';
 
@@ -38,7 +39,7 @@ export interface Container {
 	/**
 	 * Create a child container
 	 */
-	createChild: (options?: Partial<ContainerConfiguration>) => Container;
+	createChild: ContainerFactory;
 
 	/**
 	 * Make a request from this container

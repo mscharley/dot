@@ -97,8 +97,7 @@ import { Container } from './container/Container.js';
  *
  * @public
  */
-export const createContainer = (config?: Partial<interfaces.ContainerConfiguration>): interfaces.Container =>
-	new Container(config);
+export const createContainer: interfaces.ContainerFactory = (config) => new Container(config);
 
 export type { interfaces };
 export type { InjectDecorator, InjectDecoratorFactory } from './decorators/inject.js';
