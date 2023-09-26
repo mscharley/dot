@@ -1,5 +1,6 @@
 import type * as interfaces from '../interfaces/index.js';
 import type { Binding, ConstructorBinding, DynamicBinding } from '../models/Binding.js';
+import type { Container } from './Container.js';
 import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
 import { InvalidOperationError } from '../Error.js';
 import { isConstructor } from '../util/isConstructor.js';
@@ -11,24 +12,22 @@ import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 	protected scope: interfaces.ScopeOptions;
 	protected explicitScope = false;
-	protected readonly addBinding: (builder: BindingBuilder<T>, binding: Binding<T>) => void;
 	public readonly token: Token<T>;
 
 	public constructor(
 		public readonly id: interfaces.ServiceIdentifier<T>,
 		containerConfiguration: interfaces.ContainerConfiguration,
 		protected readonly warn: interfaces.LoggerFn,
-		addBinding: (builder: BindingBuilder<T>, binding: Binding<T>) => void,
+		protected readonly container: Container,
 	) {
 		this.token = tokenForIdentifier(id);
 		this.scope = containerConfiguration.defaultScope;
-		this.addBinding = addBinding;
 	}
 
 	public toConstantValue = ((value): void | Promise<void> => {
 		if (isPromise(value)) {
 			return value.then((v) =>
-				this.addBinding(this, {
+				this.container.addBinding(this, {
 					type: 'static',
 					id: this.id,
 					token: this.token,
@@ -37,7 +36,7 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 				}),
 			);
 		} else {
-			return this.addBinding(this, {
+			return this.container.addBinding(this, {
 				type: 'static',
 				id: this.id,
 				token: this.token,
@@ -60,7 +59,7 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 			);
 		}
 
-		this.addBinding(this, {
+		this.container.addBinding(this, {
 			type: 'dynamic',
 			id: this.id,
 			token: this.token,
@@ -69,6 +68,12 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 			generator: factory as DynamicBinding<T>['generator'],
 		} satisfies DynamicBinding<T>);
 	};
+
+	public toFactory: interfaces.BindingBuilder<T>['toFactory'] = (deps, fn) =>
+		this.toDynamicValue(
+			deps,
+			fn({ container: { config: this.container.config, createChild: this.container.createChild } }),
+		);
 
 	public inSingletonScope = (): this => {
 		this.scope = 'singleton';
@@ -101,7 +106,7 @@ export class ClassBindingBuilder<T extends object>
 			scope: this.scope,
 			ctr,
 		};
-		this.addBinding(this, binding as Binding<T>);
+		this.container.addBinding(this, binding as Binding<T>);
 	};
 
 	public toSelf: interfaces.ClassBindingBuilder<T>['toSelf'] = () => {
@@ -118,6 +123,6 @@ export class ClassBindingBuilder<T extends object>
 			scope: this.scope,
 			ctr: this.id,
 		};
-		this.addBinding(this, binding as Binding<T>);
+		this.container.addBinding(this, binding as Binding<T>);
 	};
 }

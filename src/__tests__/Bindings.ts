@@ -1,3 +1,4 @@
+import type * as interfaces from '../interfaces/index.js';
 import { describe, expect, it, jest } from '@jest/globals';
 import { Container } from '../container/Container.js';
 import type { ErrorCode } from '../Error.js';
@@ -142,6 +143,30 @@ describe('Bindings', () => {
 				await c.get(token);
 
 				expect(warn).toHaveBeenCalledTimes(1);
+			});
+		});
+
+		describe('toFactory', () => {
+			it('can create a child container', async () => {
+				const c = new Container();
+				const childFactory = new Token<() => interfaces.Container>('childFactory');
+				const testToken = new Token<string>('test-child');
+
+				c.bind(token).toConstantValue({ id: 10 });
+				c.bind(childFactory)
+					.inSingletonScope()
+					.toFactory([], ({ container }) => () => (): interfaces.Container => {
+						const child = container.createChild();
+						child
+							.bind(testToken)
+							.inTransientScope()
+							.toDynamicValue([token], ({ id }) => id.toString());
+
+						return child;
+					});
+
+				const v = c.get(childFactory).then(async (cc) => cc().get(testToken));
+				await expect(v).resolves.toBe('10');
 			});
 		});
 

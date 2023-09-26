@@ -1,4 +1,5 @@
 import type { ArgsForFnIdentifiers, InjectionIdentifier } from './InjectionIdentifier.js';
+import type { FactoryContext } from './FactoryContext.js';
 import type { Fn } from './Functions.js';
 
 /**
@@ -35,5 +36,18 @@ export interface Binder<in out T> {
 	toDynamicValue: <Tokens extends Array<InjectionIdentifier<unknown>>>(
 		dependencies: Tokens,
 		fn: Fn<T | Promise<T>, ArgsForFnIdentifiers<Tokens>>,
+	) => void;
+
+	/**
+	 * Bind this identifier to a dynamic value with access to some extra context from the container
+	 *
+	 * @remarks
+	 *
+	 * The context provided to factories includes access to a very cut down version of the container and this factory must
+	 * resolve to a regular handler for toDynamicValue.
+	 */
+	toFactory: <Tokens extends Array<InjectionIdentifier<unknown>>>(
+		dependencies: Tokens,
+		fn: (context: FactoryContext) => Fn<T | Promise<T>, ArgsForFnIdentifiers<Tokens>>,
 	) => void;
 }

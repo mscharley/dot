@@ -89,7 +89,7 @@ export class Container implements interfaces.Container {
 			id as interfaces.ServiceIdentifier<object>,
 			this.config,
 			this.#warn,
-			this.addBinding,
+			this,
 		) as unknown as BindingBuilder<T>;
 		this.#incompleteBindings.add(binding);
 
