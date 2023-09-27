@@ -55,7 +55,7 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 		if (!this.explicitScope) {
 			this.warn(
 				{ id: stringifyIdentifier(this.id) },
-				'Using toDynamicValue() without an explicit scope can lead to performance issues. See https://github.com/mscharley/ioc-deco/discussions/80 for details.',
+				'Using toDynamicValue() or toFactory() without an explicit scope can lead to performance issues. See https://github.com/mscharley/ioc-deco/discussions/80 for details.',
 			);
 		}
 

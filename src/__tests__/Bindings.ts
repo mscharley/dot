@@ -137,7 +137,7 @@ describe('Bindings', () => {
 				expect(warn).toHaveBeenCalledTimes(1);
 				expect(warn).toBeCalledWith(
 					{ id: 'Token<Symbol(test)>' },
-					'Using toDynamicValue() without an explicit scope can lead to performance issues. See https://github.com/mscharley/ioc-deco/discussions/80 for details.',
+					'Using toDynamicValue() or toFactory() without an explicit scope can lead to performance issues. See https://github.com/mscharley/ioc-deco/discussions/80 for details.',
 				);
 
 				await c.get(token);
