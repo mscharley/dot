@@ -1,7 +1,6 @@
 import type { DirectInjection } from './DirectInjection.js';
 import type { InjectOptions } from './InjectOptions.js';
 import type { ServiceIdentifier } from './ServiceIdentifier.js';
-import { Token } from '../Token.js';
 
 /**
  * Valid options for parameters into the `@injectable` decorator

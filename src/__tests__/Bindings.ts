@@ -2,6 +2,7 @@ import type * as interfaces from '../interfaces/index.js';
 import { describe, expect, it, jest } from '@jest/globals';
 import { Container } from '../container/Container.js';
 import type { ErrorCode } from '../Error.js';
+import { ImportTest } from '../__utils__/ImportTest.js';
 import { injectable } from '../decorators/injectable.js';
 import type { LoggerFn } from '../interfaces/Logger.js';
 import { noop } from '../util/noop.js';
@@ -272,14 +273,10 @@ describe('Bindings', () => {
 	describe('Constructor service identifier', () => {
 		it('can use a class as a service identifier', async () => {
 			const c = new Container();
-			@injectable()
-			class Test {
-				public id = 10;
-			}
 
-			c.bind(Test).toSelf();
+			c.bind(ImportTest).toSelf();
 
-			await expect(c.get(Test)).resolves.toMatchObject({ id: 10 });
+			await expect(c.get(ImportTest)).resolves.toMatchObject({ id: 10 });
 		});
 	});
 });
