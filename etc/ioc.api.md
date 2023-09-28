@@ -5,15 +5,10 @@
 ```ts
 
 // @public
-type ArgsForConstructorIdentifiers<Tokens extends [...Array<InjectionIdentifier<unknown>>]> = {
+type ArgsForInjectionIdentifiers<Tokens extends [...Array<InjectionIdentifier<unknown>>]> = {
     [Index in keyof Tokens]: InjectedType<Tokens[Index]>;
 } & {
     length: Tokens['length'];
-};
-
-// @public
-type ArgsForFnIdentifiers<Tokens extends [...Array<InjectionIdentifier<unknown>>]> = {
-    [Index in keyof Tokens]: InjectedType<Tokens[Index]>;
 };
 
 // @public
@@ -22,8 +17,8 @@ type AsyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound
 // @public
 interface Binder<in out T> {
     toConstantValue: ((v: T) => void) & ((v: Promise<T>) => Promise<void>);
-    toDynamicValue: <Tokens extends Array<InjectionIdentifier<unknown>>>(dependencies: Tokens, fn: Fn<T | Promise<T>, ArgsForFnIdentifiers<Tokens>>) => void;
-    toFactory: <Tokens extends Array<InjectionIdentifier<unknown>>>(dependencies: Tokens, fn: (context: FactoryContext) => Fn<T | Promise<T>, ArgsForFnIdentifiers<Tokens>>) => void;
+    toDynamicValue: <Tokens extends Array<InjectionIdentifier<unknown>>>(dependencies: [...Tokens], fn: Fn<T | Promise<T>, ArgsForInjectionIdentifiers<Tokens>>) => void;
+    toFactory: <Tokens extends Array<InjectionIdentifier<unknown>>>(dependencies: [...Tokens], fn: (context: FactoryContext) => Fn<T | Promise<T>, ArgsForInjectionIdentifiers<Tokens>>) => void;
 }
 
 // @public
@@ -82,10 +77,7 @@ interface Container {
     //
     // (undocumented)
     has: IsBoundFunction;
-    load: {
-        (module: AsyncContainerModule): Promise<void>;
-        (module: SyncContainerModule): void;
-    };
+    load: <M extends ContainerModule>(module: M) => ReturnType<M>;
     // Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: This type of declaration is not supported yet by the resolver
     //
     // (undocumented)
@@ -143,7 +135,7 @@ type ImplicitScopeBindingOptions = 'toConstantValue';
 export const inject: InjectDecoratorFactory;
 
 // @public
-export const injectable: <Tokens extends interfaces.InjectionIdentifier<unknown>[]>(...constructorTokens: Tokens) => InjectableDecorator<interfaces.ArgsForConstructorIdentifiers<Tokens>>;
+export const injectable: <Tokens extends interfaces.InjectionIdentifier<unknown>[]>(...constructorTokens: Tokens) => InjectableDecorator<interfaces.ArgsForInjectionIdentifiers<Tokens>>;
 
 // @public
 export interface InjectableDecorator<Args extends unknown[]> {
@@ -214,8 +206,7 @@ declare namespace interfaces {
         IsBoundFunction,
         RebindFunction,
         UnbindFunction,
-        ArgsForConstructorIdentifiers,
-        ArgsForFnIdentifiers,
+        ArgsForInjectionIdentifiers,
         InjectedType,
         InjectionIdentifier,
         InjectOptions,

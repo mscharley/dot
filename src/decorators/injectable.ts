@@ -30,7 +30,7 @@ export const addInjection = <T>(injection: Injection<T>): void => {
 };
 
 const _configureInjectable = <T extends object, Tokens extends Array<interfaces.InjectionIdentifier<unknown>>>(
-	klass: interfaces.Constructor<T, interfaces.ArgsForConstructorIdentifiers<Tokens>>,
+	klass: interfaces.Constructor<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>,
 	constructorTokens: Tokens,
 ): void => {
 	ensureRegistration(klass);
@@ -72,13 +72,13 @@ const _configureInjectable = <T extends object, Tokens extends Array<interfaces.
  */
 export const injectable = <Tokens extends Array<interfaces.InjectionIdentifier<unknown>>>(
 	...constructorTokens: Tokens
-): InjectableDecorator<interfaces.ArgsForConstructorIdentifiers<Tokens>> =>
+): InjectableDecorator<interfaces.ArgsForInjectionIdentifiers<Tokens>> =>
 	(<T extends object>(
-		target: interfaces.Constructor<T, interfaces.ArgsForConstructorIdentifiers<Tokens>>,
+		target: interfaces.Constructor<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>,
 		context?:
 			| undefined
-			| ClassDecoratorContext<interfaces.Constructor<T, interfaces.ArgsForConstructorIdentifiers<Tokens>>>,
-	): undefined | interfaces.Constructor<T, interfaces.ArgsForConstructorIdentifiers<Tokens>> => {
+			| ClassDecoratorContext<interfaces.Constructor<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>>,
+	): undefined | interfaces.Constructor<T, interfaces.ArgsForInjectionIdentifiers<Tokens>> => {
 		/* c8 ignore start */
 		if (context == null) {
 			// experimental
@@ -86,7 +86,7 @@ export const injectable = <Tokens extends Array<interfaces.InjectionIdentifier<u
 			const klass = ((): typeof target =>
 				// @ts-expect-error - TypeScript doesn't like this construct when using the generic interface types.
 				class extends target {
-					public constructor(...args: interfaces.ArgsForConstructorIdentifiers<Tokens>) {
+					public constructor(...args: interfaces.ArgsForInjectionIdentifiers<Tokens>) {
 						super(...(args as never));
 						getPropertyInjections(klass).forEach(({ name, id }) => {
 							const token = tokenForIdentifier(id);
@@ -105,4 +105,4 @@ export const injectable = <Tokens extends Array<interfaces.InjectionIdentifier<u
 
 			return undefined;
 		}
-	}) as InjectableDecorator<interfaces.ArgsForConstructorIdentifiers<Tokens>>;
+	}) as InjectableDecorator<interfaces.ArgsForInjectionIdentifiers<Tokens>>;

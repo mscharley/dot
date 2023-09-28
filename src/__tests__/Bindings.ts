@@ -144,6 +144,20 @@ describe('Bindings', () => {
 
 				expect(warn).toHaveBeenCalledTimes(1);
 			});
+
+			it('works properly for multiple dependencies', () => {
+				const c = new Container();
+				const token2 = new Token<{ name: string }>('token2');
+				const output = new Token<{ greeting: string }>('greeting');
+
+				c.bind(token).toConstantValue({ id: 10 });
+				c.bind(token2).toConstantValue({ name: 'world' });
+				c.bind(output)
+					.inTransientScope()
+					.toDynamicValue([token, token2], ({ id }, { name }) => ({
+						greeting: `Hello, ${name} - id: ${id}`,
+					}));
+			});
 		});
 
 		describe('toFactory', () => {
