@@ -112,9 +112,8 @@ export class Container implements interfaces.Container {
 		return this.bind(id);
 	}) as interfaces.RebindFunction;
 
-	public load = ((module): void | Promise<void> => {
-		return module(this.bind, this.unbind, this.has, this.rebind);
-	}) as interfaces.Container['load'];
+	public load: interfaces.Container['load'] = <M extends interfaces.ContainerModule>(module: M): ReturnType<M> =>
+		module(this.bind, this.unbind, this.has, this.rebind) as ReturnType<typeof module>;
 
 	public createChild: interfaces.Container['createChild'] = (options) => {
 		return new Container({ ...options, parent: this });

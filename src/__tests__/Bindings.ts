@@ -241,6 +241,9 @@ describe('Bindings', () => {
 
 		it('returns the correct types for sync and async loads', async () => {
 			const c = new Container();
+			const ambiguous = (async () => {
+				/* no op */
+			}) as interfaces.ContainerModule;
 
 			c.load(() => {
 				/* no op */
@@ -248,6 +251,7 @@ describe('Bindings', () => {
 			await c.load(async () => {
 				/* no op */
 			});
+			await c.load(ambiguous);
 		});
 	});
 
