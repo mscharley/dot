@@ -150,9 +150,7 @@ export interface InjectDecorator<T> {
     // (undocumented)
     (target: undefined, context: ClassFieldDecoratorContext<unknown, T>): (originalValue: T | undefined) => T;
     // (undocumented)
-    (target: {
-        constructor: () => unknown;
-    }, propertyName: string | symbol): undefined;
+    (target: object, propertyName: string | symbol): undefined;
 }
 
 // @public
