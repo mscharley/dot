@@ -103,6 +103,7 @@ export type { interfaces };
 export type { InjectDecorator, InjectDecoratorFactory } from './decorators/inject.js';
 export type { InjectableDecorator } from './decorators/injectable.js';
 export { unmanaged } from './decorators/unmanaged.js';
+export { withOptions } from './decorators/withOptions.js';
 export type { TokenType } from './Token.js';
 export { inject } from './decorators/inject.js';
 export { injectable } from './decorators/injectable.js';
