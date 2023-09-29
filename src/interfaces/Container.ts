@@ -1,7 +1,7 @@
-import type { AsyncContainerModule, SyncContainerModule } from './ContainerModule.js';
 import type { BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions.js';
 import type { ContainerConfiguration } from './ContainerConfiguration.js';
 import type { ContainerFactory } from './ContainerFactory.js';
+import type { ContainerModule } from './ContainerModule.js';
 import type { InjectOptions } from './InjectOptions.js';
 import type { ServiceIdentifier } from './ServiceIdentifier.js';
 
@@ -32,10 +32,7 @@ export interface Container {
 	/**
 	 * Load a preconfigured module into this container
 	 */
-	load: {
-		(module: AsyncContainerModule): Promise<void>;
-		(module: SyncContainerModule): void;
-	};
+	load: <M extends ContainerModule>(module: M) => ReturnType<M>;
 	/**
 	 * Create a child container
 	 */

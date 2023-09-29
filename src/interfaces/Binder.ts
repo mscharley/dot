@@ -1,4 +1,4 @@
-import type { ArgsForFnIdentifiers, InjectionIdentifier } from './InjectionIdentifier.js';
+import type { ArgsForInjectionIdentifiers, InjectionIdentifier } from './InjectionIdentifier.js';
 import type { FactoryContext } from './FactoryContext.js';
 import type { Fn } from './Functions.js';
 
@@ -34,8 +34,8 @@ export interface Binder<in out T> {
 	 * include this binding.
 	 */
 	toDynamicValue: <Tokens extends Array<InjectionIdentifier<unknown>>>(
-		dependencies: Tokens,
-		fn: Fn<T | Promise<T>, ArgsForFnIdentifiers<Tokens>>,
+		dependencies: [...Tokens],
+		fn: Fn<T | Promise<T>, ArgsForInjectionIdentifiers<Tokens>>,
 	) => void;
 
 	/**
@@ -47,7 +47,7 @@ export interface Binder<in out T> {
 	 * resolve to a regular handler for toDynamicValue.
 	 */
 	toFactory: <Tokens extends Array<InjectionIdentifier<unknown>>>(
-		dependencies: Tokens,
-		fn: (context: FactoryContext) => Fn<T | Promise<T>, ArgsForFnIdentifiers<Tokens>>,
+		dependencies: [...Tokens],
+		fn: (context: FactoryContext) => Fn<T | Promise<T>, ArgsForInjectionIdentifiers<Tokens>>,
 	) => void;
 }

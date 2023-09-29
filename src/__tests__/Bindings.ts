@@ -2,6 +2,7 @@ import type * as interfaces from '../interfaces/index.js';
 import { describe, expect, it, jest } from '@jest/globals';
 import { Container } from '../container/Container.js';
 import type { ErrorCode } from '../Error.js';
+import { ImportTest } from '../__utils__/ImportTest.js';
 import { injectable } from '../decorators/injectable.js';
 import type { LoggerFn } from '../interfaces/Logger.js';
 import { noop } from '../util/noop.js';
@@ -144,6 +145,20 @@ describe('Bindings', () => {
 
 				expect(warn).toHaveBeenCalledTimes(1);
 			});
+
+			it('works properly for multiple dependencies', () => {
+				const c = new Container();
+				const token2 = new Token<{ name: string }>('token2');
+				const output = new Token<{ greeting: string }>('greeting');
+
+				c.bind(token).toConstantValue({ id: 10 });
+				c.bind(token2).toConstantValue({ name: 'world' });
+				c.bind(output)
+					.inTransientScope()
+					.toDynamicValue([token, token2], ({ id }, { name }) => ({
+						greeting: `Hello, ${name} - id: ${id}`,
+					}));
+			});
 		});
 
 		describe('toFactory', () => {
@@ -241,6 +256,9 @@ describe('Bindings', () => {
 
 		it('returns the correct types for sync and async loads', async () => {
 			const c = new Container();
+			const ambiguous = (async () => {
+				/* no op */
+			}) as interfaces.ContainerModule;
 
 			c.load(() => {
 				/* no op */
@@ -248,20 +266,17 @@ describe('Bindings', () => {
 			await c.load(async () => {
 				/* no op */
 			});
+			await c.load(ambiguous);
 		});
 	});
 
 	describe('Constructor service identifier', () => {
 		it('can use a class as a service identifier', async () => {
 			const c = new Container();
-			@injectable()
-			class Test {
-				public id = 10;
-			}
 
-			c.bind(Test).toSelf();
+			c.bind(ImportTest).toSelf();
 
-			await expect(c.get(Test)).resolves.toMatchObject({ id: 10 });
+			await expect(c.get(ImportTest)).resolves.toMatchObject({ id: 10 });
 		});
 	});
 });

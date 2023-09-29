@@ -50,7 +50,7 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 		Tokens extends Array<interfaces.InjectionIdentifier<unknown>>,
 	>(
 		dependencies: Tokens,
-		factory: (...args: interfaces.ArgsForFnIdentifiers<Tokens>) => T | Promise<T>,
+		factory: (...args: interfaces.ArgsForInjectionIdentifiers<Tokens>) => T | Promise<T>,
 	) => {
 		if (!this.explicitScope) {
 			this.warn(

@@ -32,7 +32,7 @@ export interface InjectDecorator<T> {
 	// TC39 definition
 	(target: undefined, context: ClassFieldDecoratorContext<unknown, T>): (originalValue: T | undefined) => T;
 	// experimental decorators definition
-	(target: { constructor: () => unknown }, propertyName: string | symbol): undefined;
+	(target: object, propertyName: string | symbol): undefined;
 }
 
 /**

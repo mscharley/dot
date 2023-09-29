@@ -26,19 +26,10 @@ export type InjectedType<T extends InjectionIdentifier<unknown>> = T extends Ser
 	: never;
 
 /**
- * Mapped type to convert the a list of injection parameters into a list of injectable values
+ * Mapped type to convert a list of injection parameters into a list of injectable values
  *
  * @public
  */
-export type ArgsForConstructorIdentifiers<Tokens extends [...Array<InjectionIdentifier<unknown>>]> = {
+export type ArgsForInjectionIdentifiers<Tokens extends [...Array<InjectionIdentifier<unknown>>]> = {
 	[Index in keyof Tokens]: InjectedType<Tokens[Index]>;
 } & { length: Tokens['length'] };
-
-/**
- * Mapped type to convert the a list of injection parameters into a list of injectable values
- *
- * @public
- */
-export type ArgsForFnIdentifiers<Tokens extends [...Array<InjectionIdentifier<unknown>>]> = {
-	[Index in keyof Tokens]: InjectedType<Tokens[Index]>;
-};
