@@ -142,7 +142,7 @@ export interface InjectableDecorator<Args extends unknown[]> {
     // (undocumented)
     <T extends object>(target: interfaces.Constructor<T, Args>, context: ClassDecoratorContext<interfaces.Constructor<T, Args>>): undefined;
     // (undocumented)
-    <T extends object>(target: interfaces.Constructor<T, Args>, context?: undefined): interfaces.Constructor<T, Args>;
+    <T extends interfaces.Constructor<object, Args>>(target: T, context?: undefined): T;
 }
 
 // @public

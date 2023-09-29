@@ -21,7 +21,7 @@ export interface InjectableDecorator<Args extends unknown[]> {
 		context: ClassDecoratorContext<interfaces.Constructor<T, Args>>,
 	): undefined;
 	// experimental decorators definition
-	<T extends object>(target: interfaces.Constructor<T, Args>, context?: undefined): interfaces.Constructor<T, Args>;
+	<T extends interfaces.Constructor<object, Args>>(target: T, context?: undefined): T;
 }
 
 const _injections: Array<Injection<unknown>> = [];
