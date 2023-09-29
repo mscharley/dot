@@ -17,13 +17,16 @@ export type InjectionIdentifier<T> =
  *
  * @public
  */
-export type InjectedType<T extends InjectionIdentifier<unknown>> = T extends ServiceIdentifier<infer U>
-	? U
-	: T extends [ServiceIdentifier<infer U>, { multiple: true }]
+export type InjectedType<T extends InjectionIdentifier<unknown>> = T extends [
+	ServiceIdentifier<infer U>,
+	{ multiple: true },
+]
 	? U[]
 	: T extends [ServiceIdentifier<infer U>, { optional: true }]
 	? U | undefined
 	: T extends [ServiceIdentifier<infer U>, object]
+	? U
+	: T extends ServiceIdentifier<infer U>
 	? U
 	: T extends DirectInjection<infer U>
 	? U

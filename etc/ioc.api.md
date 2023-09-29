@@ -170,11 +170,14 @@ export interface InjectDecoratorFactory {
 // Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
 //
 // @public
-type InjectedType<T extends InjectionIdentifier<unknown>> = T extends ServiceIdentifier<infer U> ? U : T extends [ServiceIdentifier<infer U>, {
+type InjectedType<T extends InjectionIdentifier<unknown>> = T extends [
+ServiceIdentifier<infer U>,
+    {
     multiple: true;
-}] ? U[] : T extends [ServiceIdentifier<infer U>, {
+}
+] ? U[] : T extends [ServiceIdentifier<infer U>, {
     optional: true;
-}] ? U | undefined : T extends [ServiceIdentifier<infer U>, object] ? U : T extends DirectInjection<infer U> ? U : never;
+}] ? U | undefined : T extends [ServiceIdentifier<infer U>, object] ? U : T extends ServiceIdentifier<infer U> ? U : T extends DirectInjection<infer U> ? U : never;
 
 // @public
 type InjectionIdentifier<T> = ServiceIdentifier<T> | [ServiceIdentifier<T>, Partial<InjectOptions>] | DirectInjection<T>;
