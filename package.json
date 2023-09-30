@@ -55,8 +55,8 @@
 	},
 	"devDependencies": {
 		"@jest/globals": "29.7.0",
-		"@microsoft/api-documenter": "7.23.2",
-		"@microsoft/api-extractor": "7.37.0",
+		"@microsoft/api-documenter": "7.23.8",
+		"@microsoft/api-extractor": "7.37.3",
 		"@mscharley/eslint-config": "2.0.4",
 		"@mscharley/prettier-config": "2.0.2",
 		"@stryker-mutator/core": "7.1.1",
