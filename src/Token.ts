@@ -11,6 +11,7 @@
  *
  * @public
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export class Token<out T> {
 	/**
 	 * The Symbol used as the unique identifier for this token

@@ -28,7 +28,8 @@ jobs:
       - run: npm ci
       - run: npm run build --if-present
       - run: npm test
-        timeout-minutes: 60
+        timeout-minutes: 15
+
   stryker:
     runs-on: ubuntu-latest
 
