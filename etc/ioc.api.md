@@ -23,8 +23,8 @@ interface Binder<in out T> {
 
 // @public
 type BindFunction = {
-    <T extends object>(id: Constructor<T>): ClassBindingBuilder<T>;
-    <T extends object>(id: ServiceIdentifier<T>): ObjectBindingBuilder<T>;
+    <T extends object>(id: Constructor<T, any>): ClassBindingBuilder<T>;
+    <T extends object>(id: Exclude<ServiceIdentifier<T>, Constructor<T, any>>): ObjectBindingBuilder<T>;
     <T>(id: ServiceIdentifier<T>): BindingBuilder<T>;
 };
 
@@ -292,7 +292,6 @@ type SyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound:
 // @public
 export class Token<out T> {
     constructor(name: string);
-    // @internal
     readonly identifier: symbol;
 }
 
