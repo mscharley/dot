@@ -20,6 +20,7 @@
 		}
 	},
 	"scripts": {
+		"prepare": "husky install",
 		"prepack": "npm run clean && npm run build",
 		"build": "npm run build:tsc && npm run build:api && npm run build:esbuild",
 		"build:tsc": "tsc",
@@ -64,6 +65,7 @@
 		"@stryker-mutator/typescript-checker": "7.1.1",
 		"esbuild": "0.19.4",
 		"generic-type-guard": "3.7.2",
+		"husky": "^8.0.3",
 		"jest": "29.7.0",
 		"stryker-cli": "1.0.2",
 		"ts-jest": "29.1.1",
