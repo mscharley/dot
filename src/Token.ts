@@ -1,5 +1,5 @@
 /**
- * A simple identifier that has a reference to a type that can be injected
+ * A simple identifier that has a reference to a type which can be injected
  *
  * @remarks
  *
@@ -11,12 +11,9 @@
  *
  * @public
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export class Token<out T> {
 	/**
 	 * The Symbol used as the unique identifier for this token
-	 *
-	 * @internal
 	 */
 	public readonly identifier: symbol;
 

@@ -1,8 +1,8 @@
 import type * as interfaces from '../interfaces/index.js';
 import { describe, expect, it, jest } from '@jest/globals';
+import { ImportTest, ImportTestDependency } from '../__utils__/ImportTest.js';
 import { Container } from '../container/Container.js';
 import type { ErrorCode } from '../Error.js';
-import { ImportTest } from '../__utils__/ImportTest.js';
 import { injectable } from '../decorators/injectable.js';
 import type { LoggerFn } from '../interfaces/Logger.js';
 import { noop } from '../util/noop.js';
@@ -161,7 +161,7 @@ describe('Bindings', () => {
 			});
 		});
 
-		describe('toFactory', () => {
+		describe('toFactory()', () => {
 			it('can create a child container', async () => {
 				const c = new Container();
 				const childFactory = new Token<() => interfaces.Container>('childFactory');
@@ -274,9 +274,10 @@ describe('Bindings', () => {
 		it('can use a class as a service identifier', async () => {
 			const c = new Container();
 
+			c.bind(ImportTestDependency).toConstantValue('Hello world!');
 			c.bind(ImportTest).toSelf();
 
-			await expect(c.get(ImportTest)).resolves.toMatchObject({ id: 10 });
+			await expect(c.get(ImportTest)).resolves.toMatchObject({ dep: 'Hello world!', id: 10 });
 		});
 	});
 });

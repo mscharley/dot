@@ -23,8 +23,10 @@ export type Fn<out T, in Args extends unknown[] = any> = (...args: Args) => T;
  * @public
  */
 export type BindFunction = {
-	<T extends object>(id: Constructor<T>): ClassBindingBuilder<T>;
-	<T extends object>(id: ServiceIdentifier<T>): ObjectBindingBuilder<T>;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	<T extends object>(id: Constructor<T, any>): ClassBindingBuilder<T>;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	<T extends object>(id: Exclude<ServiceIdentifier<T>, Constructor<T, any>>): ObjectBindingBuilder<T>;
 	<T>(id: ServiceIdentifier<T>): BindingBuilder<T>;
 };
 
