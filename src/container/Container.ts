@@ -213,6 +213,7 @@ export class Container implements interfaces.Container {
 
 	public has: interfaces.IsBoundFunction = (id) => {
 		const token = tokenForIdentifier(id);
-		return this.#bindings.find((b) => b.token.identifier === token.identifier) != null;
+		const local = this.#bindings.find((b) => b.token.identifier === token.identifier) != null;
+		return local || (this.config.parent?.has(id) ?? false);
 	};
 }
