@@ -62,4 +62,11 @@ describe('ChildContainers', () => {
 
 		await expect(child.get(token, { multiple: true })).resolves.toStrictEqual(['Goodbye, world!']);
 	});
+
+	it('will check parent containers for bindings', () => {
+		container.bind(token).toConstantValue('Hello, world!');
+		const child = container.createChild();
+
+		expect(child.has(token)).toBe(true);
+	});
 });

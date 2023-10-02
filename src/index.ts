@@ -100,20 +100,23 @@ import { Container } from './container/Container.js';
 export const createContainer: interfaces.ContainerFactory = (config) => new Container(config);
 
 export type { interfaces };
+
 export type { InjectDecorator, InjectDecoratorFactory } from './decorators/inject.js';
 export type { InjectableDecorator } from './decorators/injectable.js';
-export { unmanaged } from './decorators/unmanaged.js';
-export { withOptions } from './decorators/withOptions.js';
 export type { TokenType } from './Token.js';
+
 export { inject } from './decorators/inject.js';
 export { injectable } from './decorators/injectable.js';
-export { Token } from './Token.js';
 export { stringifyIdentifier } from './util/stringifyIdentifier.js';
+export { Token } from './Token.js';
+export { unmanaged } from './decorators/unmanaged.js';
+export { withOptions } from './decorators/withOptions.js';
+
+export type { ErrorCode } from './Error.js';
 export {
-	IocError,
 	InvalidOperationError,
+	IocError,
 	RecursiveResolutionError,
 	ResolutionError,
 	TokenResolutionError,
 } from './Error.js';
-export type { ErrorCode } from './Error.js';
