@@ -128,7 +128,12 @@ export class Container implements interfaces.Container {
 		const token = tokenForIdentifier(id);
 		const explicitBindings = this.#bindings.filter((b) => b.token.identifier === token.identifier) as Array<Binding<T>>;
 
-		if (this.config.autobindClasses && explicitBindings.length === 0 && typeof id === 'function') {
+		if (
+			this.config.autobindClasses &&
+			explicitBindings.length === 0 &&
+			typeof id === 'function' &&
+			!(this.config.parent?.has(id) ?? false)
+		) {
 			return [
 				{
 					type: 'constructor',
