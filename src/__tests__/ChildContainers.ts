@@ -8,9 +8,19 @@ const token = new Token<string>('str');
 
 describe('ChildContainers', () => {
 	let container: interfaces.Container;
+	const log = jest.fn<interfaces.LoggerFn>();
+	const warn = jest.fn<interfaces.LoggerFn>();
 
 	beforeEach(() => {
-		container = new Container();
+		container = new Container({
+			logger: {
+				warn: warn as unknown as interfaces.LoggerFn,
+				debug: log as unknown as interfaces.LoggerFn,
+				info: log as unknown as interfaces.LoggerFn,
+				trace: log as unknown as interfaces.LoggerFn,
+			},
+			logLevel: 'info',
+		});
 	});
 
 	it('fails if not bound anywhere', async () => {
@@ -68,5 +78,14 @@ describe('ChildContainers', () => {
 		const child = container.createChild();
 
 		expect(child.has(token)).toBe(true);
+	});
+
+	it('will inherit configuration from its parent', async () => {
+		const child = container.createChild();
+		child.bind(token).toConstantValue('Hello, world!');
+
+		await child.get(token);
+
+		expect(log).toBeCalledTimes(1);
 	});
 });

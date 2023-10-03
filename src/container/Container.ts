@@ -116,7 +116,7 @@ export class Container implements interfaces.Container {
 		module(this.bind, this.unbind, this.has, this.rebind) as ReturnType<typeof module>;
 
 	public createChild: interfaces.Container['createChild'] = (options) => {
-		return new Container({ ...options, parent: this });
+		return new Container({ ...this.config, ...options, parent: this });
 	};
 
 	public addBinding = <T>(builder: BindingBuilder<T>, binding: Binding<T>): void => {
