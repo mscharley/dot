@@ -33,7 +33,7 @@ describe('Invalid decorator', () => {
 		c.bind(service).to(Service);
 
 		await expect(c.get(service)).rejects.toMatchObject({
-			code: 'INVALID_OPERATION' as ErrorCode,
+			code: 'INVALID_OPERATION' satisfies ErrorCode,
 			message: 'No @injectable() decorator for class: Node',
 		});
 	});
@@ -44,8 +44,38 @@ describe('Invalid decorator', () => {
 		c.bind(node).to(Node);
 
 		await expect(c.get(node)).rejects.toMatchObject({
-			code: 'INVALID_OPERATION' as ErrorCode,
+			code: 'INVALID_OPERATION' satisfies ErrorCode,
 			message: 'No @injectable() decorator for class: Node',
 		});
+	});
+
+	it('fails to construct a service without @injectable', async () => {
+		class Test {}
+
+		const c = new Container();
+
+		c.bind(Test).toSelf();
+		await expect(c.get(Test)).rejects.toMatchObject({
+			message: 'No @injectable() decorator for class: Test',
+			code: 'INVALID_OPERATION' satisfies ErrorCode,
+		});
+
+		c.rebind(Test).to(Test);
+		await expect(c.get(Test)).rejects.toMatchObject({
+			message: 'No @injectable() decorator for class: Test',
+			code: 'INVALID_OPERATION' satisfies ErrorCode,
+		});
+	});
+
+	it('allows user provided values for a service without @injectable', async () => {
+		class Test {}
+
+		const c = new Container();
+
+		c.bind(Test).toConstantValue(new Test());
+		await expect(c.get(Test)).resolves.toBeInstanceOf(Test);
+
+		c.rebind(Test).toDynamicValue([], () => new Test());
+		await expect(c.get(Test)).resolves.toBeInstanceOf(Test);
 	});
 });
