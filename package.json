@@ -1,6 +1,6 @@
 {
 	"name": "@mscharley/ioc",
-	"version": "1.2.9",
+	"version": "1.2.10",
 	"description": "A lightweight inversion of control framework for JavaScript and TypeScript",
 	"keywords": [
 		"node",
