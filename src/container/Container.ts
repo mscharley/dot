@@ -100,7 +100,7 @@ export class Container implements interfaces.Container {
 		const token = tokenForIdentifier(id);
 		this.#singletonCache.flushToken(token);
 		const bindings = this.#bindings.flatMap((b) => (b.token.identifier === token.identifier ? [token.identifier] : []));
-		if (bindings.length === 0) {
+		if (bindings.length === 0 && !this.has(id)) {
 			throw new Error(`Unable to unbind token because it is not bound: ${token.identifier.toString()}`);
 		}
 

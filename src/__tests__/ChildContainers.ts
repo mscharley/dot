@@ -88,4 +88,12 @@ describe('ChildContainers', () => {
 
 		expect(log).toBeCalledTimes(1);
 	});
+
+	it('will allow rebind if only the parent container has bindings available', async () => {
+		container.bind(token).toConstantValue('Hello, world!');
+		const child = container.createChild();
+		child.rebind(token).toConstantValue('Goodbye, world!');
+
+		await expect(child.get(token)).resolves.toBe('Goodbye, world!');
+	});
 });
