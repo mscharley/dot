@@ -8,7 +8,12 @@ export const tokenForIdentifier = <T>(id: interfaces.ServiceIdentifier<T>): Toke
 		return id;
 	} else {
 		if (!_mappings.has(id)) {
-			_mappings.set(id, new Token(id.name));
+			// Stryker disable all: Stryker only tests TC39, but this construct operates differently on experimental
+			_mappings.set(
+				id,
+				new Token(id.name !== '' ? id.name : (Object.getPrototypeOf(id) as interfaces.Constructor<unknown>).name),
+			);
+			// Stryker enable all
 		}
 
 		return _mappings.get(id) as Token<T>;
