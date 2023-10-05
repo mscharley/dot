@@ -86,6 +86,7 @@ interface Container {
     //
     // (undocumented)
     unbind: UnbindFunction;
+    validate: () => void;
 }
 
 // @public

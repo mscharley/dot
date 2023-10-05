@@ -260,13 +260,17 @@ describe('Bindings', () => {
 				/* no op */
 			}) as interfaces.ContainerModule;
 
-			c.load(() => {
-				/* no op */
-			});
-			await c.load(async () => {
-				/* no op */
-			});
-			await c.load(ambiguous);
+			expect(
+				c.load(() => {
+					/* no op */
+				}),
+			).toBeUndefined();
+			await expect(
+				c.load(async () => {
+					/* no op */
+				}),
+			).resolves.toBeUndefined();
+			await expect(c.load(ambiguous)).resolves.toBeUndefined();
 		});
 	});
 
@@ -278,6 +282,60 @@ describe('Bindings', () => {
 			c.bind(ImportTest).toSelf();
 
 			await expect(c.get(ImportTest)).resolves.toMatchObject({ dep: 'Hello world!', id: 10 });
+		});
+	});
+
+	describe('validate()', () => {
+		it('succeeds for an empty container', () => {
+			const c = new Container();
+			expect(() => c.validate()).not.toThrowError();
+		});
+
+		it('succeeds for a constant value', () => {
+			const c = new Container();
+			c.bind(token).toConstantValue({ id: 10 });
+
+			expect(() => c.validate()).not.toThrowError();
+		});
+
+		it('succeeds for a dynamic value', () => {
+			const c = new Container();
+			c.bind(token).toConstantValue({ id: 10 });
+			c.bind(ImportTestDependency).toDynamicValue([token], ({ id }) => id.toString());
+
+			expect(() => c.validate()).not.toThrowError();
+		});
+
+		it('succeeds for a constructor', () => {
+			@injectable(token)
+			class Test {
+				public constructor(public id: { id: number }) {}
+			}
+
+			const c = new Container();
+			c.bind(token).toConstantValue({ id: 10 });
+			c.bind(Test).toSelf();
+
+			expect(() => c.validate()).not.toThrowError();
+		});
+
+		it('fails for a dynamic value with a missing dependency', () => {
+			const c = new Container();
+			c.bind(ImportTestDependency).toDynamicValue([token], ({ id }) => id.toString());
+
+			expect(() => c.validate()).toThrowError('Unbound dependency: Token<Symbol(dep)> => Token<Symbol(test)>');
+		});
+
+		it('fails for a constructor with a missing dependency', () => {
+			@injectable(token)
+			class Test {
+				public constructor(public id: { id: number }) {}
+			}
+
+			const c = new Container();
+			c.bind(Test).toSelf();
+
+			expect(() => c.validate()).toThrowError('Unbound dependency: Constructor<Test> => Token<Symbol(test)>');
 		});
 	});
 });

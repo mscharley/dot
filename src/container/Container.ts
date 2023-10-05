@@ -1,16 +1,17 @@
 import type * as interfaces from '../interfaces/index.js';
 import type { Binding, ConstructorBinding } from '../models/Binding.js';
+import { getConstructorParameterInjections, getInjections } from '../decorators/registry.js';
 import { InvalidOperationError, TokenResolutionError } from '../Error.js';
 import type { BindingBuilder } from './BindingBuilder.js';
 import { calculatePlan } from '../planner/calculatePlan.js';
 import { ClassBindingBuilder } from './BindingBuilder.js';
 import { executePlan } from '../planner/executePlan.js';
-import { getConstructorParameterInjections } from '../decorators/registry.js';
 import type { Injection } from '../models/Injection.js';
 import { isNever } from '../util/isNever.js';
 import { noop } from '../util/noop.js';
 import type { Request } from '../models/Request.js';
 import { ResolutionCache } from './ResolutionCache.js';
+import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 import type { Token } from '../Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
@@ -62,7 +63,7 @@ export class Container implements interfaces.Container {
 			throw new TokenResolutionError(
 				'Unable to find a value to inject',
 				resolutionPath,
-				new InvalidOperationError(`Token hasn't been created yet: ${token.identifier.toString()}`),
+				new InvalidOperationError(`Value for token hasn't been created yet: ${token.identifier.toString()}`),
 			);
 		}
 		const tokenStack = request.stack[token.identifier] as T[];
@@ -128,12 +129,11 @@ export class Container implements interfaces.Container {
 		const token = tokenForIdentifier(id);
 		const explicitBindings = this.#bindings.filter((b) => b.token.identifier === token.identifier) as Array<Binding<T>>;
 
-		if (
-			this.config.autobindClasses &&
-			explicitBindings.length === 0 &&
-			typeof id === 'function' &&
-			!(this.config.parent?.has(id) ?? false)
-		) {
+		if (explicitBindings.length > 0) {
+			return explicitBindings;
+		}
+
+		if (this.config.autobindClasses && typeof id === 'function' && !(this.config.parent?.has(id) ?? false)) {
 			return [
 				{
 					type: 'constructor',
@@ -145,7 +145,7 @@ export class Container implements interfaces.Container {
 			];
 		}
 
-		return explicitBindings;
+		return [];
 	};
 
 	#resolveBinding =
@@ -219,6 +219,41 @@ export class Container implements interfaces.Container {
 	public has: interfaces.IsBoundFunction = (id) => {
 		const token = tokenForIdentifier(id);
 		const local = this.#bindings.find((b) => b.token.identifier === token.identifier) != null;
-		return local || (this.config.parent?.has(id) ?? false);
+		return local || (this.config.parent?.has(id) ?? false) || (typeof id === 'function' && this.config.autobindClasses);
+	};
+
+	public validate: interfaces.Container['validate'] = (): void => {
+		for (const binding of this.#bindings) {
+			switch (binding.type) {
+				case 'static':
+					// These are always valid, the value is in the binding and has no dependencies.
+					continue;
+				case 'dynamic': {
+					for (const i of binding.injections) {
+						if (!this.has(i.id)) {
+							throw new InvalidOperationError(
+								`Unbound dependency: ${stringifyIdentifier(binding.id)} => ${stringifyIdentifier(i.id)}`,
+							);
+						}
+					}
+					continue;
+				}
+				case 'constructor': {
+					const injections = getInjections(binding.ctr);
+					for (const i of injections) {
+						if (!this.has(i.id)) {
+							throw new InvalidOperationError(
+								`Unbound dependency: ${stringifyIdentifier(binding.id)} => ${stringifyIdentifier(i.id)}`,
+							);
+						}
+					}
+					continue;
+				}
+				default:
+					return isNever(binding, 'Invalid binding');
+			}
+		}
+
+		return this.config.parent?.validate();
 	};
 }
