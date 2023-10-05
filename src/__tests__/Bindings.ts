@@ -260,13 +260,17 @@ describe('Bindings', () => {
 				/* no op */
 			}) as interfaces.ContainerModule;
 
-			c.load(() => {
-				/* no op */
-			});
-			await c.load(async () => {
-				/* no op */
-			});
-			await c.load(ambiguous);
+			expect(
+				c.load(() => {
+					/* no op */
+				}),
+			).toBeUndefined();
+			await expect(
+				c.load(async () => {
+					/* no op */
+				}),
+			).resolves.toBeUndefined();
+			await expect(c.load(ambiguous)).resolves.toBeUndefined();
 		});
 	});
 
