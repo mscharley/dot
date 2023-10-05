@@ -10,6 +10,8 @@ export const stringifyIdentifier = <T>(id: interfaces.ServiceIdentifier<T>): str
 	if (id instanceof Token) {
 		return `Token<${id.identifier.toString()}>`;
 	} else {
-		return `Constructor<${id.name}>`;
+		return `Constructor<${
+			id.name !== '' ? id.name : (Object.getPrototypeOf(id) as interfaces.Constructor<unknown>).name
+		}>`;
 	}
 };

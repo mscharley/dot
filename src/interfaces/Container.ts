@@ -20,6 +20,7 @@ export interface Container {
 	 * The configuration used by this container
 	 */
 	readonly config: ContainerConfiguration;
+
 	/** {@inheritdoc interfaces.BindFunction} */
 	bind: BindFunction;
 	/** {@inheritdoc interfaces.UnbindFunction} */
@@ -46,4 +47,9 @@ export interface Container {
 		<T>(id: ServiceIdentifier<T>, options: Partial<InjectOptions> & { optional: true }): Promise<T | undefined>;
 		<T>(id: ServiceIdentifier<T>, options?: Partial<InjectOptions>): Promise<T>;
 	};
+
+	/**
+	 * Check that all bindings have no missing dependencies
+	 */
+	validate: () => void;
 }
