@@ -76,7 +76,7 @@ export class Container implements interfaces.Container {
 		return value!;
 	}
 
-	#validateBindings = (): void => {
+	#ensureBindingsCompleted = (): void => {
 		const values = [...this.#incompleteBindings.values()];
 		if (values.length > 0) {
 			throw new InvalidOperationError(
@@ -187,7 +187,7 @@ export class Container implements interfaces.Container {
 		id: interfaces.ServiceIdentifier<T>,
 		options?: Partial<interfaces.InjectOptions>,
 	): Promise<T> => {
-		this.#validateBindings();
+		this.#ensureBindingsCompleted();
 
 		const request: Request<T> = {
 			container: this,
@@ -222,6 +222,21 @@ export class Container implements interfaces.Container {
 		return local || (this.config.parent?.has(id) ?? false) || (typeof id === 'function' && this.config.autobindClasses);
 	};
 
+	#validateInjections = (binding: Binding<unknown>, injections: Array<Injection<unknown>>): void => {
+		for (const i of injections) {
+			if (i.options.optional) {
+				// Optional dependencies are always valid
+				continue;
+			}
+
+			if (!this.has(i.id)) {
+				throw new InvalidOperationError(
+					`Unbound dependency: ${stringifyIdentifier(binding.id)} => ${stringifyIdentifier(i.id)}`,
+				);
+			}
+		}
+	};
+
 	public validate: interfaces.Container['validate'] = (): void => {
 		for (const binding of this.#bindings) {
 			switch (binding.type) {
@@ -229,24 +244,11 @@ export class Container implements interfaces.Container {
 					// These are always valid, the value is in the binding and has no dependencies.
 					continue;
 				case 'dynamic': {
-					for (const i of binding.injections) {
-						if (!this.has(i.id)) {
-							throw new InvalidOperationError(
-								`Unbound dependency: ${stringifyIdentifier(binding.id)} => ${stringifyIdentifier(i.id)}`,
-							);
-						}
-					}
+					this.#validateInjections(binding, binding.injections);
 					continue;
 				}
 				case 'constructor': {
-					const injections = getInjections(binding.ctr);
-					for (const i of injections) {
-						if (!this.has(i.id)) {
-							throw new InvalidOperationError(
-								`Unbound dependency: ${stringifyIdentifier(binding.id)} => ${stringifyIdentifier(i.id)}`,
-							);
-						}
-					}
+					this.#validateInjections(binding, getInjections(binding.ctr));
 					continue;
 				}
 				default:

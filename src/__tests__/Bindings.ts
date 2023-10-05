@@ -8,6 +8,7 @@ import type { LoggerFn } from '../interfaces/Logger.js';
 import { noop } from '../util/noop.js';
 import { Token } from '../Token.js';
 import type { TokenType } from '../Token.js';
+import { withOptions } from '../decorators/withOptions.js';
 
 const token = new Token<{ id: number }>('test');
 
@@ -315,6 +316,15 @@ describe('Bindings', () => {
 			const c = new Container();
 			c.bind(token).toConstantValue({ id: 10 });
 			c.bind(Test).toSelf();
+
+			expect(() => c.validate()).not.toThrowError();
+		});
+
+		it('succeeds for unbound optional dependencies', () => {
+			const c = new Container();
+			c.bind(ImportTestDependency).toDynamicValue([withOptions(token, { optional: true })], (v) =>
+				(v?.id ?? 20).toString(),
+			);
 
 			expect(() => c.validate()).not.toThrowError();
 		});
