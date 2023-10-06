@@ -9,6 +9,7 @@
 	],
 	"automergeStrategy": "fast-forward",
 	"transitiveRemediation": true,
+	"ignorePaths": "**/examples/**",
 	"packageRules": [
 		{
 			"packageNames": ["@types/node"],

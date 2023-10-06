@@ -6,6 +6,7 @@ src/demo
 src/**/__tests__
 src/**/__mocks__
 src/**/__utils__
+examples
 
 # Dev files
 reports/
