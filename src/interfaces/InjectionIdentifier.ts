@@ -13,7 +13,7 @@ export type InjectionIdentifier<T> =
 	| DirectInjection<T>;
 
 /**
- * Helper type which is used to map an {@link interfaces.InjectionIdentifier | InjectionIdentifier} into the type that will be injected
+ * Helper type which is used to map an {@link @mscharley/dot#interfaces.InjectionIdentifier | InjectionIdentifier} into the type that will be injected
  *
  * @public
  */

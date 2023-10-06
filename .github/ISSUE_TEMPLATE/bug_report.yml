@@ -31,7 +31,7 @@ body:
       value: '## Versions'
   - type: input
     attributes:
-      label: IOC-Deco
+      label: DOT
     validations:
       required: true
   - type: input

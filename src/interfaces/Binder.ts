@@ -3,7 +3,7 @@ import type { FactoryContext } from './FactoryContext.js';
 import type { Fn } from './Functions.js';
 
 /**
- * Describes which {@link interfaces.Binder | Binder} options are only available when not specifying a scope
+ * Describes which {@link @mscharley/dot#interfaces.Binder | Binder} options are only available when not specifying a scope
  *
  * @public
  */

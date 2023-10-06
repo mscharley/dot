@@ -3,13 +3,12 @@
  *
  * @remarks
  *
- * For a discussion of the project goals, please see {@link https://github.com/mscharley/ioc-deco/discussions/39 | Github Discussions }.
+ * For a discussion of the project goals, please see {@link https://github.com/mscharley/dot/discussions/39 | Github Discussions }.
  *
  * @example
  *
  * ```typescript
- * import { createContainer, injectable, inject } from "@mscharley/ioc";
- * import type { interfaces } from "@mscharley/ioc";
+ * import { createContainer, injectable, inject, type interfaces } from "@mscharley/dot";
  *
  * export interface Warrior {
  *   fight: () => string;
@@ -93,7 +92,7 @@ import { Container } from './container/Container.js';
  *
  * Use this function to create new top-level containers.
  *
- * See {@link @mscharley/ioc#interfaces.ContainerConfiguration } for options.
+ * See {@link @mscharley/dot#interfaces.ContainerConfiguration } for options.
  *
  * @public
  */

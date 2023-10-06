@@ -13,8 +13,8 @@ tsdoc-metadata.json
 .stryker-tmp
 
 # Final built files
-/ioc.js
-/ioc.cjs
-/ioc.d.ts
-*.cjs.map
-*.js.map
+/dot.js
+/dot.js.map
+/dot.cjs
+/dot.cjs.map
+/dot.d.ts

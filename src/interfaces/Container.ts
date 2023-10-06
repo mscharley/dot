@@ -10,7 +10,7 @@ import type { ServiceIdentifier } from './ServiceIdentifier.js';
  *
  * @remarks
  *
- * You can either manage bindings directly on a container or use {@link @mscharley/ioc#interfaces.ContainerModule | ContainerModules }
+ * You can either manage bindings directly on a container or use {@link @mscharley/dot#interfaces.ContainerModule | ContainerModules }
  * to manage bindings in a reusable and modular way.
  *
  * @public
