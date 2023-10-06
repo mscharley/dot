@@ -15,6 +15,7 @@ temp/
 .vscode/
 .eslint*
 .nvmrc
+.husky
 api-extractor.json
 tsconfig.*.json
 tsdoc-metadata.json
