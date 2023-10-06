@@ -1,0 +1,28 @@
+{
+	"name": "@mscharley/dot-examples-ts4-cjs",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Example DOT project using TypeScript 4.x and CommonJS",
+	"main": "index.js",
+	"type": "commonjs",
+	"scripts": {
+		"test": "tsc --noEmit"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/mscharley/dot.git",
+		"directory": "examples/ts4-cjs"
+	},
+	"author": "",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/mscharley/dot/issues"
+	},
+	"homepage": "https://github.com/mscharley/dot#readme",
+	"dependencies": {
+		"@mscharley/dot": "file:../.."
+	},
+	"devDependencies": {
+		"typescript": "^4.9.5"
+	}
+}

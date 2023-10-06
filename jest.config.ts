@@ -39,6 +39,7 @@ export default {
 		'/src/interfaces/',
 		'/src/models/',
 		'/__utils__/',
+		'/examples/',
 	],
 
 	// Indicates which provider should be used to instrument code for coverage
@@ -166,7 +167,7 @@ export default {
 	// ],
 
 	// An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
-	testPathIgnorePatterns: ['/node_modules/', '/dist/', '/__utils__/'],
+	testPathIgnorePatterns: ['/node_modules/', '/dist/', '/__utils__/', '/examples/'],
 
 	// The regexp pattern or array of patterns that Jest uses to detect test files
 	// testRegex: [],

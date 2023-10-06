@@ -11,12 +11,28 @@
 		"ioc"
 	],
 	"type": "module",
+	"main": "./cjs/dot.cjs",
+	"module": "./dot.js",
 	"types": "./dot.d.ts",
+	"typesVersions": {
+		"<5.0": {
+			"dot.d.ts": [
+				"dot.v4.d.ts"
+			]
+		}
+	},
 	"exports": {
 		".": {
-			"types": "./dot.d.ts",
-			"require": "./dot.cjs",
-			"import": "./dot.js"
+			"require": {
+				"types@<5.0": "./dot.v4.d.ts",
+				"types": "./dot.d.ts",
+				"default": "./cjs/dot.cjs"
+			},
+			"import": {
+				"types@<5.0": "./dot.v4.d.ts",
+				"types": "./dot.d.ts",
+				"default": "./dot.js"
+			}
 		}
 	},
 	"scripts": {
@@ -24,7 +40,7 @@
 		"prepack": "npm run clean && npm run build",
 		"build": "npm run build:tsc && npm run build:api && npm run build:esbuild",
 		"build:tsc": "tsc",
-		"build:api": "api-extractor run --local",
+		"build:api": "api-extractor run --local && grep -v 'DecoratorContext' dot.d.ts > dot.v4.d.ts",
 		"build:docs": "api-documenter markdown -i ./reports/docs -o ./docs",
 		"build:esbuild": "npm run build:esbuild:esm && npm run build:esbuild:cjs",
 		"build:esbuild:cjs": "esbuild dist/index.js --bundle --sourcemap=linked --outfile=dot.cjs --platform=node --packages=external",
