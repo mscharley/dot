@@ -46,9 +46,7 @@
 	"bugs": {
 		"url": "https://github.com/mscharley/dot/issues"
 	},
-	"repository": {
-		"url": "https://github.com/mscharley/dot"
-	},
+	"repository": "https://github.com/mscharley/dot",
 	"homepage": "https://github.com/mscharley/dot#readme",
 	"funding": {
 		"type": "individual",
