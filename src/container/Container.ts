@@ -224,8 +224,12 @@ export class Container implements interfaces.Container {
 
 	#validateInjections = (binding: Binding<unknown>, injections: Array<Injection<unknown>>): void => {
 		for (const i of injections) {
-			if (i.options.optional) {
+			if (
 				// Optional dependencies are always valid
+				i.options.optional ||
+				// Unmanaged injections are always valid since they contain the static value to use
+				i.type === 'unmanagedConstructorParameter'
+			) {
 				continue;
 			}
 
@@ -241,7 +245,7 @@ export class Container implements interfaces.Container {
 		for (const binding of this.#bindings) {
 			switch (binding.type) {
 				case 'static':
-					// These are always valid, the value is in the binding and has no dependencies.
+					// These are always valid, the value is in the binding and has no dependencies
 					continue;
 				case 'dynamic': {
 					this.#validateInjections(binding, binding.injections);
