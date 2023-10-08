@@ -8,6 +8,7 @@ import type { LoggerFn } from '../interfaces/Logger.js';
 import { noop } from '../util/noop.js';
 import { Token } from '../Token.js';
 import type { TokenType } from '../Token.js';
+import { unmanaged } from '../decorators/unmanaged.js';
 import { withOptions } from '../decorators/withOptions.js';
 
 const token = new Token<{ id: number }>('test');
@@ -346,6 +347,18 @@ describe('Bindings', () => {
 			c.bind(Test).toSelf();
 
 			expect(() => c.validate()).toThrowError('Unbound dependency: Constructor<Test> => Token<Symbol(test)>');
+		});
+
+		it('succeeds for unmanaged dependencies', () => {
+			@injectable(unmanaged('Hello, world!'))
+			class Test {
+				public constructor(public value: string) {}
+			}
+
+			const c = new Container();
+			c.bind(Test).toSelf();
+
+			expect(() => c.validate()).not.toThrowError();
 		});
 	});
 });
