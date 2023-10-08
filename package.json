@@ -11,7 +11,7 @@
 		"ioc"
 	],
 	"type": "module",
-	"main": "./cjs/dot.cjs",
+	"main": "./dot.cjs",
 	"module": "./dot.js",
 	"types": "./dot.d.ts",
 	"typesVersions": {
@@ -26,7 +26,7 @@
 			"require": {
 				"types@<5.0": "./dot.v4.d.ts",
 				"types": "./dot.d.ts",
-				"default": "./cjs/dot.cjs"
+				"default": "./dot.cjs"
 			},
 			"import": {
 				"types@<5.0": "./dot.v4.d.ts",
