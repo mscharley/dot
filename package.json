@@ -62,7 +62,10 @@
 	"bugs": {
 		"url": "https://github.com/mscharley/dot/issues"
 	},
-	"repository": "https://github.com/mscharley/dot",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/mscharley/dot.git"
+	},
 	"homepage": "https://github.com/mscharley/dot#readme",
 	"funding": {
 		"type": "individual",
