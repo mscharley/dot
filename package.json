@@ -1,7 +1,9 @@
 {
 	"name": "@mscharley/dot",
 	"version": "1.4.7",
-	"provenance": true,
+	"publishConfig": {
+		"provenance": true
+	},
 	"description": "A lightweight inversion of control framework for JavaScript and TypeScript",
 	"keywords": [
 		"node",
