@@ -57,7 +57,8 @@
 		"test:jest:experimental": "DECORATOR_TYPE=experimental NODE_OPTIONS=--experimental-vm-modules jest",
 		"stryker": "DECORATOR_TYPE=tc39 NODE_OPTIONS=--experimental-vm-modules stryker run",
 		"rebuild-test": "npm run clean && npm run build && npm test && npm run stryker && npm run build:docs",
-		"release": "changeset publish"
+		"cs-version": "npm run build:tsc && changeset version",
+		"cs-release": "changeset publish"
 	},
 	"author": "Matthew Scharley <matt@scharley.me>",
 	"license": "MIT",
