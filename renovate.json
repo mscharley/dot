@@ -13,6 +13,7 @@
 	"packageRules": [
 		{
 			"packageNames": ["@types/node", "node"],
+			"groupName": "node",
 			"allowedVersions": "^20.0.0",
 			"major": {
 				"enabled": true,
