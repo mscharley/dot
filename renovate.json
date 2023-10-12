@@ -1,11 +1,13 @@
 {
 	"extends": [
-		"config:js-lib",
+		"config:best-practices",
+		":pinOnlyDevDependencies",
 		"schedule:weekends",
 		":automergeMinor",
 		":semanticCommits",
 		":rebaseStalePrs",
-		":label(dependencies)"
+		":label(dependencies)",
+		"npm:unpublishSafe"
 	],
 	"automergeStrategy": "fast-forward",
 	"transitiveRemediation": true,
