@@ -12,12 +12,14 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     environment: npm
+    permissions:
+      id-token: write
+      contents: write
+      pull-requests: write
 
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.RELEASE_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -37,5 +39,5 @@ jobs:
           title: 'Release next version'
           createGithubReleases: true
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
