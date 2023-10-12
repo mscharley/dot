@@ -12,8 +12,8 @@
 	"ignorePaths": ["**/examples/**"],
 	"packageRules": [
 		{
-			"packageNames": ["@types/node"],
-			"allowedVersions": "^18.0.0",
+			"packageNames": ["@types/node", "node"],
+			"allowedVersions": "^20.0.0",
 			"major": { "enabled": true }
 		},
 		{
