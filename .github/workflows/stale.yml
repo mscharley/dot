@@ -11,7 +11,7 @@ jobs:
       issues: write
       pull-requests: write
     steps:
-      - uses: actions/stale@v8
+      - uses: actions/stale@1160a2240286f5da8ec72b1c0816ce2481aabf84 # v8
         with:
           stale-issue-message: 'This issue is stale because it has been open 30 days with no activity. Remove stale label or comment or this will be closed in 7 days.'
           stale-pr-message: 'This PR is stale because it has been open 30 days with no activity.'
@@ -20,7 +20,7 @@ jobs:
           days-before-close: 7
           days-before-pr-close: -1
           any-of-labels: 'bug'
-      - uses: dessant/lock-threads@v4
+      - uses: dessant/lock-threads@be8aa5be94131386884a6da4189effda9b14aa21 # v4
         with:
           issue-inactive-days: '14'
           pr-inactive-days: '28'
