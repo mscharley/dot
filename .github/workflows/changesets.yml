@@ -13,7 +13,6 @@ jobs:
     runs-on: ubuntu-latest
     environment: npm
     permissions:
-      actions: write
       contents: write
       pull-requests: write
 
@@ -37,6 +36,7 @@ jobs:
           publish: npm run cs-release
           commit: 'ci(changesets): version packages'
           title: 'Release next version'
+          createGithubReleases: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
