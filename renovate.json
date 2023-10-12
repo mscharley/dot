@@ -12,9 +12,21 @@
 	"ignorePaths": ["**/examples/**"],
 	"packageRules": [
 		{
-			"packageNames": ["@types/node"],
-			"allowedVersions": "^18.0.0",
-			"major": { "enabled": true }
+			"packageNames": ["@types/node", "node"],
+			"allowedVersions": "^20.0.0",
+			"major": {
+				"enabled": true,
+				"semanticCommitType": "fix"
+			}
+		},
+		{
+			"matchPackageNames": ["typescript"],
+			"major": {
+				"semanticCommitType": "fix"
+			},
+			"minor": {
+				"semanticCommitType": "fix"
+			}
 		},
 		{
 			"matchPackageNames": ["@microsoft/api-documenter", "@microsoft/api-extractor"],
