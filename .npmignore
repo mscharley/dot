@@ -12,11 +12,12 @@ examples
 reports/
 docs/
 temp/
-.github/
-.vscode/
+.changeset/
 .eslint*
-.nvmrc
+.github/
 .husky
+.nvmrc
+.vscode/
 api-extractor.json
 tsconfig.*.json
 tsdoc-metadata.json
