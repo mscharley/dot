@@ -12,6 +12,10 @@ jobs:
     name: Release
     runs-on: ubuntu-latest
     environment: npm
+    permissions:
+      contents: write
+      pull-requests: write
+
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
