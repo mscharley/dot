@@ -13,7 +13,7 @@
 	"automergeStrategy": "fast-forward",
 	"transitiveRemediation": true,
 	"ignorePaths": ["**/examples/**"],
-	"gitIgnoreAuthors": ["github+renovate@scharley.me"],
+	"gitIgnoredAuthors": ["github+renovate@scharley.me"],
 	"packageRules": [
 		{
 			"matchPackageNames": ["@types/node", "node"],
