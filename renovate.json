@@ -18,7 +18,7 @@
 		{
 			"matchPackageNames": ["@types/node", "node"],
 			"groupName": "node",
-			"allowedVersions": "^20.0.0",
+			"allowedVersions": "^18.0.0 || ^20.0.0",
 			"major": {
 				"enabled": true,
 				"semanticCommitType": "fix"
