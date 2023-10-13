@@ -12,4 +12,4 @@ jobs:
 
     steps:
       - name: Update PR
-        uses: mscharley/dependencies-changesets-action@v1
+        uses: mscharley/dependency-changesets-action@v1
