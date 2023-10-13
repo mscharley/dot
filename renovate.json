@@ -1,4 +1,5 @@
 {
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
 	"extends": [
 		"config:best-practices",
 		":pinOnlyDevDependencies",
@@ -12,6 +13,7 @@
 	"automergeStrategy": "fast-forward",
 	"transitiveRemediation": true,
 	"ignorePaths": ["**/examples/**"],
+	"gitIgnoreAuthors": ["github+renovate@scharley.me"],
 	"packageRules": [
 		{
 			"matchPackageNames": ["@types/node", "node"],
@@ -32,18 +34,12 @@
 			}
 		},
 		{
-			"matchPackageNames": [
-				"@microsoft/api-documenter",
-				"@microsoft/api-extractor"
-			],
+			"matchPackageNames": ["@microsoft/api-documenter", "@microsoft/api-extractor"],
 			"groupName": "api-extractor",
 			"additionalBranchPrefix": ""
 		},
 		{
-			"matchPackageNames": [
-				"@mscharley/eslint-config",
-				"@mscharley/prettier-config"
-			],
+			"matchPackageNames": ["@mscharley/eslint-config", "@mscharley/prettier-config"],
 			"groupName": "eslint packages",
 			"additionalBranchPrefix": ""
 		}
