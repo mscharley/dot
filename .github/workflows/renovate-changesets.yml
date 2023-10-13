@@ -9,9 +9,11 @@ jobs:
     name: Update Renovate PR
     runs-on: ubuntu-latest
     if: contains(github.event.pull_request.labels.*.name, 'dependencies')
+    permissions:
+      contents: write
 
     steps:
       - name: Update PR
         uses: mscharley/dependency-changesets-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
