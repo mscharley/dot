@@ -93,7 +93,7 @@
 		"@stryker-mutator/core": "7.2.0",
 		"@stryker-mutator/jest-runner": "7.2.0",
 		"@stryker-mutator/typescript-checker": "7.2.0",
-		"esbuild": "0.19.4",
+		"esbuild": "0.19.5",
 		"generic-type-guard": "3.7.2",
 		"husky": "8.0.3",
 		"jest": "29.7.0",
