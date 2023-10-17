@@ -5,6 +5,9 @@
 		"provenance": true
 	},
 	"description": "A lightweight inversion of control framework for JavaScript and TypeScript",
+	"engines": {
+		"node": ">= 16"
+	},
 	"keywords": [
 		"node",
 		"javascript",
@@ -50,13 +53,14 @@
 		"build:esbuild:esm": "esbuild dist/index.js --bundle --sourcemap=linked --outfile=dot.js --platform=neutral --packages=external",
 		"clean": "rm -rf dot.* dist/ coverage/ docs/ reports/ temp/ .stryker-tmp/ tsdoc-metadata.json",
 		"start": "node ./dist/demo/index.js",
-		"test": "npm run test:eslint && npm run build:tsc && npm run test:api && npm run test:tsc:experimental && npm run test:jest",
+		"test": "npm run test:eslint && npm run build:tsc && npm run test:api && npm run test:tsc:experimental && npm run test:jest && npm run test:cjs-esm-compat",
 		"test:api": "api-extractor run",
 		"test:eslint": "eslint .",
 		"test:tsc:experimental": "tsc -p tsconfig.jest-experimental.json --noEmit --incremental false",
 		"test:jest": "npm run test:jest:experimental && npm run test:jest:tc39",
 		"test:jest:tc39": "DECORATOR_TYPE=tc39 NODE_OPTIONS=--experimental-vm-modules jest",
 		"test:jest:experimental": "DECORATOR_TYPE=experimental NODE_OPTIONS=--experimental-vm-modules jest",
+		"test:cjs-esm-compat": "node dist/__utils__/esm-cjs-multi-test.js",
 		"stryker": "DECORATOR_TYPE=tc39 NODE_OPTIONS=--experimental-vm-modules stryker run",
 		"rebuild-test": "npm run clean && npm run build && npm test && npm run stryker && npm run build:docs",
 		"cs-version": "npm run build:tsc && changeset version",

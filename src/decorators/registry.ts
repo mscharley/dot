@@ -7,8 +7,10 @@ import type {
 	UnmanagedConstructorParameterInjection,
 } from '../models/Injection.js';
 import { InvalidOperationError } from '../Error.js';
+import { makeGlobalCache } from '../util/makeGlobalCache.js';
 
-const registry: InjectionRegistry = new WeakMap();
+const registryCache = Symbol.for('@mscharley/dot:registry-cache');
+const registry: InjectionRegistry = makeGlobalCache(registryCache);
 
 export const ensureRegistration = <T>(klass: interfaces.Constructor<T>): void => {
 	registry.set(klass, registry.get(klass) ?? []);
