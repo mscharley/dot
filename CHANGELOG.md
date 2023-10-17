@@ -1,5 +1,11 @@
 # @mscharley/dot
 
+## 1.4.10
+
+### Patch Changes
+
+- 2cde33e: Fix an issue with tokens in mixed CJS/ESM environments
+
 ## 1.4.9
 
 ### Patch Changes
