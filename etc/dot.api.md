@@ -294,6 +294,8 @@ type SyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound:
 export class Token<out T> {
     constructor(name: string);
     readonly identifier: symbol;
+    // (undocumented)
+    get _witness(): T;
 }
 
 // @public
@@ -303,7 +305,11 @@ export class TokenResolutionError extends ResolutionError {
 }
 
 // @public
-export type TokenType<T extends Token<unknown>> = T extends Token<infer U> ? U : never;
+export type TokenType<T extends {
+    _witness: unknown;
+}> = T extends {
+    _witness: infer U;
+} ? U : never;
 
 // @public
 type UnbindFunction = <T>(id: ServiceIdentifier<T>) => void;

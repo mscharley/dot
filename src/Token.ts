@@ -11,7 +11,9 @@
  *
  * @public
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
+import { InvalidOperationError } from './Error.js';
+
 export class Token<out T> {
 	/**
 	 * The Symbol used as the unique identifier for this token
@@ -21,6 +23,10 @@ export class Token<out T> {
 	public constructor(name: string) {
 		this.identifier = Symbol(name);
 	}
+
+	public get _witness(): T {
+		throw new InvalidOperationError("Don't access the token witness, this isn't a real variable");
+	}
 }
 
 /**
@@ -28,4 +34,4 @@ export class Token<out T> {
  *
  * @public
  */
-export type TokenType<T extends Token<unknown>> = T extends Token<infer U> ? U : never;
+export type TokenType<T extends { _witness: unknown }> = T extends { _witness: infer U } ? U : never;
