@@ -6,7 +6,7 @@ const mappingsCache = Symbol.for('@mscharley/dot:identifier-token-mappings');
 const _mappings: WeakMap<interfaces.Constructor<unknown>, Token<unknown>> = makeGlobalCache(mappingsCache);
 
 export const tokenForIdentifier = <T>(id: interfaces.ServiceIdentifier<T>): Token<T> => {
-	if (id instanceof Token) {
+	if ('identifier' in id) {
 		return id;
 	} else {
 		if (!_mappings.has(id)) {
