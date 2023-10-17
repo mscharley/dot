@@ -34,7 +34,7 @@ describe('Invalid decorator', () => {
 
 		await expect(c.get(service)).rejects.toMatchObject({
 			code: 'INVALID_OPERATION' satisfies ErrorCode,
-			message: 'No @injectable() decorator for class: Node',
+			message: 'No @injectable() decorator for class: Constructor<Node>',
 		});
 	});
 
@@ -45,7 +45,7 @@ describe('Invalid decorator', () => {
 
 		await expect(c.get(node)).rejects.toMatchObject({
 			code: 'INVALID_OPERATION' satisfies ErrorCode,
-			message: 'No @injectable() decorator for class: Node',
+			message: 'No @injectable() decorator for class: Constructor<Node>',
 		});
 	});
 
@@ -56,13 +56,13 @@ describe('Invalid decorator', () => {
 
 		c.bind(Test).toSelf();
 		await expect(c.get(Test)).rejects.toMatchObject({
-			message: 'No @injectable() decorator for class: Test',
+			message: 'No @injectable() decorator for class: Constructor<Test>',
 			code: 'INVALID_OPERATION' satisfies ErrorCode,
 		});
 
 		c.rebind(Test).to(Test);
 		await expect(c.get(Test)).rejects.toMatchObject({
-			message: 'No @injectable() decorator for class: Test',
+			message: 'No @injectable() decorator for class: Constructor<Test>',
 			code: 'INVALID_OPERATION' satisfies ErrorCode,
 		});
 	});

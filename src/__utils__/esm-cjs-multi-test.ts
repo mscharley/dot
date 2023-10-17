@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/consistent-type-imports */
 /* eslint-disable @typescript-eslint/prefer-ts-expect-error */
 
 import { createRequire } from 'module';
