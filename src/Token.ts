@@ -17,6 +17,8 @@ import { InvalidOperationError } from './Error.js';
 export class Token<out T> {
 	/**
 	 * The Symbol used as the unique identifier for this token
+	 *
+	 * @internal
 	 */
 	public readonly identifier: symbol;
 
@@ -24,6 +26,14 @@ export class Token<out T> {
 		this.identifier = Symbol(name);
 	}
 
+	/**
+	 * This is a dummy variable, it throws an error on access
+	 *
+	 * @remarks
+	 *
+	 * This property mainly exists to facilitate some compatibility across ESM and CommonJS in mixed environments. It is
+	 * only here for the extra type information and accessing the value of this property is an error.
+	 */
 	public get _witness(): T {
 		throw new InvalidOperationError("Don't access the token witness, this isn't a real variable");
 	}

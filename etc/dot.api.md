@@ -293,8 +293,8 @@ type SyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound:
 // @public
 export class Token<out T> {
     constructor(name: string);
+    // @internal
     readonly identifier: symbol;
-    // (undocumented)
     get _witness(): T;
 }
 
