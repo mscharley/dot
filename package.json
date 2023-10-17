@@ -27,8 +27,8 @@
 	"exports": {
 		".": {
 			"require": {
-				"types@<5.0": "./dot.v4.d.ts",
-				"types": "./dot.d.ts",
+				"types@<5.0": "./dot.v4.d.cts",
+				"types": "./dot.d.cts",
 				"default": "./dot.cjs"
 			},
 			"import": {
@@ -43,7 +43,7 @@
 		"prepack": "npm run clean && npm run build",
 		"build": "npm run build:tsc && npm run build:api && npm run build:esbuild",
 		"build:tsc": "tsc",
-		"build:api": "api-extractor run --local && grep -v 'DecoratorContext' dot.d.ts > dot.v4.d.ts",
+		"build:api": "api-extractor run --local && grep -v 'DecoratorContext' dot.d.ts > dot.v4.d.ts && cp dot.d.ts dot.d.cts && cp dot.v4.d.ts dot.v4.d.cts",
 		"build:docs": "api-documenter markdown -i ./reports/docs -o ./docs",
 		"build:esbuild": "npm run build:esbuild:esm && npm run build:esbuild:cjs",
 		"build:esbuild:cjs": "esbuild dist/index.js --bundle --sourcemap=linked --outfile=dot.cjs --platform=node --packages=external",

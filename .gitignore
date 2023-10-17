@@ -13,9 +13,14 @@ tsdoc-metadata.json
 .stryker-tmp
 
 # Final built files
+## ESM build
 /dot.js
 /dot.js.map
-/dot.cjs
-/dot.cjs.map
 /dot.d.ts
 /dot.v4.d.ts
+
+## CJS build
+/dot.cjs
+/dot.cjs.map
+/dot.d.cts
+/dot.v4.d.cts
