@@ -24,6 +24,7 @@ export const injectionFromIdentifier = <T>(id: interfaces.InjectionIdentifier<T>
 			options: {
 				multiple: false,
 				optional: false,
+				...partialOpts,
 			},
 			value: token,
 		};
