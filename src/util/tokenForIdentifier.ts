@@ -1,7 +1,9 @@
 import type * as interfaces from '../interfaces/index.js';
+import { makeGlobalCache } from './makeGlobalCache.js';
 import { Token } from '../Token.js';
 
-const _mappings = new WeakMap<interfaces.Constructor<unknown>, Token<unknown>>();
+const mappingsCache = Symbol.for('@mscharley/dot:identifier-token-mappings');
+const _mappings: WeakMap<interfaces.Constructor<unknown>, Token<unknown>> = makeGlobalCache(mappingsCache);
 
 export const tokenForIdentifier = <T>(id: interfaces.ServiceIdentifier<T>): Token<T> => {
 	if (id instanceof Token) {
