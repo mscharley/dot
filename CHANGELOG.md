@@ -1,5 +1,13 @@
 # @mscharley/dot
 
+## 1.4.9
+
+### Patch Changes
+
+- dce0234: Fix CommonJS imports in node16 resolution mode
+- 1247f6c: Fix a bug with mixed CommonJS/ESM projects
+- 98519b9: Fix reporting of class names again
+
 ## 1.4.8
 
 ### Patch Changes
