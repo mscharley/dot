@@ -8,6 +8,7 @@ import type {
 } from '../models/Injection.js';
 import { InvalidOperationError } from '../Error.js';
 import { makeGlobalCache } from '../util/makeGlobalCache.js';
+import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 
 const registryCache = Symbol.for('@mscharley/dot:registry-cache');
 const registry: InjectionRegistry = makeGlobalCache(registryCache);
@@ -26,7 +27,7 @@ export const registerInjection = <T>(klass: interfaces.Constructor<T>, injection
 export const getInjections = <T>(klass: interfaces.Constructor<T>): Array<Injection<unknown>> => {
 	const injections = registry.get(klass);
 	if (injections == null) {
-		throw new InvalidOperationError(`No @injectable() decorator for class: ${klass.name}`);
+		throw new InvalidOperationError(`No @injectable() decorator for class: ${stringifyIdentifier(klass)}`);
 	}
 
 	return [...injections];
@@ -35,7 +36,7 @@ export const getInjections = <T>(klass: interfaces.Constructor<T>): Array<Inject
 export const getPropertyInjections = <T>(klass: interfaces.Constructor<T>): PropertyInjection[] => {
 	const injections = registry.get(klass);
 	if (injections == null) {
-		throw new InvalidOperationError(`No @injectable() decorator for class: ${klass.name}`);
+		throw new InvalidOperationError(`No @injectable() decorator for class: ${stringifyIdentifier(klass)}`);
 	}
 
 	return [...injections].filter((i): i is PropertyInjection => i.type === 'property');
@@ -46,7 +47,7 @@ export const getConstructorParameterInjections = <T>(
 ): Array<ConstructorParameterInjection | UnmanagedConstructorParameterInjection> => {
 	const injections = registry.get(klass);
 	if (injections == null) {
-		throw new InvalidOperationError(`No @injectable() decorator for class: ${klass.name}`);
+		throw new InvalidOperationError(`No @injectable() decorator for class: ${stringifyIdentifier(klass)}`);
 	}
 
 	return [...injections].filter(
