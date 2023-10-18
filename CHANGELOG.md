@@ -1,5 +1,11 @@
 # @mscharley/dot
 
+## 1.4.11
+
+### Patch Changes
+
+- 383e72e: instanceof is unreliable in mixed cjs/esm environments
+
 ## 1.4.10
 
 ### Patch Changes
