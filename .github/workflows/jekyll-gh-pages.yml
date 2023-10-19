@@ -27,11 +27,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
+        uses: actions/checkout@v4.1.1
       - name: Setup Pages
-        uses: actions/configure-pages@f156874f8191504dae5b037505266ed5dda6c382 # v3
+        uses: actions/configure-pages@v3.0.6
       - name: Setup Node.js
-        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
+        uses: actions/setup-node@v3.8.1
         with:
           node-version-file: .nvmrc
 
@@ -41,13 +41,13 @@ jobs:
       - name: Build site
         run: npm run build && npm run build:docs
       - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@058068233b22675635bdf8dfa178d6ae77f12694 # v1
+        uses: actions/jekyll-build-pages@v1.0.8
         with:
           source: ./docs/
           destination: ./_site
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@a753861a5debcf57bf8b404356158c8e1e33150c # v2
+        uses: actions/upload-pages-artifact@v2.0.0
 
   # Deployment job
   deploy:
@@ -59,4 +59,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@9dbe3824824f8a1377b8e298bafde1a50ede43e5 # v2
+        uses: actions/deploy-pages@v2.0.4

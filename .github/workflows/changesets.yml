@@ -19,10 +19,10 @@ jobs:
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4
+        uses: actions/checkout@v4.1.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3
+        uses: actions/setup-node@v3.8.1
         with:
           node-version-file: .nvmrc
 
