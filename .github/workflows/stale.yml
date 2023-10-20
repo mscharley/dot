@@ -6,21 +6,4 @@ on:
 
 jobs:
   stale:
-    runs-on: ubuntu-latest
-    permissions:
-      issues: write
-      pull-requests: write
-    steps:
-      - uses: actions/stale@1160a2240286f5da8ec72b1c0816ce2481aabf84 # v8.0.0
-        with:
-          stale-issue-message: 'This issue is stale because it has been open 30 days with no activity. Remove stale label or comment or this will be closed in 7 days.'
-          stale-pr-message: 'This PR is stale because it has been open 30 days with no activity.'
-          close-issue-message: 'This issue was closed because it has been stalled for 7 days with no activity.'
-          days-before-stale: 30
-          days-before-close: 7
-          days-before-pr-close: -1
-          any-of-labels: 'bug'
-      - uses: dessant/lock-threads@be8aa5be94131386884a6da4189effda9b14aa21 # v4.0.1
-        with:
-          issue-inactive-days: '14'
-          pr-inactive-days: '28'
+    uses: mscharley/.github/.github/workflows/stale.yml@main
