@@ -11,34 +11,13 @@ on:
 
 jobs:
   ci:
-    runs-on: ubuntu-latest
-
+    uses: mscharley/.github/.github/workflows/node-ci.yml@main
     strategy:
       matrix:
         node-version: [16.x, 18.x, 20.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
-    steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3.8.1
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run build --if-present
-      - run: npm test
-        timeout-minutes: 15
+    with:
+      node-version: ${{ matrix.node-version }}
 
   stryker:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-      - name: Setup Node.js
-        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3.8.1
-        with:
-          node-version-file: .nvmrc
-          cache: 'npm'
-      - run: npm ci
-      - run: npm run stryker
+    uses: mscharley/.github/.github/workflows/stryker.yml@main
