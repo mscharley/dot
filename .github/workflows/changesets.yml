@@ -9,35 +9,6 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
   release:
-    name: Release
-    runs-on: ubuntu-latest
-    environment: npm
-    permissions:
-      id-token: write
-      contents: write
-      pull-requests: write
-
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11 # v4.1.1
-
-      - name: Setup Node.js
-        uses: actions/setup-node@5e21ff4d9bc1a8cf6de233a3057d20ec6b3fb69d # v3.8.1
-        with:
-          node-version-file: .nvmrc
-
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Create Release Pull Request or Publish to npm
-        id: changesets
-        uses: changesets/action@v1
-        with:
-          version: npm run cs-version
-          publish: npm run cs-release
-          commit: 'ci(changesets): version packages'
-          title: 'Release next version'
-          createGithubReleases: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    uses: mscharley/.github/.github/workflows/changesets.yml@main
+    secrets:
+      token: ${{ secrets.DEPENDENCY_UPDATE_GITHUB_TOKEN }}
