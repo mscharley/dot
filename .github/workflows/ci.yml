@@ -10,7 +10,7 @@ on:
     branches: ['main']
 
 jobs:
-  ci:
+  node:
     uses: mscharley/.github/.github/workflows/node-ci.yml@main
     strategy:
       matrix:
