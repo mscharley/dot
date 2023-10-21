@@ -41,7 +41,7 @@ jobs:
       - name: Build site
         run: npm run build && npm run build:docs
       - name: Build with Jekyll
-        uses: actions/jekyll-build-pages@058068233b22675635bdf8dfa178d6ae77f12694 # v1.0.8
+        uses: actions/jekyll-build-pages@e4ef22193c23ea849fc3fea6dbce69da1ee65b6d # v1.0.9
         with:
           source: ./docs/
           destination: ./_site
