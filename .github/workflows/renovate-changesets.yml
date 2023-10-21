@@ -6,15 +6,6 @@ on:
 
 jobs:
   update:
-    name: Update Renovate PR
-    runs-on: ubuntu-latest
-    if: contains(github.event.pull_request.labels.*.name, 'dependencies')
-
-    steps:
-      - name: Update PR
-        uses: mscharley/dependency-changesets-action@f37af61802919de6925f0bb142984e4ac3cd76f8 # v1.0.0
-        with:
-          token: ${{ secrets.DEPENDENCY_UPDATE_GITHUB_TOKEN }}
-          use-semantic-commits: true
-          author-name: Renovate Changesets
-          author-email: github+renovate@scharley.me
+    uses: mscharley/.github/.github/workflows/renovate-changesets.yml@main
+    secrets:
+      token: ${{ secrets.DEPENDENCY_UPDATE_GITHUB_TOKEN }}
