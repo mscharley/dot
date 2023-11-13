@@ -1,3 +1,5 @@
-# DOT dependency management
+[Home](./index.md)
 
-Hello, world!
+## DOT dependency management
+
+- [Reference documentation](./reference/index.md)
