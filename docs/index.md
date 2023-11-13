@@ -2,4 +2,4 @@
 
 ## DOT dependency management
 
-- [Reference documentation](./reference/index.md)
+- [Reference documentation](./reference/dot.md)
