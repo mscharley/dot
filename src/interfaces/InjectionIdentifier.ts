@@ -23,14 +23,14 @@ export type InjectedType<T extends InjectionIdentifier<unknown>> = T extends [
 ]
 	? U[]
 	: T extends [ServiceIdentifier<infer U>, { optional: true }]
-	? U | undefined
-	: T extends [ServiceIdentifier<infer U>, object]
-	? U
-	: T extends ServiceIdentifier<infer U>
-	? U
-	: T extends DirectInjection<infer U>
-	? U
-	: never;
+	  ? U | undefined
+	  : T extends [ServiceIdentifier<infer U>, object]
+	    ? U
+	    : T extends ServiceIdentifier<infer U>
+	      ? U
+	      : T extends DirectInjection<infer U>
+	        ? U
+	        : never;
 
 /**
  * Mapped type to convert a list of injection parameters into a list of injectable values

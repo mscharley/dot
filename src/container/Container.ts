@@ -76,7 +76,7 @@ export class Container implements interfaces.Container {
 		return value!;
 	}
 
-	#ensureBindingsCompleted = (): void => {
+	readonly #ensureBindingsCompleted = (): void => {
 		const values = [...this.#incompleteBindings.values()];
 		if (values.length > 0) {
 			throw new InvalidOperationError(
@@ -125,7 +125,7 @@ export class Container implements interfaces.Container {
 		this.#bindings.push(binding as Binding<unknown>);
 	};
 
-	#getBindings = <T>(id: interfaces.ServiceIdentifier<T>): Array<Binding<T>> => {
+	readonly #getBindings = <T>(id: interfaces.ServiceIdentifier<T>): Array<Binding<T>> => {
 		const token = tokenForIdentifier(id);
 		const explicitBindings = this.#bindings.filter((b) => b.token.identifier === token.identifier) as Array<Binding<T>>;
 
@@ -148,7 +148,7 @@ export class Container implements interfaces.Container {
 		return [];
 	};
 
-	#resolveBinding =
+	readonly #resolveBinding =
 		(request: Request<unknown>) =>
 		<T>(binding: Binding<T>, resolutionPath: Array<Token<unknown>>): T | Promise<T> => {
 			const getArgsForParameterInjections = (injections: Array<Injection<unknown>>): unknown[] =>
@@ -222,7 +222,7 @@ export class Container implements interfaces.Container {
 		return local || (this.config.parent?.has(id) ?? false) || (typeof id === 'function' && this.config.autobindClasses);
 	};
 
-	#validateInjections = (binding: Binding<unknown>, injections: Array<Injection<unknown>>): void => {
+	readonly #validateInjections = (binding: Binding<unknown>, injections: Array<Injection<unknown>>): void => {
 		for (const i of injections) {
 			if (
 				// Optional dependencies are always valid
