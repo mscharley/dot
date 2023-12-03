@@ -1,5 +1,12 @@
 # @mscharley/dot
 
+## 1.4.12
+
+### Patch Changes
+
+- 7dfbdc9: fix(deps): update dependency typescript to v5.3.2
+- e0bce28: Fix an issue with injecting optional dependencies from child containers
+
 ## 1.4.11
 
 ### Patch Changes
