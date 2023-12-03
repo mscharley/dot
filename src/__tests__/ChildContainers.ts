@@ -80,6 +80,22 @@ describe('ChildContainers', () => {
 		expect(child.has(token)).toBe(true);
 	});
 
+	describe('optional injections', () => {
+		it("will request optional injections from it's parent", async () => {
+			container.bind(token).toConstantValue('Hello, world!');
+			const child = container.createChild();
+
+			await expect(child.get(token, { optional: true })).resolves.toBe('Hello, world!');
+		});
+
+		it("will requests multiple optional injections from it's parent if it has no explicit bindings", async () => {
+			container.bind(token).toConstantValue('Hello, world!');
+			const child = container.createChild();
+
+			await expect(child.get(token, { optional: true, multiple: true })).resolves.toStrictEqual(['Hello, world!']);
+		});
+	});
+
 	it('will inherit configuration from its parent', async () => {
 		const child = container.createChild();
 		child.bind(token).toConstantValue('Hello, world!');
