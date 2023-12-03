@@ -76,7 +76,9 @@ export const calculatePlan = <T>(
 	}
 
 	if (binds.length === 0) {
-		if (input.options.optional) {
+		if (parent != null) {
+			return [{ type: 'requestFromParent', token, parent, options: input.options }];
+		} else if (input.options.optional) {
 			return [
 				{
 					type: 'createClass',
@@ -89,8 +91,6 @@ export const calculatePlan = <T>(
 					resolutionPath: [...resolutionPath, token],
 				},
 			];
-		} else if (parent != null) {
-			return [{ type: 'requestFromParent', token, parent, options: input.options }];
 		} else {
 			throw new TokenResolutionError(
 				'Unable to resolve token',
