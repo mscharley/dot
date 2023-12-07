@@ -2,7 +2,6 @@ import type * as interfaces from '../interfaces/index.js';
 import type {
 	ConstructorParameterInjection,
 	Injection,
-	InjectionRegistry,
 	PropertyInjection,
 	UnmanagedConstructorParameterInjection,
 } from '../models/Injection.js';
@@ -11,7 +10,7 @@ import { makeGlobalCache } from '../util/makeGlobalCache.js';
 import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 
 const registryCache = Symbol.for('@mscharley/dot:registry-cache');
-const registry: InjectionRegistry = makeGlobalCache(registryCache);
+const registry = makeGlobalCache<interfaces.Constructor<unknown, unknown[]>, Array<Injection<unknown>>>(registryCache);
 
 export const ensureRegistration = <T>(klass: interfaces.Constructor<T>): void => {
 	registry.set(klass, registry.get(klass) ?? []);
@@ -55,3 +54,6 @@ export const getConstructorParameterInjections = <T>(
 			i.type === 'constructorParameter' || i.type === 'unmanagedConstructorParameter',
 	);
 };
+
+export const getRegistry = (): ReadonlyMap<interfaces.Constructor<unknown, unknown[]>, Array<Injection<unknown>>> =>
+	registry;

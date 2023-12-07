@@ -1,6 +1,6 @@
 import type * as interfaces from '../interfaces/index.js';
 import type { Binding, ConstructorBinding } from '../models/Binding.js';
-import { getConstructorParameterInjections, getInjections } from '../decorators/registry.js';
+import { getConstructorParameterInjections, getInjections, getRegistry } from '../decorators/registry.js';
 import { InvalidOperationError, TokenResolutionError } from '../Error.js';
 import type { BindingBuilder } from './BindingBuilder.js';
 import { calculatePlan } from '../planner/calculatePlan.js';
@@ -258,6 +258,16 @@ export class Container implements interfaces.Container {
 				default:
 					return isNever(binding, 'Invalid binding');
 			}
+		}
+
+		if (this.config.autobindClasses) {
+			const registry = getRegistry();
+			registry.forEach((injections, id) => {
+				this.#validateInjections(
+					{ type: 'constructor', id, ctr: id, scope: 'singleton', token: tokenForIdentifier(id) },
+					injections,
+				);
+			});
 		}
 
 		return this.config.parent?.validate();
