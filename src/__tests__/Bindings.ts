@@ -212,6 +212,11 @@ describe('Bindings', () => {
 			c.bind(token).toConstantValue({ id: 10 });
 			expect(c.has(token)).toBe(true);
 		});
+
+		it('can check if a class is autobound', () => {
+			const c = new Container({ autobindClasses: true });
+			expect(c.has(ImportTest)).toBe(true);
+		});
 	});
 
 	describe('unbind()', () => {
