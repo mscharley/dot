@@ -295,7 +295,9 @@ export class Token<out T> {
     constructor(name: string);
     // @internal
     readonly identifier: symbol;
-    get _witness(): T;
+    // (undocumented)
+    toString(): string;
+    readonly _witness: T;
 }
 
 // @public

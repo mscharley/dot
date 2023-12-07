@@ -1,3 +1,5 @@
+import { stringifyIdentifier } from './util/stringifyIdentifier.js';
+
 /**
  * A simple identifier that has a reference to a type which can be injected
  *
@@ -11,9 +13,6 @@
  *
  * @public
  */
-
-import { InvalidOperationError } from './Error.js';
-
 export class Token<out T> {
 	/**
 	 * The Symbol used as the unique identifier for this token
@@ -31,11 +30,13 @@ export class Token<out T> {
 	 *
 	 * @remarks
 	 *
-	 * This property mainly exists to facilitate some compatibility across ESM and CommonJS in mixed environments. It is
-	 * only here for the extra type information and accessing the value of this property is an error.
+	 * This property exists to facilitate some compatibility across ESM and CommonJS in mixed environments. It is
+	 * only here for the extra type information and this property is always undefined.
 	 */
-	public get _witness(): T {
-		throw new InvalidOperationError("Don't access the token witness, this isn't a real variable");
+	public declare readonly _witness: T;
+
+	public toString(): string {
+		return stringifyIdentifier(this);
 	}
 }
 
