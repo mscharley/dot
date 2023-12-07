@@ -1,5 +1,11 @@
 # @mscharley/dot
 
+## 1.5.0
+
+### Minor Changes
+
+- 7f90cd4: Validating a container will check autobound classes
+
 ## 1.4.12
 
 ### Patch Changes
