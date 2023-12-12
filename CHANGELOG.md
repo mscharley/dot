@@ -1,5 +1,11 @@
 # @mscharley/dot
 
+## 1.5.1
+
+### Patch Changes
+
+- 8fe2687: Allow for not validating autobindings as it can be troublesome in some situations
+
 ## 1.5.0
 
 ### Minor Changes
