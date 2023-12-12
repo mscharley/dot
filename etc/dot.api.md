@@ -86,7 +86,7 @@ interface Container {
     //
     // (undocumented)
     unbind: UnbindFunction;
-    validate: () => void;
+    validate: (validateAutobindings?: boolean) => void;
 }
 
 // @public

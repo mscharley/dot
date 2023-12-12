@@ -241,7 +241,7 @@ export class Container implements interfaces.Container {
 		}
 	};
 
-	public validate: interfaces.Container['validate'] = (): void => {
+	public validate: interfaces.Container['validate'] = (validateAutobindings = true): void => {
 		for (const binding of this.#bindings) {
 			switch (binding.type) {
 				case 'static':
@@ -260,7 +260,7 @@ export class Container implements interfaces.Container {
 			}
 		}
 
-		if (this.config.autobindClasses) {
+		if (this.config.autobindClasses && validateAutobindings) {
 			const registry = getRegistry();
 			registry.forEach((injections, id) => {
 				this.#validateInjections(
@@ -270,6 +270,6 @@ export class Container implements interfaces.Container {
 			});
 		}
 
-		return this.config.parent?.validate();
+		return this.config.parent?.validate(validateAutobindings);
 	};
 }

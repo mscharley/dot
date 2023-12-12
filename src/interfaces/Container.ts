@@ -51,5 +51,5 @@ export interface Container {
 	/**
 	 * Check that all bindings have no missing dependencies
 	 */
-	validate: () => void;
+	validate: (validateAutobindings?: boolean) => void;
 }
