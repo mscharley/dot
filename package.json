@@ -1,6 +1,6 @@
 {
 	"name": "@mscharley/dot",
-	"version": "1.5.1",
+	"version": "1.5.2",
 	"publishConfig": {
 		"provenance": true
 	},
