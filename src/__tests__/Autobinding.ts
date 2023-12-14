@@ -37,4 +37,15 @@ describe('Autobinding', () => {
 		const child = c.createChild({ autobindClasses: true });
 		await expect(child.get(Greeter)).resolves.toMatchObject({ greeting: 'Hello, John!' });
 	});
+
+	it('respects the default scope of a container', async () => {
+		const container = new Container({ autobindClasses: true, defaultScope: 'singleton' });
+
+		@injectable()
+		class Test {
+			public id = 10;
+		}
+
+		expect(await container.get(Test)).toBe(await container.get(Test));
+	});
 });
