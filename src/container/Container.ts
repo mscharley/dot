@@ -134,15 +134,18 @@ export class Container implements interfaces.Container {
 		}
 
 		if (this.config.autobindClasses && typeof id === 'function' && !(this.config.parent?.has(id) ?? false)) {
-			return [
-				{
-					type: 'constructor',
-					ctr: id,
-					id,
-					token: tokenForIdentifier(id),
-					scope: this.config.defaultScope,
-				} satisfies ConstructorBinding<T>,
-			];
+			const binding = {
+				type: 'constructor',
+				ctr: id,
+				id,
+				token,
+				scope: this.config.defaultScope,
+			} satisfies ConstructorBinding<T>;
+
+			// Save this binding to make sure that caches work for future attempts to get this class.
+			this.#bindings.push(binding);
+
+			return [binding];
 		}
 
 		return [];
