@@ -1,5 +1,6 @@
 import type { Logger, LoggerLevel } from './Logger.js';
 import type { Container } from './Container.js';
+import type { Context } from './Context.js';
 import type { ScopeOptions } from './ScopeOptions.js';
 
 /**
@@ -17,6 +18,16 @@ export interface ContainerConfiguration {
 	 * injected. Otherwise this is the same as calling `bind(MyClass).toSelf()` on all classes.
 	 */
 	readonly autobindClasses: boolean;
+
+	/**
+	 * Which contexts to allow for autobound classes (default: `[]`)
+	 *
+	 * @remarks
+	 *
+	 * The global context, which is used if no context is specified before using the injectable decorator, is always
+	 * available in every container with autobinding enabled.
+	 */
+	readonly autobindContexts: Context[];
 
 	/**
 	 * The default scope for all bindings in this container (default: `"transient"`)

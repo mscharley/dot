@@ -1,10 +1,10 @@
 import type * as interfaces from '../interfaces/index.js';
 import type { Binding, ConstructorBinding } from '../models/Binding.js';
-import { getConstructorParameterInjections, getInjections, getRegistry } from '../decorators/registry.js';
 import { InvalidOperationError, TokenResolutionError } from '../Error.js';
 import type { BindingBuilder } from './BindingBuilder.js';
 import { calculatePlan } from '../planner/calculatePlan.js';
 import { ClassBindingBuilder } from './BindingBuilder.js';
+import { Context } from './Context.js';
 import { executePlan } from '../planner/executePlan.js';
 import type { Injection } from '../models/Injection.js';
 import { isNever } from '../util/isNever.js';
@@ -14,6 +14,8 @@ import { ResolutionCache } from './ResolutionCache.js';
 import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 import type { Token } from '../Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
+
+export const GlobalContext = new Context('dot.Global');
 
 export class Container implements interfaces.Container {
 	static #currentRequest: Request<unknown> | undefined;
@@ -25,16 +27,22 @@ export class Container implements interfaces.Container {
 	readonly #log: interfaces.LoggerFn;
 	readonly #warn: interfaces.LoggerFn;
 	readonly #singletonCache = new ResolutionCache();
+	readonly #contexts: Context[];
 	public readonly config: Readonly<interfaces.ContainerConfiguration>;
 
 	public constructor(config?: Partial<interfaces.ContainerConfiguration>) {
 		this.config = {
 			autobindClasses: false,
+			autobindContexts: [],
 			defaultScope: 'transient',
 			logLevel: 'debug',
 			logger: { debug: noop, info: noop, trace: noop, warn: noop },
 			...config,
 		};
+		this.#contexts = [
+			GlobalContext,
+			...(config?.autobindContexts?.filter((c): c is Context => c instanceof Context) ?? []),
+		];
 		this.#log = this.config.logger[this.config.logLevel].bind(this.config.logger);
 		this.#warn = this.config.logger.warn.bind(this.config.logger);
 	}
@@ -172,7 +180,9 @@ export class Container implements interfaces.Container {
 					return binding.generator(...args);
 				}
 				case 'constructor': {
-					const args = getArgsForParameterInjections(getConstructorParameterInjections(binding.ctr));
+					const params =
+						this.#contexts.map((c) => c.getConstructorParameterInjections(binding.ctr)).find((v) => v.length > 0) ?? [];
+					const args = getArgsForParameterInjections(params);
 
 					Container.#currentRequest = request;
 					try {
@@ -212,6 +222,7 @@ export class Container implements interfaces.Container {
 				id,
 			},
 			[],
+			this.#contexts,
 			this.config.parent,
 		);
 		this.#log({ id, options, plan }, 'Processing request');
@@ -255,7 +266,10 @@ export class Container implements interfaces.Container {
 					continue;
 				}
 				case 'constructor': {
-					this.#validateInjections(binding, getInjections(binding.ctr));
+					this.#validateInjections(
+						binding,
+						this.#contexts.flatMap((c) => c.getInjections(binding.ctr)),
+					);
 					continue;
 				}
 				default:
@@ -264,7 +278,12 @@ export class Container implements interfaces.Container {
 		}
 
 		if (this.config.autobindClasses && validateAutobindings) {
-			const registry = getRegistry();
+			const registry = this.#contexts
+				.map((c) => c.registry)
+				.reduce<Map<interfaces.Constructor<unknown>, Array<Injection<unknown>>>>(
+					(acc, r) => new Map([...acc.entries(), ...r.entries()]),
+					new Map(),
+				);
 			registry.forEach((injections, id) => {
 				this.#validateInjections(
 					{ type: 'constructor', id, ctr: id, scope: 'singleton', token: tokenForIdentifier(id) },

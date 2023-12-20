@@ -82,8 +82,10 @@
  * @packageDocumentation
  */
 
+import './polyfills.js';
 import type * as interfaces from './interfaces/index.js';
 import { Container } from './container/Container.js';
+import { Context } from './container/Context.js';
 
 /**
  * Create a new empty container
@@ -97,13 +99,21 @@ import { Container } from './container/Container.js';
  * @public
  */
 export const createContainer: interfaces.ContainerFactory = (config) => new Container(config);
+/**
+ * Create a context for autobound classes
+ *
+ * @public
+ */
+export const createContext = (name: string): interfaces.Context => new Context(name);
 
 export type { interfaces };
 
+export type { InContextDecorator } from './decorators/inContext.js';
 export type { InjectDecorator, InjectDecoratorFactory } from './decorators/inject.js';
 export type { InjectableDecorator } from './decorators/injectable.js';
 export type { TokenType } from './Token.js';
 
+export { inContext } from './decorators/inContext.js';
 export { inject } from './decorators/inject.js';
 export { injectable } from './decorators/injectable.js';
 export { stringifyIdentifier } from './util/stringifyIdentifier.js';

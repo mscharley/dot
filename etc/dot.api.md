@@ -92,6 +92,7 @@ interface Container {
 // @public
 interface ContainerConfiguration {
     readonly autobindClasses: boolean;
+    readonly autobindContexts: Context[];
     readonly defaultScope: ScopeOptions;
     readonly logger: Logger;
     readonly logLevel: LoggerLevel;
@@ -105,10 +106,19 @@ type ContainerFactory = (options?: Partial<ContainerConfiguration>) => Container
 // @public
 type ContainerModule = AsyncContainerModule | SyncContainerModule;
 
+// @public (undocumented)
+interface Context {
+    // (undocumented)
+    readonly name: string;
+}
+
 // Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
 //
 // @public
 export const createContainer: interfaces.ContainerFactory;
+
+// @public
+export const createContext: (name: string) => interfaces.Context;
 
 // @public
 type DirectInjection<T> = {
@@ -131,6 +141,15 @@ type Fn<out T, in Args extends unknown[] = any> = (...args: Args) => T;
 //
 // @public
 type ImplicitScopeBindingOptions = 'toConstantValue';
+
+// @public
+export const inContext: (context: interfaces.Context) => InContextDecorator;
+
+// @public (undocumented)
+export type InContextDecorator = {
+    <T extends object>(target: interfaces.Constructor<T>, context: ClassDecoratorContext<interfaces.Constructor<T>>): undefined;
+    <T extends interfaces.Constructor<object>>(target: T, context?: undefined): T;
+};
 
 // @public
 export const inject: InjectDecoratorFactory;
@@ -204,6 +223,7 @@ declare namespace interfaces {
         AsyncContainerModule,
         ContainerModule,
         SyncContainerModule,
+        Context,
         DirectInjection,
         FactoryContext,
         Constructor,

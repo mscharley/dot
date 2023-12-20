@@ -1,12 +1,17 @@
 import { describe, expect, it, jest } from '@jest/globals';
 import type { Binding } from '../../models/Binding.js';
 import { calculatePlan } from '../calculatePlan.js';
+import { Context } from '../../container/Context.js';
+import { inContext } from '../../decorators/inContext.js';
 import { injectable } from '../../decorators/injectable.js';
 import { Token } from '../../Token.js';
 
 const strToken = new Token<string>('str');
 
+const context = new Context('calculatePlan');
+
 @injectable(strToken)
+@inContext(context)
 class Test {
 	public constructor(public readonly name: string) {}
 }
@@ -37,6 +42,7 @@ describe('calculatePlan', () => {
 				},
 			},
 			[],
+			[context],
 		);
 
 		expect(plan).toMatchObject([
@@ -83,6 +89,7 @@ describe('calculatePlan', () => {
 				},
 			},
 			[],
+			[context],
 		);
 
 		expect(generator).not.toBeCalled();

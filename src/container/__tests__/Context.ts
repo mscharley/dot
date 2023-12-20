@@ -1,38 +1,33 @@
-import { beforeEach, describe, expect, it } from '@jest/globals';
-import { getInjections, getPropertyInjections, registerInjection } from '../registry.js';
-import { Container } from '../../container/Container.js';
-import { inject } from '../inject.js';
-import { injectable } from '../injectable.js';
+import { describe, expect, it } from '@jest/globals';
+import { Context } from '../Context.js';
+import { inContext } from '../../decorators/inContext.js';
+import { inject } from '../../decorators/inject.js';
+import { injectable } from '../../decorators/injectable.js';
 import { Token } from '../../Token.js';
 
 const strToken = new Token<string>('registry.string');
+const context = new Context('registry');
 
 @injectable()
+@inContext(context)
 class TestClass {
 	@inject(strToken)
 	public str!: string;
 }
-registerInjection(TestClass, {
+context.registerInjection(TestClass, {
 	type: 'request',
 	options: { multiple: false, optional: false },
 	id: new Token<TestClass>('registry.class'),
 });
 
 describe('registry', () => {
-	let container: Container;
-
-	beforeEach(() => {
-		container = new Container();
-		container.bind(strToken).toConstantValue('hello world');
-	});
-
 	describe('getInjections', () => {
 		it('can get all injections registered', () => {
-			expect(getInjections(TestClass)).toMatchSnapshot();
+			expect(context.getInjections(TestClass)).toMatchSnapshot();
 		});
 
 		it('throws an error for a random class', () => {
-			expect(() => getInjections(class FirstTest {})).toThrowError(
+			expect(() => context.getInjections(class FirstTest {})).toThrowError(
 				'No @injectable() decorator for class: Constructor<FirstTest>',
 			);
 		});
@@ -40,11 +35,11 @@ describe('registry', () => {
 
 	describe('getPropertyInjections', () => {
 		it('can get all property injections', () => {
-			expect(getPropertyInjections(TestClass)).toMatchSnapshot();
+			expect(context.getPropertyInjections(TestClass)).toMatchSnapshot();
 		});
 
 		it('throws an error for a random class', () => {
-			expect(() => getInjections(class SecondTest {})).toThrowError(
+			expect(() => context.getInjections(class SecondTest {})).toThrowError(
 				'No @injectable() decorator for class: Constructor<SecondTest>',
 			);
 		});

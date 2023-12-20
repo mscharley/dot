@@ -2,7 +2,7 @@ import type * as interfaces from '../interfaces/index.js';
 import type { AggregateMultiple, CreateInstance, FetchFromCache, Plan, PlanStep } from '../models/Plan.js';
 import { InvalidOperationError, RecursiveResolutionError, TokenResolutionError } from '../Error.js';
 import type { Binding } from '../models/Binding.js';
-import { getInjections } from '../decorators/registry.js';
+import type { Context } from '../container/Context.js';
 import type { Injection } from '../models/Injection.js';
 import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 import type { Token } from '../Token.js';
@@ -12,12 +12,17 @@ const planBinding = <T>(
 	binding: Binding<T>,
 	input: Injection<T>,
 	resolutionPath: Array<Token<unknown>>,
+	contexts: Context[],
 	resolveBinding: <U>(binding: Binding<U>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
 	resolveInjection: (injection: Injection<unknown>) => PlanStep[],
 ): Plan<T> => {
 	const cache = binding.scope === 'transient' ? undefined : binding.scope;
 	const injections: Array<Injection<unknown>> =
-		binding.type === 'constructor' ? getInjections(binding.ctr) : binding.type === 'dynamic' ? binding.injections : [];
+		binding.type === 'constructor'
+			? contexts.map((c) => c.getInjections(binding.ctr)).find((is) => is.length > 0) ?? []
+			: binding.type === 'dynamic'
+			  ? binding.injections
+			  : [];
 	const injectionSteps = injections.flatMap(resolveInjection) as Plan<T>;
 	const fetchFromCache: FetchFromCache<T> | null =
 		cache == null
@@ -54,6 +59,7 @@ export const calculatePlan = <T>(
 	resolveBinding: <U>(binding: Binding<U>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
 	input: Injection<T>,
 	resolutionPath: Array<Token<unknown>>,
+	contexts: Context[],
 	parent?: interfaces.Container,
 ): Plan<T> => {
 	if (input.type === 'unmanagedConstructorParameter') {
@@ -101,14 +107,14 @@ export const calculatePlan = <T>(
 	} else if (binds.length === 1) {
 		// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 		const binding = binds[0]!;
-		return planBinding(binding, input, [...resolutionPath, token], resolveBinding, (i) =>
-			calculatePlan(getBindings, resolveBinding, i, [...resolutionPath, token], parent),
+		return planBinding(binding, input, [...resolutionPath, token], contexts, resolveBinding, (i) =>
+			calculatePlan(getBindings, resolveBinding, i, [...resolutionPath, token], contexts, parent),
 		) as Plan<T>;
 	} else {
 		return [
 			...(binds.flatMap((b) =>
-				planBinding(b, input, [...resolutionPath, token], resolveBinding, (i) =>
-					calculatePlan(getBindings, resolveBinding, i, [...resolutionPath, token], parent),
+				planBinding(b, input, [...resolutionPath, token], contexts, resolveBinding, (i) =>
+					calculatePlan(getBindings, resolveBinding, i, [...resolutionPath, token], contexts, parent),
 				),
 			) as Plan<T>),
 			{

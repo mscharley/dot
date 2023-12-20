@@ -1,6 +1,6 @@
 import type * as interfaces from '../interfaces/index.js';
-import { ensureRegistration, getPropertyInjections, registerInjection } from './registry.js';
-import { Container } from '../container/Container.js';
+import { Container, GlobalContext } from '../container/Container.js';
+import { getMetadata } from './metadata.js';
 import type { Injection } from '../models/Injection.js';
 import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
@@ -32,13 +32,17 @@ export const addInjection = <T>(injection: Injection<T>): void => {
 const _configureInjectable = <T extends object, Tokens extends Array<interfaces.InjectionIdentifier<unknown>>>(
 	klass: interfaces.Constructor<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>,
 	constructorTokens: Tokens,
+	metadata: DecoratorMetadataObject,
 ): void => {
-	ensureRegistration(klass);
-	_injections.splice(0).forEach((injection) => {
-		registerInjection(klass, injection);
-	});
-	constructorTokens.forEach((t, index) => {
-		registerInjection(klass, injectionFromIdentifier(t, index));
+	const contexts = getMetadata(metadata).contexts ?? [GlobalContext];
+	contexts.forEach((ctx) => {
+		ctx.ensureRegistration(klass);
+		_injections.splice(0).forEach((injection) => {
+			ctx.registerInjection(klass, injection);
+		});
+		constructorTokens.forEach((t, index) => {
+			ctx.registerInjection(klass, injectionFromIdentifier(t, index));
+		});
 	});
 };
 
@@ -88,20 +92,21 @@ export const injectable = <Tokens extends Array<interfaces.InjectionIdentifier<u
 				class extends target {
 					public constructor(...args: interfaces.ArgsForInjectionIdentifiers<Tokens>) {
 						super(...(args as never));
-						getPropertyInjections(klass).forEach(({ name, id }) => {
+						const ctx = getMetadata(klass[Symbol.metadata] ?? {}).contexts ?? [GlobalContext];
+						(ctx.map((c) => c.getPropertyInjections(klass)).find((v) => v.length > 0) ?? []).forEach(({ name, id }) => {
 							const token = tokenForIdentifier(id);
 							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
 							(this as any)[name] = Container.resolvePropertyInjection(token, [token]);
 						});
 					}
 				})();
-			_configureInjectable(klass, constructorTokens);
+			_configureInjectable(klass, constructorTokens, klass[Symbol.metadata] ?? {});
 
 			return klass;
 			/* c8 ignore end */
 		} else {
 			// tc39
-			_configureInjectable(target, constructorTokens);
+			_configureInjectable(target, constructorTokens, context.metadata);
 
 			return undefined;
 		}
