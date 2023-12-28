@@ -3,7 +3,7 @@ import { Container } from '../container/Container.js';
 import type { ErrorCode } from '../Error.js';
 import { inject } from '../decorators/inject.js';
 import { injectable } from '../decorators/injectable.js';
-import { Token } from '../Token.js';
+import { Token } from '../container/Token.js';
 
 const leaf = new Token<Leaf>('leaf');
 const node = new Token<Node>('node');

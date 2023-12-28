@@ -54,10 +54,45 @@ interface ClassBindingBuilder<in out T extends object> extends Binder<T>, Bindin
 // @public
 type Constructor<out T, in Args extends unknown[] = any> = new (...args: Args) => T;
 
+// Warning: (ae-missing-release-tag) "Container" is part of the package's API, but it is missing a release tag (@alpha, @beta, @public, or @internal)
+//
+// @public (undocumented)
+export class Container implements interfaces.Container {
+    constructor(config?: Partial<interfaces.ContainerConfiguration>);
+    // Warning: (ae-forgotten-export) The symbol "BindingBuilder_2" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "Binding" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    addBinding: <T>(builder: BindingBuilder_2<T>, binding: Binding<T>) => void;
+    // (undocumented)
+    bind: interfaces.BindFunction;
+    // (undocumented)
+    readonly config: Readonly<interfaces.ContainerConfiguration>;
+    // (undocumented)
+    createChild: interfaces.Container['createChild'];
+    // (undocumented)
+    get: <T>(id: interfaces.ServiceIdentifier<T>, options?: Partial<interfaces.InjectOptions>) => Promise<T>;
+    // (undocumented)
+    has: interfaces.IsBoundFunction;
+    // (undocumented)
+    load: interfaces.Container['load'];
+    // (undocumented)
+    rebind: interfaces.RebindFunction;
+    // Warning: (ae-forgotten-export) The symbol "Request" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    resolve<T>(token: Token<T>, request: Request<unknown>, resolutionPath: Array<Token<unknown>>): T;
+    static resolvePropertyInjection<T>(token: Token<T>, resolutionPath: Array<Token<unknown>>): T;
+    // (undocumented)
+    unbind: interfaces.UnbindFunction;
+    // (undocumented)
+    validate: interfaces.Container['validate'];
+}
+
 // Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
 //
 // @public
-interface Container {
+interface Container_2 {
     // Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: This type of declaration is not supported yet by the resolver
     //
     // (undocumented)
@@ -92,22 +127,52 @@ interface Container {
 // @public
 interface ContainerConfiguration {
     readonly autobindClasses: boolean;
-    readonly autobindContexts: Context[];
+    readonly autobindContexts: Context_2[];
     readonly defaultScope: ScopeOptions;
     readonly logger: Logger;
     readonly logLevel: LoggerLevel;
     // @internal
-    readonly parent?: Container;
+    readonly parent?: Container_2;
 }
 
 // @public
-type ContainerFactory = (options?: Partial<ContainerConfiguration>) => Container;
+type ContainerFactory = (options?: Partial<ContainerConfiguration>) => Container_2;
 
 // @public
 type ContainerModule = AsyncContainerModule | SyncContainerModule;
 
+// Warning: (ae-missing-release-tag) "Context" is part of the package's API, but it is missing a release tag (@alpha, @beta, @public, or @internal)
+//
+// @public
+export class Context implements interfaces.Context {
+    constructor(name: string);
+    // (undocumented)
+    ensureRegistration: <T>(klass: interfaces.Constructor<T>) => void;
+    // Warning: (ae-forgotten-export) The symbol "ConstructorParameterInjection" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "UnmanagedConstructorParameterInjection" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    getConstructorParameterInjections: <T>(klass: interfaces.Constructor<T>) => Array<ConstructorParameterInjection | UnmanagedConstructorParameterInjection> | null;
+    // (undocumented)
+    getInjections: <T>(klass: interfaces.Constructor<T>) => Array<Injection<unknown>> | null;
+    // Warning: (ae-forgotten-export) The symbol "PropertyInjection" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    getPropertyInjections: <T>(klass: interfaces.Constructor<T>) => PropertyInjection[] | null;
+    // (undocumented)
+    readonly name: string;
+    // Warning: (ae-forgotten-export) The symbol "Injection" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    registerInjection: <T>(klass: interfaces.Constructor<T>, injection: Injection<unknown>) => void;
+    // (undocumented)
+    get registry(): ReadonlyMap<interfaces.Constructor<unknown>, Array<Injection<unknown>>>;
+    // (undocumented)
+    toString(): string;
+}
+
 // @public (undocumented)
-interface Context {
+interface Context_2 {
     // (undocumented)
     readonly name: string;
 }
@@ -131,7 +196,7 @@ export type ErrorCode = 'RECURSIVE_RESOLUTION' | 'TOKEN_RESOLUTION' | 'INVALID_O
 
 // @public
 interface FactoryContext {
-    container: Pick<Container, 'createChild' | 'config'>;
+    container: Pick<Container_2, 'createChild' | 'config'>;
 }
 
 // @public
@@ -217,13 +282,13 @@ declare namespace interfaces {
         ObjectBindingBuilder,
         BindingScope,
         ClassBinder,
-        Container,
+        Container_2 as Container,
         ContainerConfiguration,
         ContainerFactory,
         AsyncContainerModule,
         ContainerModule,
         SyncContainerModule,
-        Context,
+        Context_2 as Context,
         DirectInjection,
         FactoryContext,
         Constructor,

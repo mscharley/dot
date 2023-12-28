@@ -1,5 +1,5 @@
 import type { Constructor } from './Functions.js';
-import type { Token } from '../Token.js';
+import type { Token } from '../container/Token.js';
 
 /**
  * A type which can act as an identifier for a specific type of object used for injection

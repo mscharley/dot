@@ -2,7 +2,7 @@ import type * as interfaces from '../interfaces/index.js';
 import { beforeEach, describe, expect, it } from '@jest/globals';
 import { Container } from '../container/Container.js';
 import { injectable } from '../decorators/injectable.js';
-import { Token } from '../Token.js';
+import { Token } from '../container/Token.js';
 import { withOptions } from '../decorators/withOptions.js';
 
 const token = new Token<string>('str');

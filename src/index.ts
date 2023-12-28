@@ -83,9 +83,8 @@
  */
 
 import './polyfills.js';
-import type * as interfaces from './interfaces/index.js';
-import { Container } from './container/Container.js';
-import { Context } from './container/Context.js';
+import { Container, Context } from './globals.js';
+import type { interfaces } from './globals.js';
 
 /**
  * Create a new empty container
@@ -106,26 +105,4 @@ export const createContainer: interfaces.ContainerFactory = (config) => new Cont
  */
 export const createContext = (name: string): interfaces.Context => new Context(name);
 
-export type { interfaces };
-
-export type { InContextDecorator } from './decorators/inContext.js';
-export type { InjectDecorator, InjectDecoratorFactory } from './decorators/inject.js';
-export type { InjectableDecorator } from './decorators/injectable.js';
-export type { TokenType } from './Token.js';
-
-export { inContext } from './decorators/inContext.js';
-export { inject } from './decorators/inject.js';
-export { injectable } from './decorators/injectable.js';
-export { stringifyIdentifier } from './util/stringifyIdentifier.js';
-export { Token } from './Token.js';
-export { unmanaged } from './decorators/unmanaged.js';
-export { withOptions } from './decorators/withOptions.js';
-
-export type { ErrorCode } from './Error.js';
-export {
-	InvalidOperationError,
-	IocError,
-	RecursiveResolutionError,
-	ResolutionError,
-	TokenResolutionError,
-} from './Error.js';
+export * from './globals.js';

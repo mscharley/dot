@@ -6,7 +6,7 @@ import { InvalidOperationError } from '../Error.js';
 import { isConstructor } from '../util/isConstructor.js';
 import { isPromise } from '../util/isPromise.js';
 import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
-import type { Token } from '../Token.js';
+import type { Token } from './Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
 export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {

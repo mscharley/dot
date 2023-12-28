@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import { Container } from '../Container.js';
 import { injectable } from '../../decorators/injectable.js';
-import { Token } from '../../Token.js';
+import { Token } from '../Token.js';
 
 describe('AutobindingValidationSuccess', () => {
 	it('will not validate autobound classes if asked not to', async () => {

@@ -2,7 +2,7 @@ import type * as interfaces from '../interfaces/index.js';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { Container } from '../container/Container.js';
 import type { ErrorCode } from '../Error.js';
-import { Token } from '../Token.js';
+import { Token } from '../container/Token.js';
 
 const token = new Token<string>('str');
 

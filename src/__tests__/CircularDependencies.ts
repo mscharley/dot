@@ -3,7 +3,7 @@ import { Container } from '../container/Container.js';
 import type { ErrorCode } from '../Error.js';
 import { inject } from '../decorators/inject.js';
 import { injectable } from '../decorators/injectable.js';
-import { Token } from '../Token.js';
+import { Token } from '../container/Token.js';
 
 const t1 = new Token<{ id: number }>('t1');
 const t2 = new Token<{ name: string }>('t2');

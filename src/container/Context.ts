@@ -5,8 +5,6 @@ import type {
 	PropertyInjection,
 	UnmanagedConstructorParameterInjection,
 } from '../models/Injection.js';
-import { InvalidOperationError } from '../Error.js';
-import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 
 /**
  * Provides a context for autobound classes
@@ -31,19 +29,19 @@ export class Context implements interfaces.Context {
 		this.#registry.set(klass, injections);
 	};
 
-	public getInjections = <T>(klass: interfaces.Constructor<T>): Array<Injection<unknown>> => {
+	public getInjections = <T>(klass: interfaces.Constructor<T>): Array<Injection<unknown>> | null => {
 		const injections = this.#registry.get(klass);
 		if (injections == null) {
-			throw new InvalidOperationError(`No @injectable() decorator for class: ${stringifyIdentifier(klass)}`);
+			return null;
 		}
 
 		return [...injections];
 	};
 
-	public getPropertyInjections = <T>(klass: interfaces.Constructor<T>): PropertyInjection[] => {
+	public getPropertyInjections = <T>(klass: interfaces.Constructor<T>): PropertyInjection[] | null => {
 		const injections = this.#registry.get(klass);
 		if (injections == null) {
-			throw new InvalidOperationError(`No @injectable() decorator for class: ${stringifyIdentifier(klass)}`);
+			return null;
 		}
 
 		return [...injections].filter((i): i is PropertyInjection => i.type === 'property');
@@ -51,10 +49,10 @@ export class Context implements interfaces.Context {
 
 	public getConstructorParameterInjections = <T>(
 		klass: interfaces.Constructor<T>,
-	): Array<ConstructorParameterInjection | UnmanagedConstructorParameterInjection> => {
+	): Array<ConstructorParameterInjection | UnmanagedConstructorParameterInjection> | null => {
 		const injections = this.#registry.get(klass);
 		if (injections == null) {
-			throw new InvalidOperationError(`No @injectable() decorator for class: ${stringifyIdentifier(klass)}`);
+			return null;
 		}
 
 		return [...injections].filter(

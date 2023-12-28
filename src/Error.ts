@@ -1,4 +1,4 @@
-import type { Token } from './Token.js';
+import type { Token } from './container/Token.js';
 
 /**
  * The error codes used by the IOC container

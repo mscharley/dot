@@ -9,10 +9,14 @@ const dotCjs = require('../../dot.cjs') as typeof import('../index.js');
 // @ts-ignore
 const dotEsm = (await import('../../dot.js')) as typeof import('../index.js');
 
+const context = dotEsm.createContext('esm/cjs test');
+
 @dotCjs.injectable()
+@dotCjs.inContext(context)
 class A {}
 
 @dotEsm.injectable()
+@dotEsm.inContext(context)
 class B {}
 
 const container = dotEsm.createContainer();

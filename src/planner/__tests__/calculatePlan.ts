@@ -4,7 +4,7 @@ import { calculatePlan } from '../calculatePlan.js';
 import { Context } from '../../container/Context.js';
 import { inContext } from '../../decorators/inContext.js';
 import { injectable } from '../../decorators/injectable.js';
-import { Token } from '../../Token.js';
+import { Token } from '../../container/Token.js';
 
 const strToken = new Token<string>('str');
 

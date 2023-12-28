@@ -4,7 +4,7 @@ import { Container } from '../../container/Container.js';
 import { executePlan } from '../executePlan.js';
 import type { Request } from '../../models/Request.js';
 import { ResolutionCache } from '../../container/ResolutionCache.js';
-import { Token } from '../../Token.js';
+import { Token } from '../../container/Token.js';
 
 const basicRequest = <T>(token: Token<T>): Request<T> => ({
 	container: new Container(),

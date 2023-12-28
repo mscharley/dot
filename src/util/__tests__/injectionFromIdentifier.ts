@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import type { Injection } from '../../models/Injection.js';
 import { injectionFromIdentifier } from '../injectionFromIdentifier.js';
-import { Token } from '../../Token.js';
+import { Token } from '../../container/Token.js';
 import { unmanaged } from '../../decorators/unmanaged.js';
 import { withOptions } from '../../decorators/withOptions.js';
 

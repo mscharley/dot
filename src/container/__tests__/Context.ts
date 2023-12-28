@@ -3,7 +3,7 @@ import { Context } from '../Context.js';
 import { inContext } from '../../decorators/inContext.js';
 import { inject } from '../../decorators/inject.js';
 import { injectable } from '../../decorators/injectable.js';
-import { Token } from '../../Token.js';
+import { Token } from '../Token.js';
 
 const strToken = new Token<string>('registry.string');
 const context = new Context('registry');

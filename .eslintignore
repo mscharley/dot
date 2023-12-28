@@ -2,6 +2,7 @@ dist/
 examples/
 jest.config.ts
 dot.cjs
+globals.cjs
 dot.js
 dot.d.ts
 dot.v4.d.ts

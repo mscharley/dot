@@ -1,6 +1,6 @@
 import type * as interfaces from '../interfaces/index.js';
 import type { Injection } from './Injection.js';
-import type { Token } from '../Token.js';
+import type { Token } from '../container/Token.js';
 
 export interface ConstructorBinding<out T> {
 	type: 'constructor';

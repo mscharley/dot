@@ -1,6 +1,6 @@
 import type * as interfaces from '../interfaces/index.js';
 import { makeGlobalCache } from './makeGlobalCache.js';
-import { Token } from '../Token.js';
+import { Token } from '../container/Token.js';
 
 const mappingsCache = Symbol.for('@mscharley/dot:identifier-token-mappings');
 const _mappings = makeGlobalCache<interfaces.Constructor<unknown>, Token<unknown>>(mappingsCache);

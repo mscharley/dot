@@ -2,7 +2,7 @@ import { describe, expect, it, jest } from '@jest/globals';
 import type { Logger, LoggerLevel } from '../interfaces/Logger.js';
 import { Container } from '../container/Container.js';
 import { noop } from '../util/noop.js';
-import { Token } from '../Token.js';
+import { Token } from '../container/Token.js';
 
 const token = new Token<string>('str');
 

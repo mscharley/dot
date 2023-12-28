@@ -1,5 +1,5 @@
 import type * as interfaces from '../interfaces/index.js';
-import { Token } from '../Token.js';
+import { Token } from '../container/Token.js';
 
 /**
  * Used to label a constructor parameter as unmanaged by the IOC container.

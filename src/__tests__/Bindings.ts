@@ -6,8 +6,8 @@ import type { ErrorCode } from '../Error.js';
 import { injectable } from '../decorators/injectable.js';
 import type { LoggerFn } from '../interfaces/Logger.js';
 import { noop } from '../util/noop.js';
-import { Token } from '../Token.js';
-import type { TokenType } from '../Token.js';
+import { Token } from '../container/Token.js';
+import type { TokenType } from '../container/Token.js';
 import { unmanaged } from '../decorators/unmanaged.js';
 import { withOptions } from '../decorators/withOptions.js';
 
@@ -335,14 +335,22 @@ describe('Bindings', () => {
 			expect(() => c.validate()).not.toThrowError();
 		});
 
-		it('fails for a dynamic value with a missing dependency', () => {
+		it('fails for a dynamic value with a missing dependency', async () => {
 			const c = new Container();
 			c.bind(ImportTestDependency).toDynamicValue([token], ({ id }) => id.toString());
 
-			expect(() => c.validate()).toThrowError('Unbound dependency: Token<Symbol(dep)> => Token<Symbol(test)>');
+			// eslint-disable-next-line @typescript-eslint/require-await
+			await expect((async (): Promise<void> => c.validate())()).rejects.toMatchObject({
+				errors: [
+					{
+						code: 'INVALID_OPERATION',
+						message: 'Unbound dependency: Token<Symbol(dep)> => Token<Symbol(test)>',
+					},
+				],
+			});
 		});
 
-		it('fails for a constructor with a missing dependency', () => {
+		it('fails for a constructor with a missing dependency', async () => {
 			@injectable(token)
 			class Test {
 				public constructor(public id: { id: number }) {}
@@ -351,7 +359,15 @@ describe('Bindings', () => {
 			const c = new Container();
 			c.bind(Test).toSelf();
 
-			expect(() => c.validate()).toThrowError('Unbound dependency: Constructor<Test> => Token<Symbol(test)>');
+			// eslint-disable-next-line @typescript-eslint/require-await
+			await expect((async (): Promise<void> => c.validate())()).rejects.toMatchObject({
+				errors: [
+					{
+						code: 'INVALID_OPERATION',
+						message: 'Unbound dependency: Constructor<Test> => Token<Symbol(test)>',
+					},
+				],
+			});
 		});
 
 		it('succeeds for unmanaged dependencies', () => {

@@ -1,4 +1,4 @@
-import { stringifyIdentifier } from './util/stringifyIdentifier.js';
+import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 
 /**
  * A simple identifier that has a reference to a type which can be injected

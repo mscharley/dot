@@ -3,6 +3,9 @@ import { Container, GlobalContext } from '../container/Container.js';
 import { getMetadata } from './metadata.js';
 import type { Injection } from '../models/Injection.js';
 import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
+import { InvalidOperationError } from '../Error.js';
+import { isNotNullOrUndefined } from '../util/isNotNullOrUndefined.js';
+import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
 /**
@@ -93,7 +96,11 @@ export const injectable = <Tokens extends Array<interfaces.InjectionIdentifier<u
 					public constructor(...args: interfaces.ArgsForInjectionIdentifiers<Tokens>) {
 						super(...(args as never));
 						const ctx = getMetadata(klass[Symbol.metadata] ?? {}).contexts ?? [GlobalContext];
-						(ctx.map((c) => c.getPropertyInjections(klass)).find((v) => v.length > 0) ?? []).forEach(({ name, id }) => {
+						const injections = ctx.map((c) => c.getPropertyInjections(klass)).find(isNotNullOrUndefined);
+						if (injections == null) {
+							throw new InvalidOperationError(`No @injectable() decorator for class: ${stringifyIdentifier(klass)}`);
+						}
+						injections.forEach(({ name, id }) => {
 							const token = tokenForIdentifier(id);
 							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
 							(this as any)[name] = Container.resolvePropertyInjection(token, [token]);

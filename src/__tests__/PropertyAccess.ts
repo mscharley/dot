@@ -3,7 +3,7 @@ import { Container } from '../container/Container.js';
 import { inject } from '../decorators/inject.js';
 import { injectable } from '../decorators/injectable.js';
 import { tc39 } from '../__utils__/DecoratorTypes.js';
-import { Token } from '../Token.js';
+import { Token } from '../container/Token.js';
 
 const prop = new Token<string>('bar');
 

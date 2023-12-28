@@ -1,5 +1,5 @@
 import type { Binding } from '../models/Binding.js';
-import type { Token } from '../Token.js';
+import type { Token } from './Token.js';
 
 export class ResolutionCache {
 	readonly #cache = new Map<Binding<unknown>, unknown>();

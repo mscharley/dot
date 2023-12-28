@@ -1,4 +1,4 @@
-import type { Token } from '../Token.js';
+import type { Token } from '../container/Token.js';
 
 /**
  * A way to allow for injections that don't involve a container, eg. unmanaged dependencies

@@ -9,6 +9,9 @@ tsdoc-metadata.json
 .stryker-tmp
 
 # Final built files
+/globals.cjs
+/globals.cjs.map
+
 ## ESM build
 /dot.js
 /dot.js.map

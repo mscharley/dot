@@ -1,6 +1,6 @@
 import type * as interfaces from '../interfaces/index.js';
 import type { Binding } from './Binding.js';
-import type { Token } from '../Token.js';
+import type { Token } from '../container/Token.js';
 
 export interface FetchFromCache<T = unknown> {
 	type: 'fetchFromCache';

@@ -8,11 +8,12 @@ import { Context } from './Context.js';
 import { executePlan } from '../planner/executePlan.js';
 import type { Injection } from '../models/Injection.js';
 import { isNever } from '../util/isNever.js';
+import { isNotNullOrUndefined } from '../util/isNotNullOrUndefined.js';
 import { noop } from '../util/noop.js';
 import type { Request } from '../models/Request.js';
 import { ResolutionCache } from './ResolutionCache.js';
 import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
-import type { Token } from '../Token.js';
+import type { Token } from './Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
 export const GlobalContext = new Context('dot.Global');
@@ -180,8 +181,14 @@ export class Container implements interfaces.Container {
 					return binding.generator(...args);
 				}
 				case 'constructor': {
-					const params =
-						this.#contexts.map((c) => c.getConstructorParameterInjections(binding.ctr)).find((v) => v.length > 0) ?? [];
+					const params = this.#contexts
+						.map((c) => c.getConstructorParameterInjections(binding.ctr))
+						.find((v) => v != null);
+					if (params == null) {
+						throw new InvalidOperationError(
+							`No @injectable() decorator for class: ${stringifyIdentifier(binding.ctr)}`,
+						);
+					}
 					const args = getArgsForParameterInjections(params);
 
 					Container.#currentRequest = request;
@@ -236,7 +243,8 @@ export class Container implements interfaces.Container {
 		return local || (this.config.parent?.has(id) ?? false) || (typeof id === 'function' && this.config.autobindClasses);
 	};
 
-	readonly #validateInjections = (binding: Binding<unknown>, injections: Array<Injection<unknown>>): void => {
+	readonly #validateInjections = (binding: Binding<unknown>, injections: Array<Injection<unknown>>): Error[] => {
+		const errs: Error[] = [];
 		for (const i of injections) {
 			if (
 				// Optional dependencies are always valid
@@ -248,29 +256,37 @@ export class Container implements interfaces.Container {
 			}
 
 			if (!this.has(i.id)) {
-				throw new InvalidOperationError(
-					`Unbound dependency: ${stringifyIdentifier(binding.id)} => ${stringifyIdentifier(i.id)}`,
+				errs.push(
+					new InvalidOperationError(
+						`Unbound dependency: ${stringifyIdentifier(binding.id)} => ${stringifyIdentifier(i.id)}`,
+					),
 				);
 			}
 		}
+
+		return errs;
 	};
 
 	public validate: interfaces.Container['validate'] = (validateAutobindings = true): void => {
+		const errs: Error[] = [];
 		for (const binding of this.#bindings) {
 			switch (binding.type) {
 				case 'static':
 					// These are always valid, the value is in the binding and has no dependencies
-					continue;
+					break;
 				case 'dynamic': {
-					this.#validateInjections(binding, binding.injections);
-					continue;
+					errs.push(...this.#validateInjections(binding, binding.injections));
+					break;
 				}
 				case 'constructor': {
-					this.#validateInjections(
-						binding,
-						this.#contexts.flatMap((c) => c.getInjections(binding.ctr)),
-					);
-					continue;
+					const injections = this.#contexts.map((c) => c.getInjections(binding.ctr)).filter(isNotNullOrUndefined);
+					if (injections.length === 0) {
+						throw new InvalidOperationError(
+							`No @injectable() decorator for class: ${stringifyIdentifier(binding.ctr)}`,
+						);
+					}
+					errs.push(...this.#validateInjections(binding, injections.flat()));
+					break;
 				}
 				default:
 					return isNever(binding, 'Invalid binding');
@@ -285,11 +301,14 @@ export class Container implements interfaces.Container {
 					new Map(),
 				);
 			registry.forEach((injections, id) => {
-				this.#validateInjections(
-					{ type: 'constructor', id, ctr: id, scope: 'singleton', token: tokenForIdentifier(id) },
-					injections,
-				);
+				this.#getBindings(id).forEach((b) => {
+					errs.push(...this.#validateInjections(b, injections));
+				});
 			});
+		}
+
+		if (errs.length > 0) {
+			throw new AggregateError(errs);
 		}
 
 		return this.config.parent?.validate(validateAutobindings);

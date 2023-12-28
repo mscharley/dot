@@ -1,7 +1,7 @@
 import { describe, expect, it } from '@jest/globals';
 import { Container } from '../Container.js';
 import { injectable } from '../../decorators/injectable.js';
-import { Token } from '../../Token.js';
+import { Token } from '../Token.js';
 
 describe('AutobindingValidationFailure', () => {
 	it('will validate autobound classes', async () => {
@@ -20,8 +20,12 @@ describe('AutobindingValidationFailure', () => {
 
 		// eslint-disable-next-line @typescript-eslint/require-await
 		await expect((async (): Promise<void> => c.validate())()).rejects.toMatchObject({
-			code: 'INVALID_OPERATION',
-			message: 'Unbound dependency: Constructor<HelloWorld> => Token<Symbol(failing-token)>',
+			errors: [
+				{
+					code: 'INVALID_OPERATION',
+					message: 'Unbound dependency: Constructor<HelloWorld> => Token<Symbol(failing-token)>',
+				},
+			],
 		});
 	});
 });

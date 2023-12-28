@@ -1,5 +1,5 @@
 import { describe, expect, it } from '@jest/globals';
-import { Token } from '../../Token.js';
+import { Token } from '../../container/Token.js';
 import { tokenForIdentifier } from '../tokenForIdentifier.js';
 
 describe('tokenForIdentifier', () => {

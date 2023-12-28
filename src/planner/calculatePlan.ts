@@ -1,11 +1,12 @@
 import type * as interfaces from '../interfaces/index.js';
 import type { AggregateMultiple, CreateInstance, FetchFromCache, Plan, PlanStep } from '../models/Plan.js';
+import type { Binding, ConstructorBinding } from '../models/Binding.js';
 import { InvalidOperationError, RecursiveResolutionError, TokenResolutionError } from '../Error.js';
-import type { Binding } from '../models/Binding.js';
 import type { Context } from '../container/Context.js';
 import type { Injection } from '../models/Injection.js';
+import { isNotNullOrUndefined } from '../util/isNotNullOrUndefined.js';
 import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
-import type { Token } from '../Token.js';
+import type { Token } from '../container/Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
 const planBinding = <T>(
@@ -17,12 +18,17 @@ const planBinding = <T>(
 	resolveInjection: (injection: Injection<unknown>) => PlanStep[],
 ): Plan<T> => {
 	const cache = binding.scope === 'transient' ? undefined : binding.scope;
-	const injections: Array<Injection<unknown>> =
+	const injections: Array<Injection<unknown>> | undefined =
 		binding.type === 'constructor'
-			? contexts.map((c) => c.getInjections(binding.ctr)).find((is) => is.length > 0) ?? []
+			? contexts.map((c) => c.getInjections(binding.ctr)).find(isNotNullOrUndefined)
 			: binding.type === 'dynamic'
 			  ? binding.injections
 			  : [];
+	if (injections == null) {
+		throw new InvalidOperationError(
+			`No @injectable() decorator for class: ${stringifyIdentifier((binding as ConstructorBinding<T>).ctr)}`,
+		);
+	}
 	const injectionSteps = injections.flatMap(resolveInjection) as Plan<T>;
 	const fetchFromCache: FetchFromCache<T> | null =
 		cache == null

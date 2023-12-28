@@ -1,7 +1,7 @@
 import type * as interfaces from '../interfaces/index.js';
 import type { Container } from '../interfaces/Container.js';
 import type { ResolutionCache } from '../container/ResolutionCache.js';
-import type { Token } from '../Token.js';
+import type { Token } from '../container/Token.js';
 
 export interface Request<T> {
 	container: Container;
