@@ -28,7 +28,7 @@ const planBinding = <T>(
 					binding: binding,
 					token: binding.token,
 					skipStepsIfFound: injectionSteps.length + 1,
-			  } satisfies FetchFromCache<T>);
+				} satisfies FetchFromCache<T>);
 
 	return [
 		...(fetchFromCache == null ? [] : [fetchFromCache]),
