@@ -38,6 +38,10 @@ export class Token<out T> {
 	public toString(): string {
 		return stringifyIdentifier(this);
 	}
+
+	public toJSON(): object {
+		return { tokenFor: this.identifier.toString() };
+	}
 }
 
 /**

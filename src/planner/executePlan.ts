@@ -3,6 +3,7 @@ import { isNever } from '../util/isNever.js';
 import type { Plan } from '../models/Plan.js';
 import type { Request } from '../models/Request.js';
 import { ResolutionCache } from '../container/ResolutionCache.js';
+import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 
 export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, token }: Request<T>): Promise<T> => {
 	const caches: Record<'singleton' | 'request', ResolutionCache> = {
@@ -66,7 +67,7 @@ export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, tok
 	}
 
 	if (!(token.identifier in stack)) {
-		throw new InvalidOperationError(`Unable to resolve final request: ${token.identifier.toString()}`);
+		throw new InvalidOperationError(`Unable to resolve final request: ${stringifyIdentifier(token)}`);
 	}
 	const [returnValue] = (stack[token.identifier]?.splice(0, 1) ?? []) as T[];
 
