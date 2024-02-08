@@ -1,5 +1,11 @@
 # @mscharley/dot
 
+## 1.5.3
+
+### Patch Changes
+
+- 8a6060b: Allows Tokens to be logged better by supporting serialisation to JSON
+
 ## 1.5.2
 
 ### Patch Changes
