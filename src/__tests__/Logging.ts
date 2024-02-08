@@ -19,19 +19,19 @@ describe('Logging', () => {
 		[
 		  [
 		    {
-		      "id": Token {
-		        "identifier": Symbol(str),
+		      "id": {
+		        "tokenFor": "Symbol(str)",
 		      },
 		      "options": undefined,
 		      "plan": [
 		        {
 		          "binding": {
-		            "id": Token {
-		              "identifier": Symbol(str),
+		            "id": {
+		              "tokenFor": "Symbol(str)",
 		            },
 		            "scope": "transient",
-		            "token": Token {
-		              "identifier": Symbol(str),
+		            "token": {
+		              "tokenFor": "Symbol(str)",
 		            },
 		            "type": "static",
 		            "value": "Hello world!",
@@ -39,16 +39,16 @@ describe('Logging', () => {
 		          "cache": undefined,
 		          "expectedTokensUsed": [],
 		          "generate": [Function],
-		          "id": Token {
-		            "identifier": Symbol(str),
+		          "id": {
+		            "tokenFor": "Symbol(str)",
 		          },
 		          "resolutionPath": [
-		            Token {
-		              "identifier": Symbol(str),
+		            {
+		              "tokenFor": "Symbol(str)",
 		            },
 		          ],
-		          "token": Token {
-		            "identifier": Symbol(str),
+		          "token": {
+		            "tokenFor": "Symbol(str)",
 		          },
 		          "type": "createClass",
 		        },

@@ -63,7 +63,7 @@ describe('executePlan', () => {
 
 	it("throws an error if the plan doesn't generate the type of thing it is supposed to", async () => {
 		await expect(async () => executePlan([], basicRequest(strToken))).rejects.toMatchObject({
-			message: 'Unable to resolve final request: Symbol(string)',
+			message: 'Unable to resolve final request: Token<Symbol(string)>',
 		});
 	});
 

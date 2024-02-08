@@ -296,6 +296,8 @@ export class Token<out T> {
     // @internal
     readonly identifier: symbol;
     // (undocumented)
+    toJSON(): object;
+    // (undocumented)
     toString(): string;
     readonly _witness: T;
 }

@@ -3,8 +3,8 @@
 exports[`registry getInjections can get all injections registered 1`] = `
 [
   {
-    "id": Token {
-      "identifier": Symbol(registry.string),
+    "id": {
+      "tokenFor": "Symbol(registry.string)",
     },
     "name": "str",
     "options": {
@@ -14,8 +14,8 @@ exports[`registry getInjections can get all injections registered 1`] = `
     "type": "property",
   },
   {
-    "id": Token {
-      "identifier": Symbol(registry.class),
+    "id": {
+      "tokenFor": "Symbol(registry.class)",
     },
     "options": {
       "multiple": false,
@@ -29,8 +29,8 @@ exports[`registry getInjections can get all injections registered 1`] = `
 exports[`registry getPropertyInjections can get all property injections 1`] = `
 [
   {
-    "id": Token {
-      "identifier": Symbol(registry.string),
+    "id": {
+      "tokenFor": "Symbol(registry.string)",
     },
     "name": "str",
     "options": {
