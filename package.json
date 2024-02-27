@@ -42,7 +42,7 @@
 		}
 	},
 	"scripts": {
-		"prepare": "husky install",
+		"prepare": "husky",
 		"prepack": "npm run clean && npm run build",
 		"build": "npm run build:tsc && npm run build:api && npm run build:esbuild",
 		"build:tsc": "tsc",
