@@ -7,7 +7,7 @@ import { Token } from '../Token.js';
 
 const strToken = new Token<string>('string');
 
-describe('InjectionOptions', () => {
+describe('injectionOptions', () => {
 	describe('optional', () => {
 		it('can handle missing bindings as optional', async () => {
 			const token = new Token<{ id?: string }>('token1');

@@ -6,7 +6,7 @@ import { Token } from '../Token.js';
 
 const token = new Token<string>('str');
 
-describe('Logging', () => {
+describe('logging', () => {
 	it('can log things', async () => {
 		const log = jest.fn<Logger[LoggerLevel]>();
 		const logger = { info: noop, debug: noop, trace: log as unknown as Logger[LoggerLevel], warn: noop };

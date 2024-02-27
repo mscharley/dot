@@ -6,7 +6,7 @@ import { Token } from '../Token.js';
 
 const token = new Token<string>('str');
 
-describe('ChildContainers', () => {
+describe('childContainers', () => {
 	let container: interfaces.Container;
 	const log = jest.fn<interfaces.LoggerFn>();
 	const warn = jest.fn<interfaces.LoggerFn>();
@@ -62,7 +62,7 @@ describe('ChildContainers', () => {
 		const child2 = container.createChild();
 		await expect(child2.get(token)).resolves.toBe('Hello world!');
 
-		expect(factory.mock.calls.length).toBe(1);
+		expect(factory.mock.calls).toHaveLength(1);
 	});
 
 	it('will not do multi-injections across levels of the containers', async () => {
@@ -102,7 +102,7 @@ describe('ChildContainers', () => {
 
 		await child.get(token);
 
-		expect(log).toBeCalledTimes(1);
+		expect(log).toHaveBeenCalledTimes(1);
 	});
 
 	it('will allow rebind if only the parent container has bindings available', async () => {

@@ -85,7 +85,7 @@ describe('calculatePlan', () => {
 			[],
 		);
 
-		expect(generator).not.toBeCalled();
-		expect(resolveBinding).not.toBeCalled();
+		expect(generator).not.toHaveBeenCalled();
+		expect(resolveBinding).not.toHaveBeenCalled();
 	});
 });

@@ -3,7 +3,7 @@ import { Container } from '../Container.js';
 import { injectable } from '../../decorators/injectable.js';
 import { Token } from '../../Token.js';
 
-describe('AutobindingValidationFailure', () => {
+describe('autobindingValidationFailure', () => {
 	it('will validate autobound classes', async () => {
 		const token = new Token<string>('failing-token');
 		const c = new Container({ autobindClasses: true });

@@ -1,3 +1,5 @@
+/* eslint-disable jest/expect-expect */
+/* eslint-disable jest/valid-title */
 /* eslint-disable @typescript-eslint/no-type-alias */
 
 import type { GuardedType } from 'generic-type-guard';
