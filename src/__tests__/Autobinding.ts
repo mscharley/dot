@@ -16,7 +16,7 @@ class Greeter {
 	}
 }
 
-describe('Autobinding', () => {
+describe('autobinding', () => {
 	it('allows for autobinding classes', async () => {
 		const c = new Container({ autobindClasses: true });
 

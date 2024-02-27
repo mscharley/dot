@@ -11,7 +11,7 @@ class Test {
 	}
 }
 
-describe('StaticProperties', () => {
+describe('staticProperties', () => {
 	it('can be accessed without @injectable interfering', async () => {
 		const c = new Container();
 		c.bind(Test).toSelf();

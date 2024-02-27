@@ -32,7 +32,7 @@ describe('registry', () => {
 		});
 
 		it('throws an error for a random class', () => {
-			expect(() => getInjections(class FirstTest {})).toThrowError(
+			expect(() => getInjections(class FirstTest {})).toThrow(
 				'No @injectable() decorator for class: Constructor<FirstTest>',
 			);
 		});
@@ -44,7 +44,7 @@ describe('registry', () => {
 		});
 
 		it('throws an error for a random class', () => {
-			expect(() => getInjections(class SecondTest {})).toThrowError(
+			expect(() => getInjections(class SecondTest {})).toThrow(
 				'No @injectable() decorator for class: Constructor<SecondTest>',
 			);
 		});

@@ -44,7 +44,7 @@ describe('singleton scope', () => {
 		c.bind(NodeToken).inSingletonScope().to(Node);
 
 		const vs = await c.get(NodeToken, { multiple: true });
-		expect(vs.length).toBe(2);
+		expect(vs).toHaveLength(2);
 		expect(vs[0]).not.toBe(vs[1]);
 	});
 
@@ -59,6 +59,7 @@ describe('singleton scope', () => {
 			expect(node.left).toBe(node2.left);
 		});
 
+		// eslint-disable-next-line jest/no-disabled-tests
 		it.skip('unbinding a token clears anything that depends on it from the cache', async () => {
 			const node = await c.get(NodeToken);
 

@@ -25,7 +25,7 @@ class Service {
 	public node!: Node;
 }
 
-describe('Invalid decorator', () => {
+describe('invalid decorator', () => {
 	it('fails to build a service', async () => {
 		const c = new Container();
 		c.bind(leaf).to(Leaf);

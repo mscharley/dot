@@ -13,7 +13,7 @@ class TestClass {
 }
 const classToken = new Token<TestClass>('nested.class');
 
-describe('Nested requests', () => {
+describe('nested requests', () => {
 	it('can handle nested requests without loosing track', async () => {
 		const container = new Container();
 		container.bind(numberToken).toConstantValue(10);

@@ -13,7 +13,7 @@ import { withOptions } from '../decorators/withOptions.js';
 
 const token = new Token<{ id: number }>('test');
 
-describe('Bindings', () => {
+describe('bindings', () => {
 	it('enforces finalising bindings', async () => {
 		const c = new Container();
 		c.bind(token);
@@ -48,6 +48,7 @@ describe('Bindings', () => {
 	describe('bind()', () => {
 		describe('toConstantValue()', () => {
 			it("can't be scoped", () => {
+				expect.assertions(0);
 				const c = new Container();
 				// @ts-expect-error This error is the actual test
 				c.bind(token).inSingletonScope().toConstantValue;
@@ -78,7 +79,7 @@ describe('Bindings', () => {
 				c.bind(token).inTransientScope().toDynamicValue([], fn);
 
 				expect(await c.get(token)).not.toBe(await c.get(token));
-				expect(fn.mock.calls.length).toBe(2);
+				expect(fn.mock.calls).toHaveLength(2);
 			});
 
 			it('singleton scope will only run the function once', async () => {
@@ -89,7 +90,7 @@ describe('Bindings', () => {
 				const resolved = await c.get(token);
 				expect(resolved).toMatchObject({ id: 10 });
 				expect(resolved).toBe(await c.get(token));
-				expect(fn.mock.calls.length).toBe(1);
+				expect(fn.mock.calls).toHaveLength(1);
 			});
 
 			it('can handle async errors', async () => {
@@ -138,7 +139,7 @@ describe('Bindings', () => {
 				}));
 
 				expect(warn).toHaveBeenCalledTimes(1);
-				expect(warn).toBeCalledWith(
+				expect(warn).toHaveBeenCalledWith(
 					{ id: 'Token<Symbol(test)>' },
 					'Using toDynamicValue() or toFactory() without an explicit scope can lead to performance issues. See https://github.com/mscharley/dot/discussions/80 for details.',
 				);
@@ -148,7 +149,7 @@ describe('Bindings', () => {
 				expect(warn).toHaveBeenCalledTimes(1);
 			});
 
-			it('works properly for multiple dependencies', () => {
+			it('works properly for multiple dependencies', async () => {
 				const c = new Container();
 				const token2 = new Token<{ name: string }>('token2');
 				const output = new Token<{ greeting: string }>('greeting');
@@ -160,6 +161,8 @@ describe('Bindings', () => {
 					.toDynamicValue([token, token2], ({ id }, { name }) => ({
 						greeting: `Hello, ${name} - id: ${id}`,
 					}));
+
+				await expect(c.get(output)).resolves.toMatchObject({ greeting: 'Hello, world - id: 10' });
 			});
 		});
 
@@ -281,7 +284,7 @@ describe('Bindings', () => {
 		});
 	});
 
-	describe('Constructor service identifier', () => {
+	describe('constructor service identifier', () => {
 		it('can use a class as a service identifier', async () => {
 			const c = new Container();
 
@@ -295,14 +298,14 @@ describe('Bindings', () => {
 	describe('validate()', () => {
 		it('succeeds for an empty container', () => {
 			const c = new Container();
-			expect(() => c.validate()).not.toThrowError();
+			expect(() => c.validate()).not.toThrow();
 		});
 
 		it('succeeds for a constant value', () => {
 			const c = new Container();
 			c.bind(token).toConstantValue({ id: 10 });
 
-			expect(() => c.validate()).not.toThrowError();
+			expect(() => c.validate()).not.toThrow();
 		});
 
 		it('succeeds for a dynamic value', () => {
@@ -310,7 +313,7 @@ describe('Bindings', () => {
 			c.bind(token).toConstantValue({ id: 10 });
 			c.bind(ImportTestDependency).toDynamicValue([token], ({ id }) => id.toString());
 
-			expect(() => c.validate()).not.toThrowError();
+			expect(() => c.validate()).not.toThrow();
 		});
 
 		it('succeeds for a constructor', () => {
@@ -323,23 +326,24 @@ describe('Bindings', () => {
 			c.bind(token).toConstantValue({ id: 10 });
 			c.bind(Test).toSelf();
 
-			expect(() => c.validate()).not.toThrowError();
+			expect(() => c.validate()).not.toThrow();
 		});
 
 		it('succeeds for unbound optional dependencies', () => {
 			const c = new Container();
 			c.bind(ImportTestDependency).toDynamicValue([withOptions(token, { optional: true })], (v) =>
+				// eslint-disable-next-line jest/no-conditional-in-test
 				(v?.id ?? 20).toString(),
 			);
 
-			expect(() => c.validate()).not.toThrowError();
+			expect(() => c.validate()).not.toThrow();
 		});
 
 		it('fails for a dynamic value with a missing dependency', () => {
 			const c = new Container();
 			c.bind(ImportTestDependency).toDynamicValue([token], ({ id }) => id.toString());
 
-			expect(() => c.validate()).toThrowError('Unbound dependency: Token<Symbol(dep)> => Token<Symbol(test)>');
+			expect(() => c.validate()).toThrow('Unbound dependency: Token<Symbol(dep)> => Token<Symbol(test)>');
 		});
 
 		it('fails for a constructor with a missing dependency', () => {
@@ -351,7 +355,7 @@ describe('Bindings', () => {
 			const c = new Container();
 			c.bind(Test).toSelf();
 
-			expect(() => c.validate()).toThrowError('Unbound dependency: Constructor<Test> => Token<Symbol(test)>');
+			expect(() => c.validate()).toThrow('Unbound dependency: Constructor<Test> => Token<Symbol(test)>');
 		});
 
 		it('succeeds for unmanaged dependencies', () => {
@@ -363,7 +367,7 @@ describe('Bindings', () => {
 			const c = new Container();
 			c.bind(Test).toSelf();
 
-			expect(() => c.validate()).not.toThrowError();
+			expect(() => c.validate()).not.toThrow();
 		});
 	});
 });

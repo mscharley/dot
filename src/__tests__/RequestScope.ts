@@ -46,7 +46,7 @@ describe('request scope', () => {
 		c.bind(NodeToken).inRequestScope().to(Node);
 
 		const vs = await c.get(NodeToken, { multiple: true });
-		expect(vs.length).toBe(2);
+		expect(vs).toHaveLength(2);
 		expect(vs[0]).not.toBe(vs[1]);
 	});
 });

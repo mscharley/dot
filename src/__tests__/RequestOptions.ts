@@ -7,7 +7,7 @@ import { withOptions } from '../decorators/withOptions.js';
 
 const token = new Token<string>('str');
 
-describe('RequestOptions', () => {
+describe('requestOptions', () => {
 	let c: interfaces.Container;
 
 	beforeEach(() => {
@@ -20,7 +20,7 @@ describe('RequestOptions', () => {
 	});
 
 	it('allows for optional fetches', async () => {
-		await expect(c.get(token, { optional: true })).resolves.toBe(undefined);
+		await expect(c.get(token, { optional: true })).resolves.toBeUndefined();
 	});
 
 	it('allows for multiple fetches', async () => {
@@ -37,6 +37,7 @@ describe('RequestOptions', () => {
 		const token2 = new Token<number>('num');
 
 		it('allows for optional fetches', async () => {
+			// eslint-disable-next-line jest/no-conditional-in-test
 			c.bind(token).toDynamicValue([withOptions(token2, { optional: true })], (num) => (num ?? 10).toString());
 
 			await expect(c.get(token)).resolves.toBe('10');

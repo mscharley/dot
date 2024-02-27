@@ -21,7 +21,7 @@ class Foo {
 }
 const foo = new Token<Foo>('foo');
 
-describe('PropertyAccess', () => {
+describe('propertyAccess', () => {
 	let c: Container;
 
 	beforeEach(() => {
@@ -37,6 +37,7 @@ describe('PropertyAccess', () => {
 
 	tc39.it('can access injected properties from the constructor', async () => {
 		const n = await c.get(foo);
+		// eslint-disable-next-line jest/no-standalone-expect
 		expect(n.constructorValue).toBe('Hello world!');
 	});
 
