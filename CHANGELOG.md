@@ -1,5 +1,11 @@
 # @mscharley/dot
 
+## 1.5.4
+
+### Patch Changes
+
+- 8d73334: fix(deps): update dependency typescript to v5.4.2
+
 ## 1.5.3
 
 ### Patch Changes
