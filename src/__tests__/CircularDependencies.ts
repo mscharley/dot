@@ -68,6 +68,7 @@ describe('circularDependencies', () => {
 		class Name {
 			@inject(t1)
 			public readonly id!: { id: number };
+
 			public name = 'world';
 		}
 

@@ -4,7 +4,5 @@
 		"@mscharley", // Baseline rules for any TS or JS project.
 		"@mscharley/eslint-config/node" // For projects running on NodeJS.
 	],
-	"rules": {
-		"no-mixed-spaces-and-tabs": ["error", "smart-tabs"]
-	}
+	"rules": {}
 }

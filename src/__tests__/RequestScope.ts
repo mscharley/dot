@@ -14,6 +14,7 @@ const NodeToken = new Token<Node>('node');
 class Node {
 	@inject(LeafToken)
 	public left!: Leaf;
+
 	@inject(LeafToken)
 	public right!: Leaf;
 }

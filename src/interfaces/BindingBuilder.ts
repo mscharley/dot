@@ -17,8 +17,8 @@ export interface BindingBuilder<in out T> extends Binder<T>, BindingScope<T, Bin
  */
 export interface ObjectBindingBuilder<in out T extends object>
 	extends Binder<T>,
-		BindingScope<T, ObjectBindingBuilder<T>>,
-		ObjectBinder<T> {}
+	BindingScope<T, ObjectBindingBuilder<T>>,
+	ObjectBinder<T> {}
 
 /**
  * BindingBuilder used for types identified by a constructor directly
@@ -27,6 +27,6 @@ export interface ObjectBindingBuilder<in out T extends object>
  */
 export interface ClassBindingBuilder<in out T extends object>
 	extends Binder<T>,
-		BindingScope<T, ClassBindingBuilder<T>>,
-		ObjectBinder<T>,
-		ClassBinder<T> {}
+	BindingScope<T, ClassBindingBuilder<T>>,
+	ObjectBinder<T>,
+	ClassBinder<T> {}

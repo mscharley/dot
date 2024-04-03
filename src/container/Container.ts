@@ -151,8 +151,8 @@ export class Container implements interfaces.Container {
 		return [];
 	};
 
-	readonly #resolveBinding =
-		(request: Request<unknown>) =>
+	readonly #resolveBinding
+		= (request: Request<unknown>) =>
 		<T>(binding: Binding<T>, resolutionPath: Array<Token<unknown>>): T | Promise<T> => {
 			const getArgsForParameterInjections = (injections: Array<Injection<unknown>>): unknown[] =>
 				injections
@@ -229,9 +229,9 @@ export class Container implements interfaces.Container {
 		for (const i of injections) {
 			if (
 				// Optional dependencies are always valid
-				i.options.optional ||
+				i.options.optional
 				// Unmanaged injections are always valid since they contain the static value to use
-				i.type === 'unmanagedConstructorParameter'
+				|| i.type === 'unmanagedConstructorParameter'
 			) {
 				continue;
 			}
