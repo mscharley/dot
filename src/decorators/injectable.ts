@@ -72,8 +72,8 @@ const _configureInjectable = <T extends object, Tokens extends Array<interfaces.
  */
 export const injectable = <Tokens extends Array<interfaces.InjectionIdentifier<unknown>>>(
 	...constructorTokens: Tokens
-): InjectableDecorator<interfaces.ArgsForInjectionIdentifiers<Tokens>> =>
-	(<T extends object>(
+): InjectableDecorator<interfaces.ArgsForInjectionIdentifiers<Tokens>> => {
+	return (<T extends object>(
 		target: interfaces.Constructor<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>,
 		context?:
 			| undefined
@@ -106,3 +106,4 @@ export const injectable = <Tokens extends Array<interfaces.InjectionIdentifier<u
 			return undefined;
 		}
 	}) as InjectableDecorator<interfaces.ArgsForInjectionIdentifiers<Tokens>>;
+};

@@ -11,6 +11,7 @@ const prop = new Token<string>('bar');
 class Foo {
 	@inject(prop)
 	public prop!: string;
+
 	public constructorValue?: string;
 
 	public constructor() {

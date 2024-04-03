@@ -96,8 +96,7 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 
 export class ClassBindingBuilder<T extends object>
 	extends BindingBuilder<T>
-	implements interfaces.ClassBindingBuilder<T>
-{
+	implements interfaces.ClassBindingBuilder<T> {
 	public to: interfaces.ClassBindingBuilder<T>['to'] = (ctr) => {
 		const binding: ConstructorBinding<T> = {
 			type: 'constructor',
