@@ -35,10 +35,21 @@ export class Token<out T> {
 	 */
 	public declare readonly _witness: T;
 
+	/**
+	 * Returns a stringified version of this token
+	 */
 	public toString(): string {
 		return stringifyIdentifier(this);
 	}
 
+	/**
+	 * Returns a simplified version of this token as a JSON blob
+	 *
+	 * @remarks
+	 *
+	 * This helps JSON loggers deal with tokens because the only property is a symbol so tokens would show up all tokens
+	 * as `{}`.
+	 */
 	public toJSON(): object {
 		return { tokenFor: this.identifier.toString() };
 	}

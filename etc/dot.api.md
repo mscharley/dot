@@ -34,11 +34,8 @@ interface BindingBuilder<in out T> extends Binder<T>, BindingScope<T, BindingBui
 
 // @public
 interface BindingScope<in T, out Builder> {
-    // (undocumented)
     inRequestScope: () => Omit<Builder, ImplicitScopeBindingOptions | keyof BindingScope<T, unknown>>;
-    // (undocumented)
     inSingletonScope: () => Omit<Builder, ImplicitScopeBindingOptions | keyof BindingScope<T, unknown>>;
-    // (undocumented)
     inTransientScope: () => Omit<Builder, ImplicitScopeBindingOptions | keyof BindingScope<T, unknown>>;
 }
 
@@ -295,9 +292,7 @@ export class Token<out T> {
     constructor(name: string);
     // @internal
     readonly identifier: symbol;
-    // (undocumented)
     toJSON(): object;
-    // (undocumented)
     toString(): string;
     readonly _witness: T;
 }
