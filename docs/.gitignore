@@ -1,1 +1,11 @@
-/reference
+# Built reference documentation
+/content/docs
+
+# Generated files
+/public
+/resources
+
+/.hugo_build.lock
+
+# This symlink is necessary to work around some apparent limitations in hugo or docsy
+!node_modules
