@@ -37,7 +37,7 @@ Known implementations:
 
 ## Usage
 
-[For usage examples, please see the documentation.](https://mscharley.github.io/dot/reference/dot.html#example)
+[For usage examples, please see the documentation.](https://mscharley.github.io/dot/docs/dot.html#example)
 
 ## Inspiration
 
