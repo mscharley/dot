@@ -50,6 +50,28 @@ export interface Container {
 
 	/**
 	 * Check that all bindings have no missing dependencies
+	 *
+	 * @example
+	 *
+	 * ```typescript
+	 * const container = createContainer();
+	 * const Name = new Token<string>();
+	 *
+	 * @injectable(Name)
+	 * class Greeter {
+	 *   public constructor(private name: string) { }
+	 *
+	 *   public greet() {
+	 *     console.log(`Hello, ${this.name}`);
+	 *   }
+	 * }
+	 *
+	 * container.bind(Greeter).toSelf();
+	 * container.validate(); // Throws an exception
+	 *
+	 * container.bind(Name).toConstantValue("John Doe");
+	 * container.validate(); // Works
+	 * ```
 	 */
 	validate: (validateAutobindings?: boolean) => void;
 }
