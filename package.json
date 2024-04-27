@@ -87,7 +87,7 @@
 		"@changesets/cli": "2.27.1",
 		"@jest/globals": "29.7.0",
 		"@microsoft/api-extractor": "7.43.1",
-		"@mscharley/api-documenter-hugo": "1.0.0",
+		"@mscharley/api-documenter-hugo": "1.0.1",
 		"@mscharley/eslint-config": "3.1.2",
 		"@mscharley/prettier-config": "3.0.5",
 		"@stryker-mutator/core": "8.2.6",
