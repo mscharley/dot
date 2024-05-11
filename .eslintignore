@@ -1,5 +1,6 @@
 dist/
 examples/
+docs/
 jest.config.ts
 dot.cjs
 dot.js

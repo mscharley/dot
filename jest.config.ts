@@ -181,11 +181,22 @@ export default {
 	// A map from regular expressions to paths to transformers
 	transform: {
 		'^.+\\.m?[tj]sx?$': [
-			'ts-jest',
+			'@swc/jest',
 			{
-				isolatedModules: true,
-				tsconfig: `./tsconfig.jest-${process.env.DECORATOR_TYPE}.json`,
-				useESM: true,
+				"$schema": "https://swc.rs/schema.json",
+				jsc: {
+					parser: {
+						syntax: "typescript",
+						decorators: true,
+					},
+					target: "es2022",
+					transform: {
+						decoratorVersion: process.env.DECORATOR_TYPE === 'tc39' ? '2022-03' : '2021-12',
+					},
+					experimental: {
+						keepImportAssertions: true
+					}
+				}
 			},
 		],
 	},
