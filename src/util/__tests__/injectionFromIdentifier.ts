@@ -1,3 +1,4 @@
+import type * as interfaces from '../../interfaces/index.js';
 import { describe, expect, it } from '@jest/globals';
 import type { Injection } from '../../models/Injection.js';
 import { injectionFromIdentifier } from '../injectionFromIdentifier.js';
@@ -13,8 +14,8 @@ describe('injectionFromIdentifier', () => {
 			type: 'constructorParameter',
 			id: token,
 			index: 0,
-			options: { multiple: false, optional: false },
-		} satisfies Injection<string>);
+			options: { multiple: false, optional: false, metadata: {} },
+		} satisfies Injection<string, interfaces.MetadataObject>);
 	});
 
 	it('generates for a token with options', () => {
@@ -22,8 +23,8 @@ describe('injectionFromIdentifier', () => {
 			type: 'constructorParameter',
 			id: token,
 			index: 0,
-			options: { multiple: true, optional: false },
-		} satisfies Injection<string>);
+			options: { multiple: true, optional: false, metadata: {} },
+		} satisfies Injection<string, interfaces.MetadataObject>);
 	});
 
 	it('generates for a constructor', () => {
@@ -33,8 +34,8 @@ describe('injectionFromIdentifier', () => {
 			type: 'constructorParameter',
 			id: Test,
 			index: 0,
-			options: { multiple: false, optional: false },
-		} satisfies Injection<Test>);
+			options: { multiple: false, optional: false, metadata: {} },
+		} satisfies Injection<Test, interfaces.MetadataObject>);
 	});
 
 	it('generates for a direct injection', () => {
@@ -43,8 +44,8 @@ describe('injectionFromIdentifier', () => {
 			type: 'unmanagedConstructorParameter',
 			id: id.token,
 			index: 0,
-			options: { multiple: false, optional: false },
+			options: { multiple: false, optional: false, metadata: {} },
 			value: id,
-		} satisfies Injection<string>);
+		} satisfies Injection<string, interfaces.MetadataObject>);
 	});
 });

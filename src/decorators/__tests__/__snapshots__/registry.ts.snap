@@ -8,6 +8,7 @@ exports[`registry getInjections can get all injections registered 1`] = `
     },
     "name": "str",
     "options": {
+      "metadata": {},
       "multiple": false,
       "optional": false,
     },
@@ -18,6 +19,7 @@ exports[`registry getInjections can get all injections registered 1`] = `
       "tokenFor": "Symbol(registry.class)",
     },
     "options": {
+      "metadata": {},
       "multiple": false,
       "optional": false,
     },
@@ -34,6 +36,7 @@ exports[`registry getPropertyInjections can get all property injections 1`] = `
     },
     "name": "str",
     "options": {
+      "metadata": {},
       "multiple": false,
       "optional": false,
     },

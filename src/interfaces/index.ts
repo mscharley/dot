@@ -9,9 +9,10 @@ export type { AsyncContainerModule, ContainerModule, SyncContainerModule } from 
 export type { DirectInjection } from './DirectInjection.js';
 export type { FactoryContext } from './FactoryContext.js';
 export type { Constructor, Fn, BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions.js';
-export type { ArgsForInjectionIdentifiers, InjectedType, InjectionIdentifier } from './InjectionIdentifier.js';
+export type { ArgsForInjectionIdentifiers, InjectedMetadata, InjectedType, InjectionIdentifier } from './InjectionIdentifier.js';
 export type { InjectOptions } from './InjectOptions.js';
 export type { Logger, LoggerFn, LoggerLevel } from './Logger.js';
+export type { MetadataObject } from './MetadataObject.js';
 export type { ObjectBinder } from './ObjectBinder.js';
 export type { ScopeOptions } from './ScopeOptions.js';
-export type { ServiceIdentifier } from './ServiceIdentifier.js';
+export type { MetadataForIdentifier, ServiceIdentifier, ServiceIdentifierWithMetadata } from './ServiceIdentifier.js';

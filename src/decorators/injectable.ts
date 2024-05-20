@@ -1,31 +1,13 @@
 import type * as interfaces from '../interfaces/index.js';
 import { ensureRegistration, getPropertyInjections, registerInjection } from './registry.js';
+import type { ClassDecorator } from './decorators.js';
 import { Container } from '../container/Container.js';
 import type { Injection } from '../models/Injection.js';
 import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
-/**
- * ConstructorTypesafe definition of a class decorator
- *
- * @remarks
- *
- * See {@link injectable | @injectable}
- *
- * @public
- */
-export interface InjectableDecorator<Args extends unknown[]> {
-	// TC39 definition
-	<T extends object>(
-		target: interfaces.Constructor<T, Args>,
-		context: ClassDecoratorContext<interfaces.Constructor<T, Args>>,
-	): undefined;
-	// experimental decorators definition
-	<T extends interfaces.Constructor<object, Args>>(target: T, context?: undefined): T;
-}
-
-const _injections: Array<Injection<unknown>> = [];
-export const addInjection = <T>(injection: Injection<T>): void => {
+const _injections: Array<Injection<unknown, interfaces.MetadataObject>> = [];
+export const addInjection = <T>(injection: Injection<T, interfaces.MetadataObject>): void => {
 	_injections.push(injection);
 };
 
@@ -70,40 +52,33 @@ const _configureInjectable = <T extends object, Tokens extends Array<interfaces.
  *
  * @public
  */
-export const injectable = <Tokens extends Array<interfaces.InjectionIdentifier<unknown>>>(
+export const injectable = <T extends object, Tokens extends Array<interfaces.InjectionIdentifier<unknown>>>(
 	...constructorTokens: Tokens
-): InjectableDecorator<interfaces.ArgsForInjectionIdentifiers<Tokens>> => {
-	return (<T extends object>(
-		target: interfaces.Constructor<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>,
-		context?:
-			| undefined
-			| ClassDecoratorContext<interfaces.Constructor<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>>,
-	): undefined | interfaces.Constructor<T, interfaces.ArgsForInjectionIdentifiers<Tokens>> => {
-		/* c8 ignore start */
-		if (context == null) {
-			// experimental
+): ClassDecorator<T, interfaces.ArgsForInjectionIdentifiers<Tokens>> =>
+		((target, context) => {
+			/* c8 ignore start */
+			if (context == null) {
+				// experimental
+				const klass = ((): typeof target =>
+					// @ts-expect-error - TypeScript doesn't like this construct when using the generic interface types.
+					class extends target {
+						public constructor(...args: interfaces.ArgsForInjectionIdentifiers<Tokens>) {
+							super(...(args as never));
+							getPropertyInjections(klass).forEach(({ name, id }) => {
+								const token = tokenForIdentifier(id);
+								// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+								(this as any)[name] = Container.resolvePropertyInjection(token, [token]);
+							});
+						}
+					})();
+				_configureInjectable(klass, constructorTokens);
 
-			const klass = ((): typeof target =>
-				// @ts-expect-error - TypeScript doesn't like this construct when using the generic interface types.
-				class extends target {
-					public constructor(...args: interfaces.ArgsForInjectionIdentifiers<Tokens>) {
-						super(...(args as never));
-						getPropertyInjections(klass).forEach(({ name, id }) => {
-							const token = tokenForIdentifier(id);
-							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-							(this as any)[name] = Container.resolvePropertyInjection(token, [token]);
-						});
-					}
-				})();
-			_configureInjectable(klass, constructorTokens);
-
-			return klass;
+				return klass;
 			/* c8 ignore end */
-		} else {
-			// tc39
-			_configureInjectable(target, constructorTokens);
+			} else {
+				// tc39
+				_configureInjectable(target, constructorTokens);
 
-			return undefined;
-		}
-	}) as InjectableDecorator<interfaces.ArgsForInjectionIdentifiers<Tokens>>;
-};
+				return undefined;
+			}
+		}) as ClassDecorator<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>;

@@ -1,11 +1,14 @@
 import type * as interfaces from '../interfaces/index.js';
 import { makeGlobalCache } from './makeGlobalCache.js';
+import type { MetadataToken } from '../Token.js';
 import { Token } from '../Token.js';
 
 const mappingsCache = Symbol.for('@mscharley/dot:identifier-token-mappings');
 const _mappings = makeGlobalCache<interfaces.Constructor<unknown>, Token<unknown>>(mappingsCache);
 
-export const tokenForIdentifier = <T>(id: interfaces.ServiceIdentifier<T>): Token<T> => {
+export const tokenForIdentifier = <T, Metadata extends interfaces.MetadataObject>(
+	id: interfaces.ServiceIdentifierWithMetadata<T, Metadata> | interfaces.ServiceIdentifier<T>,
+): Token<T> | MetadataToken<T, Metadata> => {
 	if ('identifier' in id) {
 		return id;
 	} else {

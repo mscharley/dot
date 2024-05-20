@@ -1,5 +1,5 @@
 import type * as interfaces from '../interfaces/index.js';
-import type { Binding, ConstructorBinding, DynamicBinding } from '../models/Binding.js';
+import type { ConstructorBinding, DynamicBinding } from '../models/Binding.js';
 import type { Container } from './Container.js';
 import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
 import { InvalidOperationError } from '../Error.js';
@@ -59,14 +59,15 @@ export class BindingBuilder<in out T> implements interfaces.BindingBuilder<T> {
 			);
 		}
 
-		this.container.addBinding(this, {
+		const binding: DynamicBinding<T> = {
 			type: 'dynamic',
 			id: this.id,
 			token: this.token,
 			scope: this.scope,
 			injections: dependencies.map((dep, index) => injectionFromIdentifier(dep, index)),
 			generator: factory as DynamicBinding<T>['generator'],
-		} satisfies DynamicBinding<T>);
+		};
+		this.container.addBinding(this, binding);
 	};
 
 	public toFactory: interfaces.BindingBuilder<T>['toFactory'] = (deps, fn) =>
@@ -105,7 +106,7 @@ export class ClassBindingBuilder<T extends object>
 			scope: this.scope,
 			ctr,
 		};
-		this.container.addBinding(this, binding as Binding<T>);
+		this.container.addBinding(this, binding);
 	};
 
 	public toSelf: interfaces.ClassBindingBuilder<T>['toSelf'] = () => {
@@ -122,6 +123,6 @@ export class ClassBindingBuilder<T extends object>
 			scope: this.scope,
 			ctr: this.id,
 		};
-		this.container.addBinding(this, binding as Binding<T>);
+		this.container.addBinding(this, binding);
 	};
 }

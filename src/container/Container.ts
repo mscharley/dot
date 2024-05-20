@@ -1,12 +1,12 @@
 import type * as interfaces from '../interfaces/index.js';
 import type { Binding, ConstructorBinding } from '../models/Binding.js';
 import { getConstructorParameterInjections, getInjections, getRegistry } from '../decorators/registry.js';
+import type { Injection, RequestInjection } from '../models/Injection.js';
 import { InvalidOperationError, TokenResolutionError } from '../Error.js';
 import type { BindingBuilder } from './BindingBuilder.js';
 import { calculatePlan } from '../planner/calculatePlan.js';
 import { ClassBindingBuilder } from './BindingBuilder.js';
 import { executePlan } from '../planner/executePlan.js';
-import type { Injection } from '../models/Injection.js';
 import { isNever } from '../util/isNever.js';
 import { noop } from '../util/noop.js';
 import type { Request } from '../models/Request.js';
@@ -120,12 +120,17 @@ export class Container implements interfaces.Container {
 		return new Container({ ...this.config, ...options, parent: this });
 	};
 
-	public addBinding = <T>(builder: BindingBuilder<T>, binding: Binding<T>): void => {
+	public addBinding = <T>(
+		builder: BindingBuilder<T>,
+		binding: Binding<T>,
+	): void => {
 		this.#incompleteBindings.delete(builder);
 		this.#bindings.push(binding as Binding<unknown>);
 	};
 
-	readonly #getBindings = <T>(id: interfaces.ServiceIdentifier<T>): Array<Binding<T>> => {
+	readonly #getBindings = <T>(
+		id: interfaces.ServiceIdentifier<T>,
+	): Array<Binding<T>> => {
 		const token = tokenForIdentifier(id);
 		const explicitBindings = this.#bindings.filter((b) => b.token.identifier === token.identifier) as Array<Binding<T>>;
 
@@ -154,7 +159,7 @@ export class Container implements interfaces.Container {
 	readonly #resolveBinding
 		= (request: Request<unknown>) =>
 		<T>(binding: Binding<T>, resolutionPath: Array<Token<unknown>>): T | Promise<T> => {
-			const getArgsForParameterInjections = (injections: Array<Injection<unknown>>): unknown[] =>
+			const getArgsForParameterInjections = (injections: Array<Injection<unknown, interfaces.MetadataObject>>): unknown[] =>
 				injections
 					// eslint-disable-next-line @typescript-eslint/no-magic-numbers
 					.sort((a, b) => ('index' in a && 'index' in b ? (a.index < b.index ? -1 : 1) : 0))
@@ -186,20 +191,30 @@ export class Container implements interfaces.Container {
 			}
 		};
 
-	public get = async <T>(
-		id: interfaces.ServiceIdentifier<T>,
-		options?: Partial<interfaces.InjectOptions>,
-	): Promise<T> => {
+	public get: interfaces.Container['get'] = async <
+		Id extends interfaces.ServiceIdentifier<unknown>,
+		Options extends Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<Id>>>,
+	>(
+		id: Id,
+		options?: Options,
+	): Promise<interfaces.InjectedType<[Id, Options]>> => {
 		this.#ensureBindingsCompleted();
 
-		const request: Request<T> = {
+		/* eslint-disable @typescript-eslint/no-type-alias */
+		type ReturnType = interfaces.InjectedType<[Id, Options]>;
+		type Metadata = interfaces.MetadataForIdentifier<Id>;
+		// Despite this being a reflective type, this isn't inferred properly by TypeScript currently.
+		const idValid = id as interfaces.ServiceIdentifier<ReturnType>;
+		/* eslint-enable @typescript-eslint/no-type-alias */
+
+		const request: Request<ReturnType> = {
 			container: this,
 			stack: {},
 			singletonCache: this.#singletonCache,
-			id,
-			token: tokenForIdentifier(id),
+			id: idValid,
+			token: tokenForIdentifier<ReturnType, Metadata>(idValid),
 		};
-		const plan = calculatePlan<T>(
+		const plan = calculatePlan<ReturnType>(
 			this.#getBindings,
 			this.#resolveBinding(request),
 			{
@@ -207,10 +222,11 @@ export class Container implements interfaces.Container {
 				options: {
 					multiple: false,
 					optional: false,
+					metadata: {},
 					...options,
 				},
-				id,
-			},
+				id: idValid,
+			} satisfies RequestInjection<ReturnType, Metadata>,
 			[],
 			this.config.parent,
 		);
@@ -225,7 +241,10 @@ export class Container implements interfaces.Container {
 		return local || (this.config.parent?.has(id) ?? false) || (typeof id === 'function' && this.config.autobindClasses);
 	};
 
-	readonly #validateInjections = (binding: Binding<unknown>, injections: Array<Injection<unknown>>): void => {
+	readonly #validateInjections = (
+		binding: Binding<unknown>,
+		injections: Array<Injection<unknown, interfaces.MetadataObject>>,
+	): void => {
 		for (const i of injections) {
 			if (
 				// Optional dependencies are always valid

@@ -55,7 +55,7 @@ describe('transient scope', () => {
 		c.bind(NodeToken).inTransientScope().to(Node);
 		c.bind(NodeToken).inTransientScope().to(Node);
 
-		const vs = await c.get(NodeToken, { multiple: true });
+		const vs: Node[] = await c.get(NodeToken, { multiple: true });
 		expect(vs).toHaveLength(2);
 		expect(vs[0]).not.toBe(vs[1]);
 	});

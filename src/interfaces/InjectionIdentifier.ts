@@ -1,6 +1,7 @@
+import type { ServiceIdentifier, ServiceIdentifierWithMetadata } from './ServiceIdentifier.js';
 import type { DirectInjection } from './DirectInjection.js';
 import type { InjectOptions } from './InjectOptions.js';
-import type { ServiceIdentifier } from './ServiceIdentifier.js';
+import type { MetadataObject } from './MetadataObject.js';
 
 /**
  * Valid options for parameters into the `@injectable` decorator
@@ -9,7 +10,7 @@ import type { ServiceIdentifier } from './ServiceIdentifier.js';
  */
 export type InjectionIdentifier<T> =
 	| ServiceIdentifier<T>
-	| [ServiceIdentifier<T>, Partial<InjectOptions>]
+	| [ServiceIdentifier<T>, Partial<InjectOptions<MetadataObject>> | undefined]
 	| DirectInjection<T>;
 
 /**
@@ -17,20 +18,23 @@ export type InjectionIdentifier<T> =
  *
  * @public
  */
-export type InjectedType<T extends InjectionIdentifier<unknown>> = T extends [
-	ServiceIdentifier<infer U>,
-	{ multiple: true },
-]
-	? U[]
-	: T extends [ServiceIdentifier<infer U>, { optional: true }]
-		? U | undefined
-		: T extends [ServiceIdentifier<infer U>, object]
-			? U
-			: T extends ServiceIdentifier<infer U>
-				? U
-				: T extends DirectInjection<infer U>
-					? U
-					: never;
+export type InjectedType<T extends InjectionIdentifier<unknown>> =
+	T extends [ ServiceIdentifier<infer U>, { multiple: true } ] ? U[]
+		: T extends [ServiceIdentifier<infer U>, { optional: true }] ? U | undefined
+			: T extends [ServiceIdentifier<infer U>, unknown] ? U
+				: T extends ServiceIdentifier<infer U> ? U
+					: T extends DirectInjection<infer U> ? U
+						: never;
+
+/**
+ * Helper type which is used to map an {@link @mscharley/dot#interfaces.InjectionIdentifier | InjectionIdentifier} into the type of any metadata that might be requested
+ *
+ * @public
+ */
+export type InjectedMetadata<T extends InjectionIdentifier<unknown>> =
+	T extends [ServiceIdentifierWithMetadata<unknown, infer U>, unknown] ? U
+		: T extends ServiceIdentifierWithMetadata<unknown, infer U> ? U
+			: MetadataObject;
 
 /**
  * Mapped type to convert a list of injection parameters into a list of injectable values

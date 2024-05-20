@@ -14,7 +14,7 @@ class TestClass {
 }
 registerInjection(TestClass, {
 	type: 'request',
-	options: { multiple: false, optional: false },
+	options: { multiple: false, optional: false, metadata: {} },
 	id: new Token<TestClass>('registry.class'),
 });
 

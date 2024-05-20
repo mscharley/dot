@@ -1,5 +1,6 @@
+import type { MetadataToken, Token } from '../Token.js';
 import type { Constructor } from './Functions.js';
-import type { Token } from '../Token.js';
+import type { MetadataObject } from './MetadataObject.js';
 
 /**
  * A type which can act as an identifier for a specific type of object used for injection
@@ -11,4 +12,16 @@ import type { Token } from '../Token.js';
  *
  * @public
  */
-export type ServiceIdentifier<T> = Token<T> | Constructor<T>;
+export type ServiceIdentifier<T> = Token<T> | Constructor<T> | ServiceIdentifierWithMetadata<T, MetadataObject>;
+
+/**
+ * A {@link ServiceIdentifier} which allows for attaching metadata to bindings as well
+ *
+ * @public
+ */
+export type ServiceIdentifierWithMetadata<T, Metadata extends MetadataObject> = MetadataToken<T, Metadata>;
+
+export type MetadataForIdentifier<Id extends ServiceIdentifier<unknown>> =
+	Id extends ServiceIdentifierWithMetadata<unknown, infer Metadata> ? Metadata : MetadataObject;
+
+export type IdentifiedType<T extends ServiceIdentifier<unknown>> = T extends ServiceIdentifier<infer U> ? U : never;

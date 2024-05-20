@@ -28,13 +28,17 @@ export interface AggregateMultiple<T = unknown> {
 	resolutionPath: Array<Token<unknown>>;
 }
 
-export interface ParentRequest<T = unknown> {
+export interface ParentRequest<T = unknown, Metadata extends interfaces.MetadataObject = interfaces.MetadataObject> {
 	type: 'requestFromParent';
 	token: Token<T>;
 	parent: interfaces.Container;
-	options: interfaces.InjectOptions;
+	options: interfaces.InjectOptions<Metadata>;
 }
 
-export type PlanStep<T = unknown> = AggregateMultiple<T> | CreateInstance<T> | FetchFromCache<T> | ParentRequest<T>;
+export type PlanStep<T = unknown, Metadata extends interfaces.MetadataObject = interfaces.MetadataObject> =
+	AggregateMultiple<T> |
+	CreateInstance<T> |
+	FetchFromCache<T> |
+	ParentRequest<T, Metadata>;
 
-export type Plan<T> = Array<PlanStep<T>>;
+export type Plan = PlanStep[];

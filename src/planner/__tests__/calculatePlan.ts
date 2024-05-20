@@ -34,6 +34,7 @@ describe('calculatePlan', () => {
 				options: {
 					multiple: false,
 					optional: false,
+					metadata: {},
 				},
 			},
 			[],
@@ -80,6 +81,7 @@ describe('calculatePlan', () => {
 				options: {
 					multiple: false,
 					optional: false,
+					metadata: {},
 				},
 			},
 			[],

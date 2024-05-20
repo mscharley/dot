@@ -1,7 +1,7 @@
 import type * as interfaces from '../interfaces/index.js';
 import { addInjection } from './injectable.js';
+import type { ClassFieldDecorator } from './decorators.js';
 import { Container } from '../container/Container.js';
-import type { Token } from '../Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
 /**
@@ -14,25 +14,9 @@ import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
  * @public
  */
 export interface InjectDecoratorFactory {
-	<T>(token: Token<T>, options: Partial<interfaces.InjectOptions> & { multiple: true }): InjectDecorator<T[]>;
-	<T>(token: Token<T>, options: Partial<interfaces.InjectOptions> & { optional: true }): InjectDecorator<T | undefined>;
-	<T>(token: Token<T>, options?: Partial<interfaces.InjectOptions>): InjectDecorator<T>;
-}
-
-/**
- * Typesafe definition of a class field decorator
- *
- * @remarks
- *
- * See {@link inject | @inject}
- *
- * @public
- */
-export interface InjectDecorator<T> {
-	// TC39 definition
-	(target: undefined, context: ClassFieldDecoratorContext<unknown, T>): (originalValue: T | undefined) => T;
-	// experimental decorators definition
-	(target: object, propertyName: string | symbol): undefined;
+	<T>(id: interfaces.ServiceIdentifier<T>, options: Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<typeof id>>> & { multiple: true }): ClassFieldDecorator<object, T[]>;
+	<T>(id: interfaces.ServiceIdentifier<T>, options: Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<typeof id>>> & { optional: true }): ClassFieldDecorator<object, T | undefined>;
+	<T>(id: interfaces.ServiceIdentifier<T>, options?: Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<typeof id>>>): ClassFieldDecorator<object, T>;
 }
 
 /**
@@ -58,11 +42,12 @@ export interface InjectDecorator<T> {
  */
 export const inject: InjectDecoratorFactory = <T>(
 	id: interfaces.ServiceIdentifier<T>,
-	options?: Partial<interfaces.InjectOptions>,
-): InjectDecorator<T> => {
-	const opts: interfaces.InjectOptions = {
+	options?: Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<typeof id>>>,
+): ClassFieldDecorator<object, T> => {
+	const opts: interfaces.InjectOptions<interfaces.MetadataForIdentifier<typeof id>> = {
 		multiple: false,
 		optional: false,
+		metadata: {},
 		...options,
 	};
 	const token = tokenForIdentifier(id);
@@ -95,5 +80,5 @@ export const inject: InjectDecoratorFactory = <T>(
 				return value;
 			};
 		}
-	}) as InjectDecorator<T>;
+	}) as ClassFieldDecorator<object, T>;
 };
