@@ -22,7 +22,7 @@ class Foo {
 }
 const foo = new Token<Foo>('foo');
 
-describe('propertyAccess', () => {
+describe('property access', () => {
 	let c: Container;
 
 	beforeEach(() => {

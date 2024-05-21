@@ -1,5 +1,7 @@
 import type { BindingBuilder, ClassBindingBuilder, ObjectBindingBuilder } from './BindingBuilder.js';
-import type { ServiceIdentifier } from './ServiceIdentifier.js';
+import type { MetadataForIdentifier, ServiceIdentifier } from './ServiceIdentifier.js';
+import type { InjectedType } from './InjectionIdentifier.js';
+import type { MetadataObject } from './MetadataObject.js';
 
 /**
  * A constructor for a class
@@ -24,10 +26,10 @@ export type Fn<out T, in Args extends unknown[] = any> = (...args: Args) => T;
  */
 export type BindFunction = {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	<T extends object>(id: Constructor<T, any>): ClassBindingBuilder<T>;
+	<Id extends Constructor<any, any>>(id: Id): ClassBindingBuilder<InjectedType<Id>, MetadataObject>;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	<T extends object>(id: Exclude<ServiceIdentifier<T>, Constructor<T, any>>): ObjectBindingBuilder<T>;
-	<T>(id: ServiceIdentifier<T>): BindingBuilder<T>;
+	<Id extends Exclude<ServiceIdentifier<object>, Constructor<any, any>>>(id: Id): ObjectBindingBuilder<InjectedType<Id>, MetadataForIdentifier<Id>>;
+	<Id extends ServiceIdentifier<unknown>>(id: Id): BindingBuilder<InjectedType<Id>, MetadataForIdentifier<Id>>;
 };
 
 /**

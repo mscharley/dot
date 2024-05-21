@@ -109,6 +109,7 @@ export { injectable } from './decorators/injectable.js';
 export { stringifyIdentifier } from './util/stringifyIdentifier.js';
 export type { AnyToken } from './Token.js';
 export { MetadataToken, NamedToken, Token } from './Token.js';
+export { isToken, isMetadataToken } from './util/isToken.js';
 export { named } from './decorators/named.js';
 export { unmanaged } from './decorators/unmanaged.js';
 export { withOptions } from './decorators/withOptions.js';

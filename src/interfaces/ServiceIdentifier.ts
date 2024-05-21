@@ -15,13 +15,19 @@ import type { MetadataObject } from './MetadataObject.js';
 export type ServiceIdentifier<T> = Token<T> | Constructor<T> | ServiceIdentifierWithMetadata<T, MetadataObject>;
 
 /**
- * A {@link ServiceIdentifier} which allows for attaching metadata to bindings as well
+ * A {@link interfaces.ServiceIdentifier} which allows for attaching metadata to bindings as well
  *
  * @public
  */
 export type ServiceIdentifierWithMetadata<T, Metadata extends MetadataObject> = MetadataToken<T, Metadata>;
 
+/**
+ * @public
+ */
 export type MetadataForIdentifier<Id extends ServiceIdentifier<unknown>> =
 	Id extends ServiceIdentifierWithMetadata<unknown, infer Metadata> ? Metadata : MetadataObject;
 
+/**
+ * @public
+ */
 export type IdentifiedType<T extends ServiceIdentifier<unknown>> = T extends ServiceIdentifier<infer U> ? U : never;

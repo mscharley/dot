@@ -5,7 +5,7 @@ import type { Token } from './Token.js';
  *
  * @public
  */
-export type ErrorCode = 'RECURSIVE_RESOLUTION' | 'TOKEN_RESOLUTION' | 'INVALID_OPERATION';
+export type ErrorCode = 'RECURSIVE_RESOLUTION' | 'BINDING_ERROR' | 'TOKEN_RESOLUTION' | 'INVALID_OPERATION';
 
 /**
  * Superclass for all errors that are thrown by the IOC container
@@ -30,6 +30,17 @@ export abstract class IocError extends Error {
 	public constructor(msg: string, code: ErrorCode, originalError?: Error) {
 		super(msg, { cause: originalError });
 		this.code = code;
+	}
+}
+
+/**
+ * An error occurred while trying to configure a binding
+ *
+ * @public
+ */
+export class BindingError extends IocError {
+	public constructor(msg: string, originalError?: Error) {
+		super(msg, 'BINDING_ERROR', originalError);
 	}
 }
 

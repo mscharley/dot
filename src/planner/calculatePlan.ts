@@ -9,10 +9,10 @@ import type { Token } from '../Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
 const planBinding = <T, Metadata extends interfaces.MetadataObject>(
-	binding: Binding<T>,
+	binding: Binding<T, Metadata>,
 	input: Injection<T, Metadata>,
 	resolutionPath: Array<Token<unknown>>,
-	resolveBinding: <U>(binding: Binding<U>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
+	resolveBinding: <U>(binding: Binding<U, interfaces.MetadataObject>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
 	resolveInjection: (injection: Injection<unknown, interfaces.MetadataObject>) => Plan,
 ): Plan => {
 	const cache = binding.scope === 'transient' ? undefined : binding.scope;
@@ -50,8 +50,8 @@ const planBinding = <T, Metadata extends interfaces.MetadataObject>(
 };
 
 export const calculatePlan = <T>(
-	getBindings: <U>(id: interfaces.ServiceIdentifier<U>) => Array<Binding<U>>,
-	resolveBinding: <U>(binding: Binding<U>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
+	getBindings: <U>(id: interfaces.ServiceIdentifier<U>, metadata: interfaces.MetadataObject) => Array<Binding<U, interfaces.MetadataObject>>,
+	resolveBinding: <U>(binding: Binding<U, interfaces.MetadataObject>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
 	input: Injection<T, interfaces.MetadataObject>,
 	resolutionPath: Array<Token<unknown>>,
 	parent?: interfaces.Container,
@@ -66,7 +66,7 @@ export const calculatePlan = <T>(
 		throw new RecursiveResolutionError('Recursive binding detected', [...resolutionPath, token]);
 	}
 
-	const binds = getBindings(id);
+	const binds = getBindings(id, input.options.metadata);
 	if (!input.options.multiple && binds.length > 1) {
 		throw new TokenResolutionError(
 			'Unable to resolve token',

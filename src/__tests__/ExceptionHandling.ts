@@ -16,7 +16,7 @@ class Test {
 	public id = 10;
 }
 
-describe('exceptionHandling', () => {
+describe('exception handling', () => {
 	describe('should allow errors from client code to be accessible to client code', () => {
 		it('class constructor', async () => {
 			const c = new Container();

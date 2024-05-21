@@ -104,7 +104,7 @@ export class MetadataToken<out T, Metadata extends interfaces.MetadataObject> {
 	 * as `{}`.
 	 */
 	public toJSON(): object {
-		return { tokenFor: this.identifier.toString() };
+		return { metadataTokenFor: this.identifier.toString() };
 	}
 }
 

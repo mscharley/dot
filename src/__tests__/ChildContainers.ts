@@ -6,7 +6,7 @@ import { Token } from '../Token.js';
 
 const token = new Token<string>('str');
 
-describe('childContainers', () => {
+describe('child containers', () => {
 	let container: interfaces.Container;
 	const log = jest.fn<interfaces.LoggerFn>();
 	const warn = jest.fn<interfaces.LoggerFn>();

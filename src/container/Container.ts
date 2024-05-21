@@ -19,22 +19,22 @@ export class Container implements interfaces.Container {
 	static #currentRequest: Request<unknown> | undefined;
 
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	readonly #incompleteBindings = new Set<BindingBuilder<any>>();
+	readonly #incompleteBindings = new Set<BindingBuilder<any, any>>();
 
-	#bindings: Array<Binding<unknown>> = [];
+	#bindings: Array<Binding<unknown, interfaces.MetadataObject>> = [];
 	readonly #log: interfaces.LoggerFn;
 	readonly #warn: interfaces.LoggerFn;
 	readonly #singletonCache = new ResolutionCache();
 	public readonly config: Readonly<interfaces.ContainerConfiguration>;
 
 	public constructor(config?: Partial<interfaces.ContainerConfiguration>) {
-		this.config = {
+		this.config = Object.freeze({
 			autobindClasses: false,
 			defaultScope: 'transient',
 			logLevel: 'debug',
 			logger: { debug: noop, info: noop, trace: noop, warn: noop },
 			...config,
-		};
+		});
 		this.#log = this.config.logger[this.config.logLevel].bind(this.config.logger);
 		this.#warn = this.config.logger.warn.bind(this.config.logger);
 	}
@@ -85,13 +85,15 @@ export class Container implements interfaces.Container {
 		}
 	};
 
-	public bind = (<T>(id: interfaces.ServiceIdentifier<T>): interfaces.BindingBuilder<T> => {
+	public bind = (<Id extends interfaces.ServiceIdentifier<unknown>>(
+		id: Id,
+	): interfaces.BindingBuilder<interfaces.InjectedType<Id>, interfaces.MetadataForIdentifier<Id>> => {
 		const binding = new ClassBindingBuilder(
 			id as interfaces.ServiceIdentifier<object>,
 			this.config,
 			this.#warn,
 			this,
-		) as unknown as BindingBuilder<T>;
+		) as unknown as BindingBuilder<interfaces.InjectedType<Id>, interfaces.MetadataForIdentifier<Id>>;
 		this.#incompleteBindings.add(binding);
 
 		return binding;
@@ -120,32 +122,42 @@ export class Container implements interfaces.Container {
 		return new Container({ ...this.config, ...options, parent: this });
 	};
 
-	public addBinding = <T>(
-		builder: BindingBuilder<T>,
-		binding: Binding<T>,
+	public addBinding = <T, Metadata extends interfaces.MetadataObject>(
+		builder: BindingBuilder<T, Metadata>,
+		binding: Binding<T, Metadata>,
 	): void => {
 		this.#incompleteBindings.delete(builder);
-		this.#bindings.push(binding as Binding<unknown>);
+		this.#bindings.push(binding as Binding<unknown, interfaces.MetadataObject>);
 	};
 
 	readonly #getBindings = <T>(
 		id: interfaces.ServiceIdentifier<T>,
-	): Array<Binding<T>> => {
+		metadata: interfaces.MetadataObject,
+	): Array<Binding<T, interfaces.MetadataObject>> => {
+		const metadataFilters = Object.entries(metadata);
 		const token = tokenForIdentifier(id);
-		const explicitBindings = this.#bindings.filter((b) => b.token.identifier === token.identifier) as Array<Binding<T>>;
+		const explicitBindings = this.#bindings
+			.filter((b): b is Binding<T, interfaces.MetadataObject> => b.token.identifier === token.identifier)
+			.filter((b) => metadataFilters.map(([k, v]) => b.metadata[k] === v).reduce((acc, v) => acc && v, true));
 
 		if (explicitBindings.length > 0) {
 			return explicitBindings;
 		}
 
-		if (this.config.autobindClasses && typeof id === 'function' && !(this.config.parent?.has(id) ?? false)) {
+		if (
+			this.config.autobindClasses
+			&& metadataFilters.length === 0
+			&& typeof id === 'function'
+			&& !(this.config.parent?.has(id) ?? false)
+		) {
 			const binding = {
 				type: 'constructor',
 				ctr: id,
 				id,
 				token,
 				scope: this.config.defaultScope,
-			} satisfies ConstructorBinding<T>;
+				metadata: {},
+			} satisfies ConstructorBinding<T, interfaces.MetadataObject>;
 
 			// Save this binding to make sure that caches work for future attempts to get this class.
 			this.#bindings.push(binding);
@@ -158,7 +170,7 @@ export class Container implements interfaces.Container {
 
 	readonly #resolveBinding
 		= (request: Request<unknown>) =>
-		<T>(binding: Binding<T>, resolutionPath: Array<Token<unknown>>): T | Promise<T> => {
+		<T>(binding: Binding<T, interfaces.MetadataObject>, resolutionPath: Array<Token<unknown>>): T | Promise<T> => {
 			const getArgsForParameterInjections = (injections: Array<Injection<unknown, interfaces.MetadataObject>>): unknown[] =>
 				injections
 					// eslint-disable-next-line @typescript-eslint/no-magic-numbers
@@ -242,7 +254,7 @@ export class Container implements interfaces.Container {
 	};
 
 	readonly #validateInjections = (
-		binding: Binding<unknown>,
+		binding: Binding<unknown, interfaces.MetadataObject>,
 		injections: Array<Injection<unknown, interfaces.MetadataObject>>,
 	): void => {
 		for (const i of injections) {
@@ -286,7 +298,7 @@ export class Container implements interfaces.Container {
 			const registry = getRegistry();
 			registry.forEach((injections, id) => {
 				this.#validateInjections(
-					{ type: 'constructor', id, ctr: id, scope: 'singleton', token: tokenForIdentifier(id) },
+					{ type: 'constructor', id, ctr: id, scope: 'singleton', metadata: {}, token: tokenForIdentifier(id) },
 					injections,
 				);
 			});

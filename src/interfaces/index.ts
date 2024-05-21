@@ -1,5 +1,6 @@
 export type { Binder, ImplicitScopeBindingOptions } from './Binder.js';
 export type { BindingBuilder, ClassBindingBuilder, ObjectBindingBuilder } from './BindingBuilder.js';
+export type { BindingMetadata } from './BindingMetadata.js';
 export type { BindingScope } from './BindingScope.js';
 export type { ClassBinder } from './ClassBinder.js';
 export type { Container } from './Container.js';

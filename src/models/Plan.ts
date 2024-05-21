@@ -2,11 +2,11 @@ import type * as interfaces from '../interfaces/index.js';
 import type { Binding } from './Binding.js';
 import type { Token } from '../Token.js';
 
-export interface FetchFromCache<T = unknown> {
+export interface FetchFromCache<T> {
 	type: 'fetchFromCache';
 	cache: 'singleton' | 'request';
 	token: Token<T>;
-	binding: Binding<T>;
+	binding: Binding<T, interfaces.MetadataObject>;
 	skipStepsIfFound: number;
 }
 
@@ -16,7 +16,7 @@ export interface CreateInstance<T = unknown> {
 	generate: () => T | Promise<T>;
 	id: interfaces.ServiceIdentifier<T>;
 	token: Token<T>;
-	binding: Binding<T> | undefined;
+	binding: Binding<T, interfaces.MetadataObject> | undefined;
 	expectedTokensUsed: Array<Token<unknown>>;
 	resolutionPath: Array<Token<unknown>>;
 }
