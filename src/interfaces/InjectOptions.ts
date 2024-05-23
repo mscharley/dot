@@ -1,7 +1,5 @@
 import type { MetadataObject } from './MetadataObject.js';
 
-type Exact<T, U> = T extends U ? (U extends T ? T : never) : never;
-
 /**
  * Options that can be applied to an individual injection
  *

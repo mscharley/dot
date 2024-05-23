@@ -7,9 +7,9 @@ import type * as interfaces from '../interfaces/index.js';
  */
 export interface ClassDecorator<T, Args extends unknown[]> {
 	// TC39 definition
-	(target: interfaces.Constructor<T, Args>, context: ClassDecoratorContext<interfaces.Constructor<T, Args>>): undefined;
+	<Ctr extends interfaces.Constructor<T, Args>>(target: Ctr, context: ClassDecoratorContext<Ctr>): undefined;
 	// experimental decorators definition
-	(target: interfaces.Constructor<T, Args>, context?: undefined): interfaces.Constructor<T, Args> | undefined;
+	<Ctr extends interfaces.Constructor<T, Args>>(target: Ctr, context?: undefined): Ctr | undefined;
 }
 
 /**
