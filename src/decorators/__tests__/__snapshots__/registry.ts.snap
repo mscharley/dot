@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`registry getConstructorParameterInjections can get all property injections 1`] = `[]`;
+
 exports[`registry getInjections can get all injections registered 1`] = `
 [
   {
@@ -41,6 +43,22 @@ exports[`registry getPropertyInjections can get all property injections 1`] = `
       "optional": false,
     },
     "type": "property",
+  },
+]
+`;
+
+exports[`registry registerInjection succeeds for an unseen class 1`] = `
+[
+  {
+    "id": {
+      "tokenFor": "Symbol(Unseen)",
+    },
+    "options": {
+      "metadata": {},
+      "multiple": false,
+      "optional": false,
+    },
+    "type": "request",
   },
 ]
 `;

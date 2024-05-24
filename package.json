@@ -58,10 +58,10 @@
 		"test:eslint": "eslint .",
 		"test:tsc:experimental": "tsc --experimentalDecorators true --noEmit --incremental false",
 		"test:jest": "npm run test:jest:experimental && npm run test:jest:tc39",
-		"test:jest:tc39": "DECORATOR_TYPE=tc39 NODE_OPTIONS=--experimental-vm-modules jest",
-		"test:jest:experimental": "DECORATOR_TYPE=experimental NODE_OPTIONS=--experimental-vm-modules jest",
+		"test:jest:tc39": "DECORATOR_TYPE=tc39 NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest",
+		"test:jest:experimental": "DECORATOR_TYPE=experimental NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest",
 		"test:cjs-esm-compat": "node dist/__utils__/esm-cjs-multi-test.js",
-		"stryker": "DECORATOR_TYPE=tc39 NODE_OPTIONS=--experimental-vm-modules stryker run",
+		"stryker": "DECORATOR_TYPE=tc39 NODE_OPTIONS='--experimental-vm-modules --no-warnings' stryker run",
 		"rebuild-test": "npm run clean && npm run build && npm test && npm run stryker && npm run build:docs",
 		"cs-version": "npm run build:tsc && changeset version",
 		"cs-release": "changeset publish"

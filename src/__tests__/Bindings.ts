@@ -188,6 +188,26 @@ describe('bindings', () => {
 				const v = c.get(childFactory).then(async (cc) => cc().get(testToken));
 				await expect(v).resolves.toBe('10');
 			});
+
+			it('prints a warning if used without an explicit scope', async () => {
+				const warn = jest.fn<LoggerFn>();
+				const c = new Container({
+					logger: { warn: warn as unknown as LoggerFn, debug: noop, info: noop, trace: noop },
+				});
+				c.bind(token).toFactory([], () => () => ({
+					id: 10,
+				}));
+
+				expect(warn).toHaveBeenCalledTimes(1);
+				expect(warn).toHaveBeenCalledWith(
+					{ id: 'Token<Symbol(test)>' },
+					'Using toDynamicValue() or toFactory() without an explicit scope can lead to performance issues. See https://github.com/mscharley/dot/discussions/80 for details.',
+				);
+
+				await c.get(token);
+
+				expect(warn).toHaveBeenCalledTimes(1);
+			});
 		});
 
 		describe('to()', () => {

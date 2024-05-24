@@ -50,8 +50,7 @@ export default {
 
 	// An object that configures minimum threshold enforcement for coverage results
 	coverageThreshold: {
-		"src/planner": { branches: 100, functions: 100, lines: 100, statements: 100 },
-		global: { branches: 75, functions: 95, lines: 95, statements: 95 },
+		global: { branches: 95, functions: 95, lines: 95, statements: 95 },
 	},
 
 	// A path to a custom dependency extractor
