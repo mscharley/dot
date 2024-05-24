@@ -1,6 +1,7 @@
 import type { ArgsForInjectionIdentifiers, InjectionIdentifier } from './InjectionIdentifier.js';
 import type { FactoryContext } from './FactoryContext.js';
 import type { Fn } from './Functions.js';
+import type { MetadataObject } from './MetadataObject.js';
 
 /**
  * Describes which {@link @mscharley/dot#interfaces.Binder | Binder} options are only available when not specifying a scope
@@ -14,7 +15,7 @@ export type ImplicitScopeBindingOptions = 'toConstantValue';
  *
  * @public
  */
-export interface Binder<in out T> {
+export interface Binder<in out T, in out Metadata extends MetadataObject> {
 	/**
 	 * Bind this identifier to a constant value
 	 *
@@ -48,6 +49,6 @@ export interface Binder<in out T> {
 	 */
 	toFactory: <Tokens extends Array<InjectionIdentifier<unknown>>>(
 		dependencies: [...Tokens],
-		fn: (context: FactoryContext) => Fn<T | Promise<T>, ArgsForInjectionIdentifiers<Tokens>>,
+		fn: (context: FactoryContext<Metadata>) => Fn<T | Promise<T>, ArgsForInjectionIdentifiers<Tokens>>,
 	) => void;
 }

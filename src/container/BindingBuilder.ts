@@ -1,5 +1,5 @@
 import type * as interfaces from '../interfaces/index.js';
-import type { Binding, ConstructorBinding, DynamicBinding, StaticBinding } from '../models/Binding.js';
+import type { Binding, ConstructorBinding, DynamicBinding, FactoryBinding, StaticBinding } from '../models/Binding.js';
 import { BindingError, InvalidOperationError } from '../Error.js';
 import type { Container } from './Container.js';
 import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
@@ -21,14 +21,14 @@ export class BindingBuilder<in out T, Metadata extends interfaces.MetadataObject
 		public readonly id: interfaces.ServiceIdentifier<T>,
 		containerConfiguration: interfaces.ContainerConfiguration,
 		protected readonly warn: interfaces.LoggerFn,
-		private readonly container: Container,
+		private readonly container: Pick<Container, 'addBinding'>,
 	) {
 		this.token = tokenForIdentifier(id);
 		this.scope = containerConfiguration.defaultScope;
 	}
 
 	protected readonly finaliseBinding = (binding: Binding<T, Metadata>): void => {
-		if (isMetadataToken(this.token) && this.metadata == null) {
+		if (isMetadataToken(this.token) && this.metadata == null && !(binding.type === 'factory' && this.scope === 'transient')) {
 			throw new BindingError('Bindings for metadata tokens require setting metadata');
 		}
 
@@ -92,11 +92,25 @@ export class BindingBuilder<in out T, Metadata extends interfaces.MetadataObject
 		this.finaliseBinding(binding);
 	};
 
-	public toFactory: interfaces.BindingBuilder<T, Metadata>['toFactory'] = (deps, fn) =>
-		this.toDynamicValue(
-			deps,
-			fn({ container: { config: this.container.config, createChild: this.container.createChild } }),
-		);
+	public toFactory: interfaces.BindingBuilder<T, Metadata>['toFactory'] = (deps, fn) => {
+		if (!this.explicitScope) {
+			this.warn(
+				{ id: stringifyIdentifier(this.id) },
+				'Using toDynamicValue() or toFactory() without an explicit scope can lead to performance issues. See https://github.com/mscharley/dot/discussions/80 for details.',
+			);
+		}
+
+		const binding: FactoryBinding<T, Metadata> = {
+			type: 'factory',
+			id: this.id,
+			token: this.token,
+			scope: this.scope,
+			metadata: this.metadata,
+			injections: deps.map((dep, index) => injectionFromIdentifier(dep, index)),
+			generator: fn as FactoryBinding<T, Metadata>['generator'],
+		};
+		this.finaliseBinding(binding);
+	};
 
 	public inSingletonScope = (): this => {
 		this.scope = 'singleton';

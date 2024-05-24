@@ -1,5 +1,5 @@
 import type * as interfaces from '../interfaces/index.js';
-import { beforeEach, describe, expect, it } from '@jest/globals';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { IsInterface, isString } from 'generic-type-guard';
 import { MetadataToken, NamedToken } from '../Token.js';
 import { Container } from '../container/Container.js';
@@ -82,6 +82,43 @@ describe('metadata bindings', () => {
 			}
 
 			await expect(c.get(Test)).resolves.toMatchObject({ name: 'Hello' });
+		});
+	});
+
+	describe('factories', () => {
+		const token = new MetadataToken<string, Metadata>('factory', isMetadata);
+
+		beforeEach(() => {
+			c = new Container({ defaultScope: 'transient' });
+		});
+
+		it('provides metadata to the factory function', async () => {
+			// eslint-disable-next-line jest/no-conditional-in-test
+			const factory = jest.fn(({ metadata }: interfaces.FactoryContext<Metadata>) => (): string => metadata.name ?? 'fallback');
+
+			c.bind(token).inSingletonScope().withMetadata({ name: 'Hello', type: 'world' }).toFactory([], factory);
+			await c.get(token, { metadata: { name: 'Hello' } });
+			await expect(c.get(token, { metadata: { name: 'Hello' } })).resolves.toBe('Hello');
+			await expect(c.get(token, { metadata: { name: 'Hello' } })).resolves.toBe('Hello');
+			expect(factory).toHaveBeenCalledTimes(1);
+		});
+
+		it('allows metadata for transient bindings', async () => {
+			// eslint-disable-next-line jest/no-conditional-in-test
+			const factory = jest.fn(({ metadata }: interfaces.FactoryContext<Metadata>) => (): string => metadata.name ?? 'fallback');
+
+			c.bind(token).inTransientScope().withMetadata({ name: 'Hello', type: 'world' }).toFactory([], factory);
+			await expect(c.get(token, { metadata: { name: 'Hello' } })).resolves.toBe('Hello');
+			await expect(c.get(token, { metadata: { name: 'Goodbye' } })).rejects.toMatchObject({ message: 'Unable to resolve token' });
+		});
+
+		it("doesn't require metadata for transient bindings", async () => {
+			// eslint-disable-next-line jest/no-conditional-in-test
+			const factory = jest.fn(({ metadata }: interfaces.FactoryContext<Metadata>) => (): string => metadata.name ?? 'fallback');
+
+			c.bind(token).inTransientScope().toFactory([], factory);
+			await expect(c.get(token, { metadata: { name: 'Hello' } })).resolves.toBe('Hello');
+			await expect(c.get(token, { metadata: { name: 'Goodbye' } })).resolves.toBe('Goodbye');
 		});
 	});
 });

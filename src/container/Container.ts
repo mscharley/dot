@@ -138,7 +138,10 @@ export class Container implements interfaces.Container {
 		const token = tokenForIdentifier(id);
 		const explicitBindings = this.#bindings
 			.filter((b): b is Binding<T, interfaces.MetadataObject> => b.token.identifier === token.identifier)
-			.filter((b) => metadataFilters.map(([k, v]) => b.metadata[k] === v).reduce((acc, v) => acc && v, true));
+			.filter((b) =>
+				(b.type === 'factory' && b.scope === 'transient' && b.metadata == null)
+				|| metadataFilters.map(([k, v]) => b.metadata?.[k] === v).reduce((acc, v) => acc && v, true),
+			);
 
 		if (explicitBindings.length > 0) {
 			return explicitBindings;
@@ -170,7 +173,7 @@ export class Container implements interfaces.Container {
 
 	readonly #resolveBinding
 		= (request: Request<unknown>) =>
-		<T>(binding: Binding<T, interfaces.MetadataObject>, resolutionPath: Array<Token<unknown>>): T | Promise<T> => {
+		<T, Metadata extends interfaces.MetadataObject>(binding: Binding<T, Metadata>, injection: Injection<T, Metadata>, resolutionPath: Array<Token<unknown>>): T | Promise<T> => {
 			const getArgsForParameterInjections = (injections: Array<Injection<unknown, interfaces.MetadataObject>>): unknown[] =>
 				injections
 					// eslint-disable-next-line @typescript-eslint/no-magic-numbers
@@ -187,6 +190,17 @@ export class Container implements interfaces.Container {
 				case 'dynamic': {
 					const args = getArgsForParameterInjections(binding.injections);
 					return binding.generator(...args);
+				}
+				case 'factory': {
+					const args = getArgsForParameterInjections(binding.injections);
+					const ctx: interfaces.FactoryContext<Metadata> = {
+						container: { config: this.config, createChild: this.createChild },
+						metadata: {
+							...binding.metadata,
+							...injection.options.metadata,
+						},
+					};
+					return binding.generator(ctx)(...args);
 				}
 				case 'constructor': {
 					const args = getArgsForParameterInjections(getConstructorParameterInjections(binding.ctr));
@@ -281,7 +295,8 @@ export class Container implements interfaces.Container {
 				case 'static':
 					// These are always valid, the value is in the binding and has no dependencies
 					continue;
-				case 'dynamic': {
+				case 'dynamic':
+				case 'factory': {
 					this.#validateInjections(binding, binding.injections);
 					continue;
 				}

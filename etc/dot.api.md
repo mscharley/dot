@@ -18,10 +18,10 @@ type ArgsForInjectionIdentifiers<Tokens extends [...Array<InjectionIdentifier<un
 type AsyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound: IsBoundFunction, rebind: RebindFunction) => Promise<void>;
 
 // @public
-interface Binder<in out T> {
+interface Binder<in out T, in out Metadata extends MetadataObject> {
     toConstantValue: ((v: T) => void) & ((v: Promise<T>) => Promise<void>);
     toDynamicValue: <Tokens extends Array<InjectionIdentifier<unknown>>>(dependencies: [...Tokens], fn: Fn<T | Promise<T>, ArgsForInjectionIdentifiers<Tokens>>) => void;
-    toFactory: <Tokens extends Array<InjectionIdentifier<unknown>>>(dependencies: [...Tokens], fn: (context: FactoryContext) => Fn<T | Promise<T>, ArgsForInjectionIdentifiers<Tokens>>) => void;
+    toFactory: <Tokens extends Array<InjectionIdentifier<unknown>>>(dependencies: [...Tokens], fn: (context: FactoryContext<Metadata>) => Fn<T | Promise<T>, ArgsForInjectionIdentifiers<Tokens>>) => void;
 }
 
 // @public
@@ -32,7 +32,7 @@ type BindFunction = {
 };
 
 // @public
-interface BindingBuilder<in out T, in out Metadata extends MetadataObject> extends Binder<T>, BindingMetadata<T, Metadata, BindingBuilder<T, Metadata>>, BindingScope<T, BindingBuilder<T, Metadata>> {
+interface BindingBuilder<in out T, in out Metadata extends MetadataObject> extends Binder<T, Metadata>, BindingMetadata<T, Metadata, BindingBuilder<T, Metadata>>, BindingScope<T, BindingBuilder<T, Metadata>> {
 }
 
 // @public
@@ -54,15 +54,15 @@ interface ClassBinder<in T> {
 }
 
 // @public
-interface ClassBindingBuilder<in out T extends object, in out Metadata extends MetadataObject> extends Binder<T>, BindingMetadata<T, Metadata, ClassBindingBuilder<T, Metadata>>, BindingScope<T, ClassBindingBuilder<T, Metadata>>, ObjectBinder<T>, ClassBinder<T> {
+interface ClassBindingBuilder<in out T extends object, in out Metadata extends MetadataObject> extends Binder<T, Metadata>, BindingMetadata<T, Metadata, ClassBindingBuilder<T, Metadata>>, BindingScope<T, ClassBindingBuilder<T, Metadata>>, ObjectBinder<T>, ClassBinder<T> {
 }
 
 // @public
 interface ClassDecorator_2<T, Args extends unknown[]> {
     // (undocumented)
-    (target: interfaces.Constructor<T, Args>, context: ClassDecoratorContext<interfaces.Constructor<T, Args>>): undefined;
+    <Ctr extends interfaces.Constructor<T, Args>>(target: Ctr, context: ClassDecoratorContext<Ctr>): undefined;
     // (undocumented)
-    (target: interfaces.Constructor<T, Args>, context?: undefined): interfaces.Constructor<T, Args> | undefined;
+    <Ctr extends interfaces.Constructor<T, Args>>(target: Ctr, context?: undefined): Ctr | undefined;
 }
 export { ClassDecorator_2 as ClassDecorator }
 
@@ -143,8 +143,9 @@ type DirectInjection<T> = {
 export type ErrorCode = 'RECURSIVE_RESOLUTION' | 'BINDING_ERROR' | 'TOKEN_RESOLUTION' | 'INVALID_OPERATION';
 
 // @public
-interface FactoryContext {
+interface FactoryContext<Metadata extends MetadataObject> {
     container: Pick<Container, 'createChild' | 'config'>;
+    metadata: Partial<Metadata>;
 }
 
 // @public
@@ -312,7 +313,7 @@ interface ObjectBinder<in out T extends object> {
 }
 
 // @public
-interface ObjectBindingBuilder<in out T extends object, in out Metadata extends MetadataObject> extends Binder<T>, BindingMetadata<T, Metadata, ObjectBindingBuilder<T, Metadata>>, BindingScope<T, ObjectBindingBuilder<T, Metadata>>, ObjectBinder<T> {
+interface ObjectBindingBuilder<in out T extends object, in out Metadata extends MetadataObject> extends Binder<T, Metadata>, BindingMetadata<T, Metadata, ObjectBindingBuilder<T, Metadata>>, BindingScope<T, ObjectBindingBuilder<T, Metadata>>, ObjectBinder<T> {
 }
 
 // @public

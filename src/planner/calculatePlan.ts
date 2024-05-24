@@ -12,7 +12,7 @@ const planBinding = <T, Metadata extends interfaces.MetadataObject>(
 	binding: Binding<T, Metadata>,
 	input: Injection<T, Metadata>,
 	resolutionPath: Array<Token<unknown>>,
-	resolveBinding: <U>(binding: Binding<U, interfaces.MetadataObject>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
+	resolveBinding: <U, Meta extends interfaces.MetadataObject>(binding: Binding<U, Meta>, injection: Injection<U, Meta>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
 	resolveInjection: (injection: Injection<unknown, interfaces.MetadataObject>) => Plan,
 ): Plan => {
 	const cache = binding.scope === 'transient' ? undefined : binding.scope;
@@ -25,7 +25,7 @@ const planBinding = <T, Metadata extends interfaces.MetadataObject>(
 			: ({
 					type: 'fetchFromCache',
 					cache,
-					binding: binding,
+					binding: binding as Binding<T, interfaces.MetadataObject>,
 					token: binding.token,
 					skipStepsIfFound: injectionSteps.length + 1,
 				} satisfies FetchFromCache<T>);
@@ -36,14 +36,14 @@ const planBinding = <T, Metadata extends interfaces.MetadataObject>(
 		{
 			type: 'createClass',
 			generate: async (): Promise<T> => {
-				const value = await resolveBinding(binding, resolutionPath);
+				const value = await resolveBinding(binding, input, resolutionPath);
 				return input.options.multiple ? ([value] as T) : value;
 			},
 			id: binding.id,
 			token: binding.token,
 			expectedTokensUsed: injections.map((i) => tokenForIdentifier(i.id)),
 			cache,
-			binding,
+			binding: binding as Binding<T, interfaces.MetadataObject>,
 			resolutionPath,
 		} satisfies CreateInstance<T>,
 	];
@@ -51,7 +51,7 @@ const planBinding = <T, Metadata extends interfaces.MetadataObject>(
 
 export const calculatePlan = <T>(
 	getBindings: <U>(id: interfaces.ServiceIdentifier<U>, metadata: interfaces.MetadataObject) => Array<Binding<U, interfaces.MetadataObject>>,
-	resolveBinding: <U>(binding: Binding<U, interfaces.MetadataObject>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
+	resolveBinding: <U, Meta extends interfaces.MetadataObject>(binding: Binding<U, Meta>, injection: Injection<U, Meta>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
 	input: Injection<T, interfaces.MetadataObject>,
 	resolutionPath: Array<Token<unknown>>,
 	parent?: interfaces.Container,
