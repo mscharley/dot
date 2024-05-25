@@ -1,5 +1,15 @@
 # @mscharley/dot
 
+## 1.6.0
+
+### Minor Changes
+
+- 204d484: Add support for metadata in bindings and injections
+
+### Patch Changes
+
+- 8d73334: fix(deps): update dependency typescript to v5.4.2
+
 ## 1.5.3
 
 ### Patch Changes
