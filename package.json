@@ -84,7 +84,7 @@
 		"tslib": "*"
 	},
 	"devDependencies": {
-		"@changesets/cli": "2.27.1",
+		"@changesets/cli": "2.27.3",
 		"@jest/globals": "29.7.0",
 		"@microsoft/api-extractor": "7.43.7",
 		"@mscharley/api-documenter-hugo": "1.0.3",
