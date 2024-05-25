@@ -1,5 +1,5 @@
 import type * as interfaces from '../interfaces/index.js';
-import type { AggregateMultiple, CreateInstance, FetchFromCache, Plan, PlanStep } from '../models/Plan.js';
+import type { AggregateMultiple, CreateInstance, FetchFromCache, Plan } from '../models/Plan.js';
 import { InvalidOperationError, RecursiveResolutionError, TokenResolutionError } from '../Error.js';
 import type { Binding } from '../models/Binding.js';
 import { getInjections } from '../decorators/registry.js';
@@ -8,24 +8,24 @@ import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 import type { Token } from '../Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
-const planBinding = <T>(
-	binding: Binding<T>,
-	input: Injection<T>,
+const planBinding = <T, Metadata extends interfaces.MetadataObject>(
+	binding: Binding<T, Metadata>,
+	input: Injection<T, Metadata>,
 	resolutionPath: Array<Token<unknown>>,
-	resolveBinding: <U>(binding: Binding<U>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
-	resolveInjection: (injection: Injection<unknown>) => PlanStep[],
-): Plan<T> => {
+	resolveBinding: <U, Meta extends interfaces.MetadataObject>(binding: Binding<U, Meta>, injection: Injection<U, Meta>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
+	resolveInjection: (injection: Injection<unknown, interfaces.MetadataObject>) => Plan,
+): Plan => {
 	const cache = binding.scope === 'transient' ? undefined : binding.scope;
-	const injections: Array<Injection<unknown>>
+	const injections: Array<Injection<unknown, interfaces.MetadataObject>>
 		= binding.type === 'constructor' ? getInjections(binding.ctr) : binding.type === 'dynamic' ? binding.injections : [];
-	const injectionSteps = injections.flatMap(resolveInjection) as Plan<T>;
+	const injectionSteps: Plan = injections.flatMap(resolveInjection);
 	const fetchFromCache: FetchFromCache<T> | null
 		= cache == null
 			? null
 			: ({
 					type: 'fetchFromCache',
 					cache,
-					binding: binding,
+					binding: binding as Binding<T, interfaces.MetadataObject>,
 					token: binding.token,
 					skipStepsIfFound: injectionSteps.length + 1,
 				} satisfies FetchFromCache<T>);
@@ -36,26 +36,26 @@ const planBinding = <T>(
 		{
 			type: 'createClass',
 			generate: async (): Promise<T> => {
-				const value = await resolveBinding(binding, resolutionPath);
+				const value = await resolveBinding(binding, input, resolutionPath);
 				return input.options.multiple ? ([value] as T) : value;
 			},
 			id: binding.id,
 			token: binding.token,
 			expectedTokensUsed: injections.map((i) => tokenForIdentifier(i.id)),
 			cache,
-			binding,
+			binding: binding as Binding<T, interfaces.MetadataObject>,
 			resolutionPath,
 		} satisfies CreateInstance<T>,
 	];
 };
 
 export const calculatePlan = <T>(
-	getBindings: <U>(id: interfaces.ServiceIdentifier<U>) => Array<Binding<U>>,
-	resolveBinding: <U>(binding: Binding<U>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
-	input: Injection<T>,
+	getBindings: <U, Meta extends interfaces.MetadataObject>(injection: Injection<U, Meta>) => Array<Binding<U, Meta>>,
+	resolveBinding: <U, Meta extends interfaces.MetadataObject>(binding: Binding<U, Meta>, injection: Injection<U, Meta>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
+	input: Injection<T, interfaces.MetadataObject>,
 	resolutionPath: Array<Token<unknown>>,
 	parent?: interfaces.Container,
-): Plan<T> => {
+): Plan => {
 	if (input.type === 'unmanagedConstructorParameter') {
 		// Unmanaged constructor parameters are dealt with as static values and don't need any plan to resolve them.
 		return [];
@@ -66,7 +66,7 @@ export const calculatePlan = <T>(
 		throw new RecursiveResolutionError('Recursive binding detected', [...resolutionPath, token]);
 	}
 
-	const binds = getBindings(id);
+	const binds = getBindings(input);
 	if (!input.options.multiple && binds.length > 1) {
 		throw new TokenResolutionError(
 			'Unable to resolve token',
@@ -103,20 +103,20 @@ export const calculatePlan = <T>(
 		const binding = binds[0]!;
 		return planBinding(binding, input, [...resolutionPath, token], resolveBinding, (i) =>
 			calculatePlan(getBindings, resolveBinding, i, [...resolutionPath, token], parent),
-		) as Plan<T>;
+		) as Plan;
 	} else {
 		return [
 			...(binds.flatMap((b) =>
 				planBinding(b, input, [...resolutionPath, token], resolveBinding, (i) =>
 					calculatePlan(getBindings, resolveBinding, i, [...resolutionPath, token], parent),
 				),
-			) as Plan<T>),
+			) as Plan),
 			{
 				type: 'aggregateMultiple',
 				count: binds.length,
 				token,
 				resolutionPath: [...resolutionPath, token],
-			} satisfies AggregateMultiple<T>,
+			} satisfies AggregateMultiple,
 		];
 	}
 };

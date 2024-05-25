@@ -1,6 +1,8 @@
 import type { Binder } from './Binder.js';
+import type { BindingMetadata } from './BindingMetadata.js';
 import type { BindingScope } from './BindingScope.js';
 import type { ClassBinder } from './ClassBinder.js';
+import type { MetadataObject } from './MetadataObject.js';
 import type { ObjectBinder } from './ObjectBinder.js';
 
 /**
@@ -8,16 +10,20 @@ import type { ObjectBinder } from './ObjectBinder.js';
  *
  * @public
  */
-export interface BindingBuilder<in out T> extends Binder<T>, BindingScope<T, BindingBuilder<T>> {}
+export interface BindingBuilder<in out T, in out Metadata extends MetadataObject>
+	extends Binder<T, Metadata>,
+	BindingMetadata<T, Metadata, BindingBuilder<T, Metadata>>,
+	BindingScope<T, BindingBuilder<T, Metadata>> {}
 
 /**
  * BindingBuilder used for types which are objects
  *
  * @public
  */
-export interface ObjectBindingBuilder<in out T extends object>
-	extends Binder<T>,
-	BindingScope<T, ObjectBindingBuilder<T>>,
+export interface ObjectBindingBuilder<in out T extends object, in out Metadata extends MetadataObject>
+	extends Binder<T, Metadata>,
+	BindingMetadata<T, Metadata, ObjectBindingBuilder<T, Metadata>>,
+	BindingScope<T, ObjectBindingBuilder<T, Metadata>>,
 	ObjectBinder<T> {}
 
 /**
@@ -25,8 +31,9 @@ export interface ObjectBindingBuilder<in out T extends object>
  *
  * @public
  */
-export interface ClassBindingBuilder<in out T extends object>
-	extends Binder<T>,
-	BindingScope<T, ClassBindingBuilder<T>>,
+export interface ClassBindingBuilder<in out T extends object, in out Metadata extends MetadataObject>
+	extends Binder<T, Metadata>,
+	BindingMetadata<T, Metadata, ClassBindingBuilder<T, Metadata>>,
+	BindingScope<T, ClassBindingBuilder<T, Metadata>>,
 	ObjectBinder<T>,
 	ClassBinder<T> {}

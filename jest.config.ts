@@ -50,7 +50,7 @@ export default {
 
 	// An object that configures minimum threshold enforcement for coverage results
 	coverageThreshold: {
-		global: { branches: 75, functions: 95, lines: 95, statements: 95 },
+		global: { branches: 95, functions: 95, lines: 95, statements: 95 },
 	},
 
 	// A path to a custom dependency extractor
@@ -109,6 +109,9 @@ export default {
 
 	// An enum that specifies notification mode. Requires { notify: true }
 	// notifyMode: "failure-change",
+
+  // Use an explicit null path to prettier to disable it.
+  prettierPath: null,
 
 	// Run tests from one or more projects
 	// projects: undefined,

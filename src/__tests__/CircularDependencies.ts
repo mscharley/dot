@@ -8,7 +8,7 @@ import { Token } from '../Token.js';
 const t1 = new Token<{ id: number }>('t1');
 const t2 = new Token<{ name: string }>('t2');
 
-describe('circularDependencies', () => {
+describe('circular dependencies', () => {
 	it('throws an error for simple recursion', async () => {
 		@injectable(t2)
 		class Id {

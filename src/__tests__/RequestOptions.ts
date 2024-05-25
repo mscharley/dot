@@ -7,7 +7,7 @@ import { withOptions } from '../decorators/withOptions.js';
 
 const token = new Token<string>('str');
 
-describe('requestOptions', () => {
+describe('request options', () => {
 	let c: interfaces.Container;
 
 	beforeEach(() => {

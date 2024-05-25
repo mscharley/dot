@@ -1,9 +1,10 @@
 import type { BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions.js';
+import type { MetadataForIdentifier, ServiceIdentifier } from './ServiceIdentifier.js';
 import type { ContainerConfiguration } from './ContainerConfiguration.js';
 import type { ContainerFactory } from './ContainerFactory.js';
 import type { ContainerModule } from './ContainerModule.js';
+import type { InjectedType } from './InjectionIdentifier.js';
 import type { InjectOptions } from './InjectOptions.js';
-import type { ServiceIdentifier } from './ServiceIdentifier.js';
 
 /**
  * An IOC container
@@ -43,9 +44,20 @@ export interface Container {
 	 * Make a request from this container
 	 */
 	get: {
-		<T>(id: ServiceIdentifier<T>, options: Partial<InjectOptions> & { multiple: true }): Promise<T[]>;
-		<T>(id: ServiceIdentifier<T>, options: Partial<InjectOptions> & { optional: true }): Promise<T | undefined>;
-		<T>(id: ServiceIdentifier<T>, options?: Partial<InjectOptions>): Promise<T>;
+		/* eslint-disable @typescript-eslint/unified-signatures */
+		<Id extends ServiceIdentifier<unknown>>(
+			id: Id,
+			options: { multiple: true } & Partial<InjectOptions<MetadataForIdentifier<Id>>>,
+		): Promise<InjectedType<[Id, typeof options]>>;
+		<Id extends ServiceIdentifier<unknown>>(
+			id: Id,
+			options: { optional: true } & Partial<InjectOptions<MetadataForIdentifier<Id>>>,
+		): Promise<InjectedType<[Id, typeof options]>>;
+		<Id extends ServiceIdentifier<unknown>>(
+			id: Id,
+			options?: Partial<InjectOptions<MetadataForIdentifier<Id>>>,
+		): Promise<InjectedType<[Id, typeof options]>>;
+		/* eslint-enable @typescript-eslint/unified-signatures */
 	};
 
 	/**

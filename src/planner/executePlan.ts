@@ -5,7 +5,7 @@ import type { Request } from '../models/Request.js';
 import { ResolutionCache } from '../container/ResolutionCache.js';
 import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 
-export const executePlan = async <T>(plan: Plan<T>, { singletonCache, stack, token }: Request<T>): Promise<T> => {
+export const executePlan = async <T>(plan: Plan, { singletonCache, stack, token }: Request<T>): Promise<T> => {
 	const caches: Record<'singleton' | 'request', ResolutionCache> = {
 		singleton: singletonCache,
 		request: new ResolutionCache(),

@@ -16,47 +16,48 @@ describe('logging', () => {
 		await expect(c.get(token)).resolves.toBe('Hello world!');
 
 		expect(log.mock.calls).toMatchInlineSnapshot(`
-		[
-		  [
-		    {
-		      "id": {
-		        "tokenFor": "Symbol(str)",
-		      },
-		      "options": undefined,
-		      "plan": [
-		        {
-		          "binding": {
-		            "id": {
-		              "tokenFor": "Symbol(str)",
-		            },
-		            "scope": "transient",
-		            "token": {
-		              "tokenFor": "Symbol(str)",
-		            },
-		            "type": "static",
-		            "value": "Hello world!",
-		          },
-		          "cache": undefined,
-		          "expectedTokensUsed": [],
-		          "generate": [Function],
-		          "id": {
-		            "tokenFor": "Symbol(str)",
-		          },
-		          "resolutionPath": [
-		            {
-		              "tokenFor": "Symbol(str)",
-		            },
-		          ],
-		          "token": {
-		            "tokenFor": "Symbol(str)",
-		          },
-		          "type": "createClass",
-		        },
-		      ],
-		    },
-		    "Processing request",
-		  ],
-		]
-	`);
+[
+  [
+    {
+      "id": {
+        "tokenFor": "Symbol(str)",
+      },
+      "options": undefined,
+      "plan": [
+        {
+          "binding": {
+            "id": {
+              "tokenFor": "Symbol(str)",
+            },
+            "metadata": {},
+            "scope": "transient",
+            "token": {
+              "tokenFor": "Symbol(str)",
+            },
+            "type": "static",
+            "value": "Hello world!",
+          },
+          "cache": undefined,
+          "expectedTokensUsed": [],
+          "generate": [Function],
+          "id": {
+            "tokenFor": "Symbol(str)",
+          },
+          "resolutionPath": [
+            {
+              "tokenFor": "Symbol(str)",
+            },
+          ],
+          "token": {
+            "tokenFor": "Symbol(str)",
+          },
+          "type": "createClass",
+        },
+      ],
+    },
+    "Processing request",
+  ],
+]
+`);
 	});
 });

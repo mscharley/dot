@@ -14,7 +14,7 @@ import type * as interfaces from '../interfaces/index.js';
  *
  * @public
  */
-export const withOptions = <T, Options extends Partial<interfaces.InjectOptions>>(
-	id: interfaces.ServiceIdentifier<T>,
+export const withOptions = <Id extends interfaces.ServiceIdentifier<unknown>, Options extends Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<Id>>>>(
+	id: Id,
 	options: Options,
-): [interfaces.ServiceIdentifier<T>, Options] => [id, options];
+): [Id, Options] => [id, options];

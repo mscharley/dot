@@ -27,7 +27,7 @@ class UnmanagedTest {
 	}
 }
 
-describe('constructorInjection', () => {
+describe('constructor injection', () => {
 	let c: Container;
 
 	beforeEach(() => {

@@ -1,5 +1,6 @@
+import type * as interfaces from '../../interfaces/index.js';
+import type { Binding, DynamicBinding, StaticBinding } from '../../models/Binding.js';
 import { describe, expect, it, jest } from '@jest/globals';
-import type { Binding } from '../../models/Binding.js';
 import { calculatePlan } from '../calculatePlan.js';
 import { injectable } from '../../decorators/injectable.js';
 import { Token } from '../../Token.js';
@@ -17,16 +18,17 @@ describe('calculatePlan', () => {
 		const bob = new Test('Bob');
 
 		const plan = calculatePlan(
-			<T>(): Array<Binding<T>> =>
+			<T, Meta extends interfaces.MetadataObject>(): Array<Binding<T, Meta>> =>
 				[
 					{
 						type: 'static',
 						token: testToken,
 						id: Test,
 						scope: 'request',
+						metadata: {},
 						value: bob,
-					} satisfies Binding<Test>,
-				] as unknown as Array<Binding<T>>,
+					} satisfies StaticBinding<Test, interfaces.MetadataObject>,
+				] as unknown as Array<Binding<T, Meta>>,
 			() => bob as never,
 			{
 				type: 'request',
@@ -34,6 +36,7 @@ describe('calculatePlan', () => {
 				options: {
 					multiple: false,
 					optional: false,
+					metadata: {},
 				},
 			},
 			[],
@@ -61,7 +64,7 @@ describe('calculatePlan', () => {
 		const resolveBinding = jest.fn();
 
 		calculatePlan(
-			<T>(): Array<Binding<T>> =>
+			<T, Meta extends interfaces.MetadataObject>(): Array<Binding<T, Meta>> =>
 				[
 					{
 						type: 'dynamic',
@@ -70,8 +73,9 @@ describe('calculatePlan', () => {
 						id: testToken,
 						token: testToken,
 						scope: 'request',
-					} satisfies Binding<Test>,
-				] as unknown as Array<Binding<T>>,
+						metadata: {},
+					} satisfies DynamicBinding<Test, interfaces.MetadataObject>,
+				] as unknown as Array<Binding<T, Meta>>,
 			// eslint-disable-next-line @typescript-eslint/no-magic-numbers
 			resolveBinding as Parameters<typeof calculatePlan>[1],
 			{
@@ -80,6 +84,7 @@ describe('calculatePlan', () => {
 				options: {
 					multiple: false,
 					optional: false,
+					metadata: {},
 				},
 			},
 			[],

@@ -1,4 +1,5 @@
 dist/
+docs/
 examples/
 docs/
 jest.config.ts

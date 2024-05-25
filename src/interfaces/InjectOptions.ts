@@ -1,9 +1,11 @@
+import type { MetadataObject } from './MetadataObject.js';
+
 /**
  * Options that can be applied to an individual injection
  *
  * @public
  */
-export interface InjectOptions {
+export interface InjectOptions<Metadata extends MetadataObject> {
 	/**
 	 * Inject this identifier if it is available, otherwise inject undefined
 	 */
@@ -18,4 +20,9 @@ export interface InjectOptions {
 	 * always contain at least one value.
 	 */
 	multiple: boolean;
+
+	/**
+	 * Metadata to filter by for this injection
+	 */
+	metadata: Partial<Metadata>;
 }

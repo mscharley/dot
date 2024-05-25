@@ -5,6 +5,9 @@
 ```ts
 
 // @public
+export type AnyToken<T> = Token<T> | MetadataToken<T, interfaces.MetadataObject>;
+
+// @public
 type ArgsForInjectionIdentifiers<Tokens extends [...Array<InjectionIdentifier<unknown>>]> = {
     [Index in keyof Tokens]: InjectedType<Tokens[Index]>;
 } & {
@@ -15,21 +18,27 @@ type ArgsForInjectionIdentifiers<Tokens extends [...Array<InjectionIdentifier<un
 type AsyncContainerModule = (bind: BindFunction, unbind: UnbindFunction, isBound: IsBoundFunction, rebind: RebindFunction) => Promise<void>;
 
 // @public
-interface Binder<in out T> {
+interface Binder<in out T, in out Metadata extends MetadataObject> {
     toConstantValue: ((v: T) => void) & ((v: Promise<T>) => Promise<void>);
     toDynamicValue: <Tokens extends Array<InjectionIdentifier<unknown>>>(dependencies: [...Tokens], fn: Fn<T | Promise<T>, ArgsForInjectionIdentifiers<Tokens>>) => void;
-    toFactory: <Tokens extends Array<InjectionIdentifier<unknown>>>(dependencies: [...Tokens], fn: (context: FactoryContext) => Fn<T | Promise<T>, ArgsForInjectionIdentifiers<Tokens>>) => void;
+    toFactory: <Tokens extends Array<InjectionIdentifier<unknown>>>(dependencies: [...Tokens], fn: (context: FactoryContext<Metadata>) => Fn<T | Promise<T>, ArgsForInjectionIdentifiers<Tokens>>) => void;
 }
 
 // @public
 type BindFunction = {
-    <T extends object>(id: Constructor<T, any>): ClassBindingBuilder<T>;
-    <T extends object>(id: Exclude<ServiceIdentifier<T>, Constructor<T, any>>): ObjectBindingBuilder<T>;
-    <T>(id: ServiceIdentifier<T>): BindingBuilder<T>;
+    <Id extends Constructor<any, any>>(id: Id): ClassBindingBuilder<InjectedType<Id>, MetadataObject>;
+    <Id extends Exclude<ServiceIdentifier<object>, Constructor<any, any>>>(id: Id): ObjectBindingBuilder<InjectedType<Id>, MetadataForIdentifier<Id>>;
+    <Id extends ServiceIdentifier<unknown>>(id: Id): BindingBuilder<InjectedType<Id>, MetadataForIdentifier<Id>>;
 };
 
 // @public
-interface BindingBuilder<in out T> extends Binder<T>, BindingScope<T, BindingBuilder<T>> {
+interface BindingBuilder<in out T, in out Metadata extends MetadataObject> extends Binder<T, Metadata>, BindingMetadata<T, Metadata, BindingBuilder<T, Metadata>>, BindingScope<T, BindingBuilder<T, Metadata>> {
+}
+
+// @public
+interface BindingMetadata<in out T, in out Metadata, out Builder> {
+    // (undocumented)
+    withMetadata: (metadata: Metadata) => Omit<Builder, keyof BindingMetadata<T, Metadata, unknown>>;
 }
 
 // @public
@@ -45,7 +54,24 @@ interface ClassBinder<in T> {
 }
 
 // @public
-interface ClassBindingBuilder<in out T extends object> extends Binder<T>, BindingScope<T, ClassBindingBuilder<T>>, ObjectBinder<T>, ClassBinder<T> {
+interface ClassBindingBuilder<in out T extends object, in out Metadata extends MetadataObject> extends Binder<T, Metadata>, BindingMetadata<T, Metadata, ClassBindingBuilder<T, Metadata>>, BindingScope<T, ClassBindingBuilder<T, Metadata>>, ObjectBinder<T>, ClassBinder<T> {
+}
+
+// @public
+interface ClassDecorator_2<T, Args extends unknown[]> {
+    // (undocumented)
+    <Ctr extends interfaces.Constructor<T, Args>>(target: Ctr, context: ClassDecoratorContext<Ctr>): undefined;
+    // (undocumented)
+    <Ctr extends interfaces.Constructor<T, Args>>(target: Ctr, context?: undefined): Ctr | undefined;
+}
+export { ClassDecorator_2 as ClassDecorator }
+
+// @public
+export interface ClassFieldDecorator<T extends object, Property> {
+    // (undocumented)
+    (target: undefined, context: ClassFieldDecoratorContext<T, Property>): (originalValue: Property | undefined) => Property;
+    // (undocumented)
+    (target: T, propertyName: string | symbol): undefined;
 }
 
 // @public
@@ -62,13 +88,13 @@ interface Container {
     readonly config: ContainerConfiguration;
     createChild: ContainerFactory;
     get: {
-        <T>(id: ServiceIdentifier<T>, options: Partial<InjectOptions> & {
+        <Id extends ServiceIdentifier<unknown>>(id: Id, options: {
             multiple: true;
-        }): Promise<T[]>;
-        <T>(id: ServiceIdentifier<T>, options: Partial<InjectOptions> & {
+        } & Partial<InjectOptions<MetadataForIdentifier<Id>>>): Promise<InjectedType<[Id, typeof options]>>;
+        <Id extends ServiceIdentifier<unknown>>(id: Id, options: {
             optional: true;
-        }): Promise<T | undefined>;
-        <T>(id: ServiceIdentifier<T>, options?: Partial<InjectOptions>): Promise<T>;
+        } & Partial<InjectOptions<MetadataForIdentifier<Id>>>): Promise<InjectedType<[Id, typeof options]>>;
+        <Id extends ServiceIdentifier<unknown>>(id: Id, options?: Partial<InjectOptions<MetadataForIdentifier<Id>>>): Promise<InjectedType<[Id, typeof options]>>;
     };
     // Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: This type of declaration is not supported yet by the resolver
     //
@@ -114,11 +140,12 @@ type DirectInjection<T> = {
 };
 
 // @public
-export type ErrorCode = 'RECURSIVE_RESOLUTION' | 'TOKEN_RESOLUTION' | 'INVALID_OPERATION';
+export type ErrorCode = 'RECURSIVE_RESOLUTION' | 'BINDING_ERROR' | 'TOKEN_RESOLUTION' | 'INVALID_OPERATION';
 
 // @public
-interface FactoryContext {
+interface FactoryContext<Metadata extends MetadataObject> {
     container: Pick<Container, 'createChild' | 'config'>;
+    metadata: Partial<Metadata>;
 }
 
 // @public
@@ -133,55 +160,42 @@ type ImplicitScopeBindingOptions = 'toConstantValue';
 export const inject: InjectDecoratorFactory;
 
 // @public
-export const injectable: <Tokens extends interfaces.InjectionIdentifier<unknown>[]>(...constructorTokens: Tokens) => InjectableDecorator<interfaces.ArgsForInjectionIdentifiers<Tokens>>;
-
-// @public
-export interface InjectableDecorator<Args extends unknown[]> {
-    // (undocumented)
-    <T extends object>(target: interfaces.Constructor<T, Args>, context: ClassDecoratorContext<interfaces.Constructor<T, Args>>): undefined;
-    // (undocumented)
-    <T extends interfaces.Constructor<object, Args>>(target: T, context?: undefined): T;
-}
-
-// @public
-export interface InjectDecorator<T> {
-    // (undocumented)
-    (target: undefined, context: ClassFieldDecoratorContext<unknown, T>): (originalValue: T | undefined) => T;
-    // (undocumented)
-    (target: object, propertyName: string | symbol): undefined;
-}
+export const injectable: <T extends object, Tokens extends interfaces.InjectionIdentifier<unknown>[]>(...constructorTokens: Tokens) => ClassDecorator_2<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>;
 
 // @public
 export interface InjectDecoratorFactory {
     // (undocumented)
-    <T>(token: Token<T>, options: Partial<interfaces.InjectOptions> & {
+    <T>(id: interfaces.ServiceIdentifier<T>, options: Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<typeof id>>> & {
         multiple: true;
-    }): InjectDecorator<T[]>;
+    }): ClassFieldDecorator<object, T[]>;
     // (undocumented)
-    <T>(token: Token<T>, options: Partial<interfaces.InjectOptions> & {
+    <T>(id: interfaces.ServiceIdentifier<T>, options: Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<typeof id>>> & {
         optional: true;
-    }): InjectDecorator<T | undefined>;
+    }): ClassFieldDecorator<object, T | undefined>;
     // (undocumented)
-    <T>(token: Token<T>, options?: Partial<interfaces.InjectOptions>): InjectDecorator<T>;
+    <T>(id: interfaces.ServiceIdentifier<T>, options?: Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<typeof id>>>): ClassFieldDecorator<object, T>;
 }
 
 // Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
 //
 // @public
-type InjectedType<T extends InjectionIdentifier<unknown>> = T extends [
-ServiceIdentifier<infer U>,
-    {
+type InjectedMetadata<T extends InjectionIdentifier<unknown>> = T extends [ServiceIdentifierWithMetadata<unknown, infer U>, unknown] ? U : T extends ServiceIdentifierWithMetadata<unknown, infer U> ? U : MetadataObject;
+
+// Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
+//
+// @public
+type InjectedType<T extends InjectionIdentifier<unknown>> = T extends [ServiceIdentifier<infer U>, {
     multiple: true;
-}
-] ? U[] : T extends [ServiceIdentifier<infer U>, {
+}] ? U[] : T extends [ServiceIdentifier<infer U>, {
     optional: true;
-}] ? U | undefined : T extends [ServiceIdentifier<infer U>, object] ? U : T extends ServiceIdentifier<infer U> ? U : T extends DirectInjection<infer U> ? U : never;
+}] ? U | undefined : T extends [ServiceIdentifier<infer U>, unknown] ? U : T extends ServiceIdentifier<infer U> ? U : T extends DirectInjection<infer U> ? U : never;
 
 // @public
-type InjectionIdentifier<T> = ServiceIdentifier<T> | [ServiceIdentifier<T>, Partial<InjectOptions>] | DirectInjection<T>;
+type InjectionIdentifier<T> = ServiceIdentifier<T> | [ServiceIdentifier<T>, Partial<InjectOptions<MetadataObject>> | undefined] | DirectInjection<T>;
 
 // @public
-interface InjectOptions {
+interface InjectOptions<Metadata extends MetadataObject> {
+    metadata: Partial<Metadata>;
     multiple: boolean;
     optional: boolean;
 }
@@ -193,6 +207,7 @@ declare namespace interfaces {
         BindingBuilder,
         ClassBindingBuilder,
         ObjectBindingBuilder,
+        BindingMetadata,
         BindingScope,
         ClassBinder,
         Container,
@@ -210,15 +225,19 @@ declare namespace interfaces {
         RebindFunction,
         UnbindFunction,
         ArgsForInjectionIdentifiers,
+        InjectedMetadata,
         InjectedType,
         InjectionIdentifier,
         InjectOptions,
         Logger,
         LoggerFn,
         LoggerLevel,
+        MetadataObject,
         ObjectBinder,
         ScopeOptions,
-        ServiceIdentifier
+        MetadataForIdentifier,
+        ServiceIdentifier,
+        ServiceIdentifierWithMetadata
     }
 }
 export { interfaces }
@@ -239,6 +258,12 @@ export abstract class IocError extends Error {
 type IsBoundFunction = <T>(id: ServiceIdentifier<T>) => boolean;
 
 // @public
+export const isMetadataToken: (o: unknown) => o is MetadataToken<unknown, interfaces.MetadataObject>;
+
+// @public
+export const isToken: (o: unknown) => o is AnyToken<unknown>;
+
+// @public
 type Logger = Record<LoggerLevel, LoggerFn>;
 
 // @public
@@ -250,13 +275,45 @@ type LoggerFn = {
 // @public
 type LoggerLevel = 'warn' | 'info' | 'debug' | 'trace';
 
+// @public (undocumented)
+type MetadataForIdentifier<Id extends ServiceIdentifier<unknown>> = Id extends ServiceIdentifierWithMetadata<unknown, infer Metadata> ? Metadata : MetadataObject;
+
+// @public
+type MetadataObject = Record<string, unknown>;
+
+// @public
+export class MetadataToken<out T, Metadata extends interfaces.MetadataObject> {
+    constructor(name: string, guard: (o: unknown) => o is Metadata);
+    // (undocumented)
+    readonly guard: (o: unknown) => o is Metadata;
+    // @internal
+    readonly identifier: symbol;
+    toJSON(): object;
+    toString(): string;
+    readonly _witness: T;
+}
+
+// @public
+export const named: <Id extends NamedToken<unknown>>(id: Id, name: string, options?: Partial<interfaces.InjectOptions<{
+    name: string;
+}>>) => [Id, Partial<interfaces.InjectOptions<{
+    name: string;
+}>>];
+
+// @public
+export class NamedToken<out T> extends MetadataToken<T, {
+    name: string;
+}> {
+    constructor(name: string);
+}
+
 // @public
 interface ObjectBinder<in out T extends object> {
     to: (fn: Constructor<T>) => void;
 }
 
 // @public
-interface ObjectBindingBuilder<in out T extends object> extends Binder<T>, BindingScope<T, ObjectBindingBuilder<T>>, ObjectBinder<T> {
+interface ObjectBindingBuilder<in out T extends object, in out Metadata extends MetadataObject> extends Binder<T, Metadata>, BindingMetadata<T, Metadata, ObjectBindingBuilder<T, Metadata>>, BindingScope<T, ObjectBindingBuilder<T, Metadata>>, ObjectBinder<T> {
 }
 
 // @public
@@ -279,7 +336,12 @@ export abstract class ResolutionError extends IocError {
 type ScopeOptions = 'transient' | 'request' | 'singleton';
 
 // @public
-type ServiceIdentifier<T> = Token<T> | Constructor<T>;
+type ServiceIdentifier<T> = Token<T> | Constructor<T> | ServiceIdentifierWithMetadata<T, MetadataObject>;
+
+// Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
+//
+// @public
+type ServiceIdentifierWithMetadata<T, Metadata extends MetadataObject> = MetadataToken<T, Metadata>;
 
 // @public
 export const stringifyIdentifier: <T>(id: interfaces.ServiceIdentifier<T>) => string;
@@ -317,6 +379,6 @@ type UnbindFunction = <T>(id: ServiceIdentifier<T>) => void;
 export const unmanaged: <T>(defaultValue: T, name?: string) => interfaces.DirectInjection<T>;
 
 // @public
-export const withOptions: <T, Options extends Partial<interfaces.InjectOptions>>(id: interfaces.ServiceIdentifier<T>, options: Options) => [interfaces.ServiceIdentifier<T>, Options];
+export const withOptions: <Id extends interfaces.ServiceIdentifier<unknown>, Options extends Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<Id>>>>(id: Id, options: Options) => [Id, Options];
 
 ```
