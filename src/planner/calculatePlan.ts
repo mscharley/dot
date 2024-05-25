@@ -50,7 +50,7 @@ const planBinding = <T, Metadata extends interfaces.MetadataObject>(
 };
 
 export const calculatePlan = <T>(
-	getBindings: <U>(id: interfaces.ServiceIdentifier<U>, metadata: interfaces.MetadataObject) => Array<Binding<U, interfaces.MetadataObject>>,
+	getBindings: <U, Meta extends interfaces.MetadataObject>(injection: Injection<U, Meta>) => Array<Binding<U, Meta>>,
 	resolveBinding: <U, Meta extends interfaces.MetadataObject>(binding: Binding<U, Meta>, injection: Injection<U, Meta>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
 	input: Injection<T, interfaces.MetadataObject>,
 	resolutionPath: Array<Token<unknown>>,
@@ -66,7 +66,7 @@ export const calculatePlan = <T>(
 		throw new RecursiveResolutionError('Recursive binding detected', [...resolutionPath, token]);
 	}
 
-	const binds = getBindings(id, input.options.metadata);
+	const binds = getBindings(input);
 	if (!input.options.multiple && binds.length > 1) {
 		throw new TokenResolutionError(
 			'Unable to resolve token',

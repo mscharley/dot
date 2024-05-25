@@ -7,6 +7,7 @@ import type { BindingBuilder } from './BindingBuilder.js';
 import { calculatePlan } from '../planner/calculatePlan.js';
 import { ClassBindingBuilder } from './BindingBuilder.js';
 import { executePlan } from '../planner/executePlan.js';
+import { isMetadataToken } from '../util/isToken.js';
 import { isNever } from '../util/isNever.js';
 import { noop } from '../util/noop.js';
 import type { Request } from '../models/Request.js';
@@ -130,18 +131,27 @@ export class Container implements interfaces.Container {
 		this.#bindings.push(binding as Binding<unknown, interfaces.MetadataObject>);
 	};
 
-	readonly #getBindings = <T>(
-		id: interfaces.ServiceIdentifier<T>,
-		metadata: interfaces.MetadataObject,
-	): Array<Binding<T, interfaces.MetadataObject>> => {
-		const metadataFilters = Object.entries(metadata);
+	readonly #getBindings = <T, Metadata extends interfaces.MetadataObject>(
+		{ id, options }: Injection<T, Metadata>,
+	): Array<Binding<T, Metadata>> => {
+		const metadataFilters = Object.entries(options.metadata);
 		const token = tokenForIdentifier(id);
-		const explicitBindings = this.#bindings
-			.filter((b): b is Binding<T, interfaces.MetadataObject> => b.token.identifier === token.identifier)
-			.filter((b) =>
-				(b.type === 'factory' && b.scope === 'transient' && b.metadata == null)
-				|| metadataFilters.map(([k, v]) => b.metadata?.[k] === v).reduce((acc, v) => acc && v, true),
-			);
+		const explicitBindings = (this.#bindings as Array<Binding<T, Metadata>>)
+			.filter((b) => b.token.identifier === token.identifier)
+			.filter((b) => {
+				const hasRequestMetadata = metadataFilters.length > 0;
+				const hasBindingMetadata = b.metadata != null;
+				const transientMetadataFactory = b.type === 'factory' && b.scope === 'transient' && isMetadataToken(id);
+				const filtersPassed = metadataFilters.map(([k, v]) => b.metadata?.[k] === v).reduce((acc, v) => acc && v, true);
+				const matchesMetadataFilters = !transientMetadataFactory && filtersPassed;
+				const validTransientMetadataFactory = transientMetadataFactory && (
+					(hasBindingMetadata && hasRequestMetadata && filtersPassed)
+					|| (!options.multiple && hasRequestMetadata && (!hasBindingMetadata || filtersPassed))
+					|| (options.multiple && hasBindingMetadata && filtersPassed)
+				);
+
+				return validTransientMetadataFactory || matchesMetadataFilters;
+			});
 
 		if (explicitBindings.length > 0) {
 			return explicitBindings;
@@ -159,8 +169,9 @@ export class Container implements interfaces.Container {
 				id,
 				token,
 				scope: this.config.defaultScope,
-				metadata: {},
-			} satisfies ConstructorBinding<T, interfaces.MetadataObject>;
+				// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+				metadata: {} as Metadata,
+			} satisfies ConstructorBinding<T, Metadata>;
 
 			// Save this binding to make sure that caches work for future attempts to get this class.
 			this.#bindings.push(binding);

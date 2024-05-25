@@ -18,7 +18,7 @@ describe('calculatePlan', () => {
 		const bob = new Test('Bob');
 
 		const plan = calculatePlan(
-			<T>(): Array<Binding<T, interfaces.MetadataObject>> =>
+			<T, Meta extends interfaces.MetadataObject>(): Array<Binding<T, Meta>> =>
 				[
 					{
 						type: 'static',
@@ -28,7 +28,7 @@ describe('calculatePlan', () => {
 						metadata: {},
 						value: bob,
 					} satisfies StaticBinding<Test, interfaces.MetadataObject>,
-				] as unknown as Array<Binding<T, interfaces.MetadataObject>>,
+				] as unknown as Array<Binding<T, Meta>>,
 			() => bob as never,
 			{
 				type: 'request',
@@ -64,7 +64,7 @@ describe('calculatePlan', () => {
 		const resolveBinding = jest.fn();
 
 		calculatePlan(
-			<T>(): Array<Binding<T, interfaces.MetadataObject>> =>
+			<T, Meta extends interfaces.MetadataObject>(): Array<Binding<T, Meta>> =>
 				[
 					{
 						type: 'dynamic',
@@ -75,7 +75,7 @@ describe('calculatePlan', () => {
 						scope: 'request',
 						metadata: {},
 					} satisfies DynamicBinding<Test, interfaces.MetadataObject>,
-				] as unknown as Array<Binding<T, interfaces.MetadataObject>>,
+				] as unknown as Array<Binding<T, Meta>>,
 			// eslint-disable-next-line @typescript-eslint/no-magic-numbers
 			resolveBinding as Parameters<typeof calculatePlan>[1],
 			{

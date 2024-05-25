@@ -167,6 +167,26 @@ describe('bindings', () => {
 		});
 
 		describe('toFactory()', () => {
+			it('transient scope will always run the function', async () => {
+				const c = new Container();
+				const fn = jest.fn(() => (): TokenType<typeof token> => ({ id: 10 }));
+				c.bind(token).inTransientScope().toFactory([], fn);
+
+				expect(await c.get(token)).not.toBe(await c.get(token));
+				expect(fn.mock.calls).toHaveLength(2);
+			});
+
+			it('singleton scope will only run the function once', async () => {
+				const c = new Container();
+				const fn = jest.fn(() => (): TokenType<typeof token> => ({ id: 10 }));
+				c.bind(token).inSingletonScope().toFactory([], fn);
+
+				const resolved = await c.get(token);
+				expect(resolved).toMatchObject({ id: 10 });
+				expect(resolved).toBe(await c.get(token));
+				expect(fn.mock.calls).toHaveLength(1);
+			});
+
 			it('can create a child container', async () => {
 				const c = new Container();
 				const childFactory = new Token<() => interfaces.Container>('childFactory');
@@ -194,6 +214,7 @@ describe('bindings', () => {
 				const c = new Container({
 					logger: { warn: warn as unknown as LoggerFn, debug: noop, info: noop, trace: noop },
 				});
+				// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 				c.bind(token).toFactory([], () => () => ({
 					id: 10,
 				}));
