@@ -2,6 +2,7 @@ import type * as interfaces from '../interfaces/index.js';
 import type { Binding, ConstructorBinding, DynamicBinding, FactoryBinding, StaticBinding } from '../models/Binding.js';
 import { BindingError, InvalidOperationError } from '../Error.js';
 import type { Container } from './Container.js';
+import type { Injection } from '../models/Injection.js';
 import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
 import { isConstructor } from '../util/isConstructor.js';
 import { isMetadataToken } from '../util/isToken.js';
@@ -86,7 +87,7 @@ export class BindingBuilder<in out T, Metadata extends interfaces.MetadataObject
 			scope: this.scope,
 			// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 			metadata: this.metadata ?? ({} as Metadata),
-			injections: dependencies.map((dep, index) => injectionFromIdentifier(dep, index)),
+			injections: dependencies.map((dep, index) => injectionFromIdentifier(dep, index)) as Array<Injection<T, Metadata>>,
 			generator: factory as DynamicBinding<T, Metadata>['generator'],
 		};
 		this.finaliseBinding(binding);
@@ -106,7 +107,7 @@ export class BindingBuilder<in out T, Metadata extends interfaces.MetadataObject
 			token: this.token,
 			scope: this.scope,
 			metadata: this.metadata,
-			injections: deps.map((dep, index) => injectionFromIdentifier(dep, index)),
+			injections: deps.map((dep, index) => injectionFromIdentifier(dep, index)) as Array<Injection<T, Metadata>>,
 			generator: fn as FactoryBinding<T, Metadata>['generator'],
 		};
 		this.finaliseBinding(binding);
