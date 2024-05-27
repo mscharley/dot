@@ -30,6 +30,14 @@ describe('autobinding', () => {
 		await expect(c.get(Greeter)).resolves.toBeInstanceOf(Greeter);
 	});
 
+	it('works correctly with caches', async () => {
+		const c = new Container({ autobindClasses: true, defaultScope: 'singleton' });
+
+		const g1 = await c.get(Greeter);
+		const g2 = await c.get(Greeter);
+		expect(g1).toBe(g2);
+	});
+
 	it('will prefer to load something from a parent container', async () => {
 		const c = new Container();
 		c.bind(Greeter).toConstantValue(new Greeter({ name: 'John' }));
