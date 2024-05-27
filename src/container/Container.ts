@@ -43,11 +43,13 @@ export class Container implements interfaces.Container {
 	/**
 	 * Attempt to resolve a token using the currently executing request
 	 *
-	 * @remarks
+	 * @privateRemarks
 	 *
 	 * There is only a brief window where this is valid, while synchronously constructing a class. Because this relies on
 	 * only synchronous processing there is no chance of a race condition in JavaScript despite this relying on some
 	 * static shenanigans.
+	 *
+	 * See {@link Container##resolveBinding}
 	 */
 	public static resolvePropertyInjection<T>(token: Token<T>, resolutionPath: Array<Token<unknown>>): T {
 		if (this.#currentRequest == null) {
