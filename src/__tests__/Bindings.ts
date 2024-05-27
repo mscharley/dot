@@ -41,7 +41,7 @@ describe('bindings', () => {
 
 	it('fails if attempting a resolution outside a request', () => {
 		expect(() => Container.resolvePropertyInjection(token, [])).toThrowErrorMatchingInlineSnapshot(
-			'"Unable to resolve token as no container is currently making a request: Symbol(test)"',
+			'"Unable to resolve token as no container is currently making a request: Token<Symbol(test)>"',
 		);
 	});
 
@@ -209,6 +209,25 @@ describe('bindings', () => {
 				await expect(v).resolves.toBe('10');
 			});
 
+			it("doesn't print warnings if used with any kind of explicit scope", () => {
+				const warn = jest.fn<LoggerFn>();
+				const c = new Container({
+					logger: { warn: warn as unknown as LoggerFn, debug: noop, info: noop, trace: noop },
+				});
+
+				c.bind(token)
+					.inTransientScope()
+					.toFactory([], () => (): TokenType<typeof token> => ({ id: 10 }));
+				c.bind(token)
+					.inRequestScope()
+					.toFactory([], () => (): TokenType<typeof token> => ({ id: 10 }));
+				c.bind(token)
+					.inSingletonScope()
+					.toFactory([], () => (): TokenType<typeof token> => ({ id: 10 }));
+
+				expect(warn).toHaveBeenCalledTimes(0);
+			});
+
 			it('prints a warning if used without an explicit scope', async () => {
 				const warn = jest.fn<LoggerFn>();
 				const c = new Container({
@@ -228,6 +247,22 @@ describe('bindings', () => {
 				await c.get(token);
 
 				expect(warn).toHaveBeenCalledTimes(1);
+			});
+
+			it('works properly for multiple dependencies', async () => {
+				const c = new Container();
+				const token2 = new Token<{ name: string }>('token2');
+				const output = new Token<{ greeting: string }>('greeting');
+
+				c.bind(token).toConstantValue({ id: 10 });
+				c.bind(token2).toConstantValue({ name: 'world' });
+				c.bind(output)
+					.inTransientScope()
+					.toFactory([token, token2], () => ({ id }, { name }): TokenType<typeof output> => ({
+						greeting: `Hello, ${name} - id: ${id}`,
+					}));
+
+				await expect(c.get(output)).resolves.toMatchObject({ greeting: 'Hello, world - id: 10' });
 			});
 		});
 

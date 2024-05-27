@@ -4,9 +4,25 @@ import { InvalidOperationError, RecursiveResolutionError, TokenResolutionError }
 import type { Binding } from '../models/Binding.js';
 import { getInjections } from '../decorators/registry.js';
 import type { Injection } from '../models/Injection.js';
+import { isNever } from '../util/isNever.js';
 import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 import type { Token } from '../Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
+
+const resolveInjections = <T, Metadata extends interfaces.MetadataObject>(
+	binding: Binding<T, Metadata>,
+): Array<Injection<T, Metadata>> => {
+	switch (binding.type) {
+		case 'factory':
+		case 'dynamic':
+			return binding.injections;
+		case 'constructor':
+			return getInjections(binding.ctr) as Array<Injection<T, Metadata>>;
+		case 'static':
+			return [];
+		default: return isNever(binding, 'Invalid binding');
+	}
+};
 
 const planBinding = <T, Metadata extends interfaces.MetadataObject>(
 	binding: Binding<T, Metadata>,
@@ -16,8 +32,7 @@ const planBinding = <T, Metadata extends interfaces.MetadataObject>(
 	resolveInjection: (injection: Injection<unknown, interfaces.MetadataObject>) => Plan,
 ): Plan => {
 	const cache = binding.scope === 'transient' ? undefined : binding.scope;
-	const injections: Array<Injection<unknown, interfaces.MetadataObject>>
-		= binding.type === 'constructor' ? getInjections(binding.ctr) : binding.type === 'dynamic' ? binding.injections : [];
+	const injections = resolveInjections(binding);
 	const injectionSteps: Plan = injections.flatMap(resolveInjection);
 	const fetchFromCache: FetchFromCache<T> | null
 		= cache == null

@@ -26,7 +26,7 @@ export interface DynamicBinding<out T, in out Metadata extends interfaces.Metada
 	token: AnyToken<T>;
 	scope: interfaces.ScopeOptions;
 	metadata: Metadata;
-	injections: Array<Injection<unknown, interfaces.MetadataObject>>;
+	injections: Array<Injection<T, Metadata>>;
 	generator: (...args: unknown[]) => T | Promise<T>;
 }
 
@@ -36,7 +36,7 @@ export interface FactoryBinding<out T, in out Metadata extends interfaces.Metada
 	token: AnyToken<T>;
 	scope: interfaces.ScopeOptions;
 	metadata?: Metadata | undefined;
-	injections: Array<Injection<unknown, interfaces.MetadataObject>>;
+	injections: Array<Injection<T, Metadata>>;
 	generator: (ctx: interfaces.FactoryContext<Metadata>) => (...args: unknown[]) => T | Promise<T>;
 }
 

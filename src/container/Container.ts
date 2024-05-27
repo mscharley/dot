@@ -52,7 +52,7 @@ export class Container implements interfaces.Container {
 	public static resolvePropertyInjection<T>(token: Token<T>, resolutionPath: Array<Token<unknown>>): T {
 		if (this.#currentRequest == null) {
 			throw new InvalidOperationError(
-				`Unable to resolve token as no container is currently making a request: ${token.identifier.toString()}`,
+				`Unable to resolve token as no container is currently making a request: ${stringifyIdentifier(token)}`,
 			);
 		}
 
@@ -64,7 +64,7 @@ export class Container implements interfaces.Container {
 			throw new TokenResolutionError(
 				'Unable to find a value to inject',
 				resolutionPath,
-				new InvalidOperationError(`Value for token hasn't been created yet: ${token.identifier.toString()}`),
+				new InvalidOperationError(`Value for token hasn't been created yet: ${stringifyIdentifier(token)}`),
 			);
 		}
 		const tokenStack = request.stack[token.identifier] as T[];
