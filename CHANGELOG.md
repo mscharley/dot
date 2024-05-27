@@ -1,5 +1,12 @@
 # @mscharley/dot
 
+## 1.6.1
+
+### Patch Changes
+
+- b9351f3: Fix a race condition with caching and concurrent requests to the container
+- e22307b: Fix a bug relating to creating dependencies for factories
+
 ## 1.6.0
 
 ### Minor Changes
