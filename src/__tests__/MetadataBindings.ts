@@ -2,7 +2,7 @@
 import type * as interfaces from '../interfaces/index.js';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { IsInterface, isString } from 'generic-type-guard';
-import { MetadataToken, NamedToken, Token } from '../Token.js';
+import { MetadataToken, NamedToken } from '../Token.js';
 import { Container } from '../container/Container.js';
 import type { GuardedType } from 'generic-type-guard';
 import { injectable } from '../decorators/injectable.js';
