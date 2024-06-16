@@ -94,7 +94,7 @@
 		"@stryker-mutator/core": "8.2.6",
 		"@stryker-mutator/jest-runner": "8.2.6",
 		"@stryker-mutator/typescript-checker": "8.2.6",
-		"@swc/core": "1.5.28",
+		"@swc/core": "1.5.29",
 		"@swc/jest": "0.2.36",
 		"autoprefixer": "10.4.19",
 		"esbuild": "0.21.5",
