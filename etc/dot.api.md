@@ -160,7 +160,7 @@ type ImplicitScopeBindingOptions = 'toConstantValue';
 export const inject: InjectDecoratorFactory;
 
 // @public
-export const injectable: <T extends object, Tokens extends interfaces.InjectionIdentifier<unknown>[]>(...constructorTokens: Tokens) => ClassDecorator_2<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>;
+export const injectable: <T extends object, Tokens extends Array<interfaces.InjectionIdentifier<unknown>>>(...constructorTokens: Tokens) => ClassDecorator_2<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>;
 
 // @public
 export interface InjectDecoratorFactory {
