@@ -46,7 +46,7 @@ jobs:
         id: pages
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5.0.0
       - name: Setup Node.js
-        uses: actions/setup-node@60edb5dd545a775178f52524783378180af0d1f8 # v4.0.2
+        uses: actions/setup-node@969bd2663942d722d85b6a8626225850c2f7be4b # v3.5.0
         with:
           node-version-file: .tool-versions
       - name: Authenticate with private NPM package
