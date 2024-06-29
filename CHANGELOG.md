@@ -1,5 +1,11 @@
 # @mscharley/dot
 
+## 1.6.2
+
+### Patch Changes
+
+- 233c01e: fix(deps): update dependency typescript to v5.5.2
+
 ## 1.6.1
 
 ### Patch Changes
