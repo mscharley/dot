@@ -96,7 +96,7 @@
 		"@stryker-mutator/typescript-checker": "8.3.0",
 		"@swc/core": "1.7.6",
 		"@swc/jest": "0.2.36",
-		"autoprefixer": "10.4.19",
+		"autoprefixer": "10.4.20",
 		"esbuild": "0.23.0",
 		"generic-type-guard": "4.1.0",
 		"husky": "9.1.4",
