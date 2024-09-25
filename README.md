@@ -18,7 +18,7 @@ This library should work out of the box with any TypeScript configuration if you
 
 ### TypeScript support
 
-This library is designed to work with either setting of the `experimentalDecorators` option in TypeScript 5.x or later. In TypeScript 4.x and earlier, you will need to enable experimental decorators as that is the only option for decorator support. In either case, the `emitDecoratorMetadata` is not required, and is not used for any functionality if enabled.
+This library is designed to work with either setting of the `experimentalDecorators` option in TypeScript 5.x or later. `emitDecoratorMetadata` is not required, and is not used if enabled.
 
 ### JavaScript support
 
