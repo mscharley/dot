@@ -17,46 +17,34 @@
 		"ioc"
 	],
 	"type": "module",
-	"main": "./dot.cjs",
-	"module": "./dot.js",
-	"types": "./dot.d.ts",
-	"typesVersions": {
-		"<5.0": {
-			"dot.d.ts": [
-				"dot.v4.d.ts"
-			]
-		}
-	},
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
 	"exports": {
 		".": {
-			"require": {
-				"types@<5.0": "./dot.v4.d.cts",
-				"types": "./dot.d.cts",
-				"default": "./dot.cjs"
-			},
 			"import": {
-				"types@<5.0": "./dot.v4.d.ts",
-				"types": "./dot.d.ts",
-				"default": "./dot.js"
+				"types": "./dist/index.d.ts",
+				"default": "./dist/index.js"
+			}
+		},
+		"./loader": {
+			"import": {
+				"types": "./dist/loader.d.ts",
+				"default": "./dist/loader.js"
 			}
 		}
 	},
 	"scripts": {
 		"prepack": "turbo clean && turbo build",
 		"build:tsc": "tsc",
-		"build:api": "api-extractor run --local && grep -v 'DecoratorContext' dot.d.ts > dot.v4.d.ts && cp dot.d.ts dot.d.cts && cp dot.v4.d.ts dot.v4.d.cts",
+		"build:api": "api-extractor run --local",
 		"build:docs": "api-documenter-hugo hugo -i ./reports/docs -o ./docs/content/docs && cd docs && hugo --gc --minify",
-		"build:esbuild:cjs": "esbuild dist/index.js --bundle --sourcemap=linked --outfile=dot.cjs --platform=node --packages=external",
-		"build:esbuild:esm": "esbuild dist/index.js --bundle --sourcemap=linked --outfile=dot.js --platform=neutral --packages=external",
-		"clean": "rm -rf dot.* dist/ coverage/ docs/reference reports/ temp/ .stryker-tmp/ tsdoc-metadata.json .turbo/cache",
-		"start": "node ./dist/demo/index.js",
+		"clean": "rm -rf dist/ docs/reference/ reports/ temp/ .stryker-tmp/ tsdoc-metadata.json .turbo/cache",
 		"test:api": "api-extractor run",
 		"test:eslint": "eslint",
 		"test:tsc:experimental": "tsc --experimentalDecorators true --noEmit --incremental false",
-		"test:jest:tc39": "DECORATOR_TYPE=tc39 NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest",
-		"test:jest:experimental": "DECORATOR_TYPE=experimental NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest",
-		"test:cjs-esm-compat": "node dist/__utils__/esm-cjs-multi-test.js",
-		"stryker": "DECORATOR_TYPE=tc39 NODE_OPTIONS='--experimental-vm-modules --no-warnings' stryker run",
+		"test:jest:tc39": "DECORATOR_TYPE=tc39 NODE_OPTIONS='--experimental-vm-modules' jest",
+		"test:jest:experimental": "DECORATOR_TYPE=experimental NODE_OPTIONS='--experimental-vm-modules' jest",
+		"stryker": "DECORATOR_TYPE=tc39 NODE_OPTIONS='--experimental-vm-modules' stryker run",
 		"cs-version": "turbo build:tsc && changeset version",
 		"cs-release": "pnpm publish -r"
 	},
