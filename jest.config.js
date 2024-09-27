@@ -2,10 +2,8 @@
  * For a detailed explanation regarding each configuration property and type check, visit:
  * https://jestjs.io/docs/configuration
  */
-import type { Config } from 'jest';
 
-declare const process: { env: Record<string, string> };
-
+/** @type {import('jest').Config} */
 export default {
 	// A preset that is used as a base for Jest's configuration
 	// preset: 'ts-jest',
@@ -110,8 +108,8 @@ export default {
 	// An enum that specifies notification mode. Requires { notify: true }
 	// notifyMode: "failure-change",
 
-  // Use an explicit null path to prettier to disable it.
-  prettierPath: null,
+	// Use an explicit null path to prettier to disable it.
+	prettierPath: null,
 
 	// Run tests from one or more projects
 	// projects: undefined,
@@ -186,20 +184,20 @@ export default {
 		'^.+\\.m?[tj]sx?$': [
 			'@swc/jest',
 			{
-				"$schema": "https://swc.rs/schema.json",
+				$schema: 'https://swc.rs/schema.json',
 				jsc: {
 					parser: {
-						syntax: "typescript",
+						syntax: 'typescript',
 						decorators: true,
 					},
-					target: "es2022",
+					target: 'es2022',
 					transform: {
 						decoratorVersion: process.env.DECORATOR_TYPE === 'tc39' ? '2022-03' : '2021-12',
 					},
 					experimental: {
-						keepImportAssertions: true
-					}
-				}
+						keepImportAssertions: true,
+					},
+				},
 			},
 		],
 	},
@@ -224,4 +222,4 @@ export default {
 
 	// Whether to use watchman for file crawling
 	// watchman: true,
-} satisfies Config;
+};
