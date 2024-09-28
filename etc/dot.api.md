@@ -81,13 +81,9 @@ type Constructor<out T, in Args extends unknown[] = any> = new (...args: Args) =
 //
 // @public
 interface Container {
-    // Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: This type of declaration is not supported yet by the resolver
-    //
-    // (undocumented)
-    bind: BindFunction;
     readonly config: ContainerConfiguration;
-    createChild: ContainerFactory;
-    get: {
+    readonly createChild: ContainerFactory;
+    readonly get: {
         <Id extends ServiceIdentifier<unknown>>(id: Id, options: {
             multiple: true;
         } & Partial<InjectOptions<MetadataForIdentifier<Id>>>): Promise<InjectedType<[Id, typeof options]>>;
@@ -99,17 +95,13 @@ interface Container {
     // Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: This type of declaration is not supported yet by the resolver
     //
     // (undocumented)
-    has: IsBoundFunction;
-    load: <M extends ContainerModule>(module: M) => ReturnType<M>;
+    readonly has: IsBoundFunction;
+    readonly load: <M extends ContainerModule>(module: M) => ReturnType<M>;
     // Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: This type of declaration is not supported yet by the resolver
     //
     // (undocumented)
-    rebind: RebindFunction;
-    // Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: This type of declaration is not supported yet by the resolver
-    //
-    // (undocumented)
-    unbind: UnbindFunction;
-    validate: (validateAutobindings?: boolean) => void;
+    readonly unbind: UnbindFunction;
+    readonly validate: (validateAutobindings?: boolean) => void;
 }
 
 // @public

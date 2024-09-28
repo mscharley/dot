@@ -52,7 +52,7 @@ describe('async tests', () => {
 	it('releases correctly if errors occur', async () => {
 		const c = new Container({ autobindClasses: true, defaultScope: 'singleton' });
 		const factory = jest.fn<() => Greeter>();
-		c.bind(Greeter).toDynamicValue([], factory);
+		c.load((bind) => bind(Greeter).toDynamicValue([], factory));
 
 		factory.mockImplementationOnce(() => {
 			throw new Error('Oops!');

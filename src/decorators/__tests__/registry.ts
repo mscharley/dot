@@ -29,7 +29,7 @@ describe('registry', () => {
 
 	beforeEach(() => {
 		container = new Container();
-		container.bind(strToken).toConstantValue('hello world');
+		container.load((bind) => bind(strToken).toConstantValue('hello world'));
 	});
 
 	describe('registerInjection', () => {

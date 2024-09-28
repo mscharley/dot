@@ -106,14 +106,14 @@ export const createContainer: interfaces.ContainerFactory = (config) => new Cont
 
 export type { interfaces };
 
-export type { ClassDecorator, ClassFieldDecorator } from './decorators/decorators.js';
-export type { InjectDecoratorFactory } from './decorators/inject.js';
+export type { AnyToken } from './Token.js';
+export type { ClassDecorator } from './decorators/injectable.js';
+export type { ClassFieldDecorator, InjectDecoratorFactory } from './decorators/inject.js';
 export type { TokenType } from './Token.js';
 
 export { inject } from './decorators/inject.js';
 export { injectable } from './decorators/injectable.js';
 export { stringifyIdentifier } from './util/stringifyIdentifier.js';
-export type { AnyToken } from './Token.js';
 export { MetadataToken, NamedToken, Token } from './Token.js';
 export { isToken, isMetadataToken } from './util/isToken.js';
 export { named } from './decorators/named.js';

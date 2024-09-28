@@ -43,7 +43,7 @@ describe('child containers', () => {
 	});
 
 	it('can request things from the parent', async () => {
-		container.bind(token).toConstantValue('Hello world!');
+		container.load((bind) => bind(token).toConstantValue('Hello world!'));
 		const child = container.createChild();
 
 		await expect(child.get(token)).resolves.toBe('Hello world!');
@@ -51,16 +51,16 @@ describe('child containers', () => {
 
 	it('can request things from the parent from a dynamic value', async () => {
 		const name = new Token<string>('name');
-		container.bind(name).toConstantValue('world');
+		container.load((bind) => bind(name).toConstantValue('world'));
 		const child = container.createChild();
-		child.bind(token).toDynamicValue([name], (n) => `Hello ${n}!`);
+		child.load((bind) => bind(token).toDynamicValue([name], (n) => `Hello ${n}!`));
 
 		await expect(child.get(token)).resolves.toBe('Hello world!');
 	});
 
 	it('can cache things in the parent container', async () => {
 		const factory = jest.fn<() => string>(() => 'Hello world!');
-		container.bind(token).inSingletonScope().toDynamicValue([], factory);
+		container.load((bind) => bind(token).inSingletonScope().toDynamicValue([], factory));
 
 		const child1 = container.createChild();
 		await expect(child1.get(token)).resolves.toBe('Hello world!');
@@ -72,15 +72,15 @@ describe('child containers', () => {
 	});
 
 	it('will not do multi-injections across levels of the containers', async () => {
-		container.bind(token).toConstantValue('Hello, world!');
+		container.load((bind) => bind(token).toConstantValue('Hello, world!'));
 		const child = container.createChild();
-		child.bind(token).toConstantValue('Goodbye, world!');
+		child.load((bind) => bind(token).toConstantValue('Goodbye, world!'));
 
 		await expect(child.get(token, { multiple: true })).resolves.toStrictEqual(['Goodbye, world!']);
 	});
 
 	it('will check parent containers for bindings', () => {
-		container.bind(token).toConstantValue('Hello, world!');
+		container.load((bind) => bind(token).toConstantValue('Hello, world!'));
 		const child = container.createChild();
 
 		expect(child.has(token)).toBe(true);
@@ -88,14 +88,14 @@ describe('child containers', () => {
 
 	describe('optional injections', () => {
 		it('will request optional injections from it\'s parent', async () => {
-			container.bind(token).toConstantValue('Hello, world!');
+			container.load((bind) => bind(token).toConstantValue('Hello, world!'));
 			const child = container.createChild();
 
 			await expect(child.get(token, { optional: true })).resolves.toBe('Hello, world!');
 		});
 
 		it('will requests multiple optional injections from it\'s parent if it has no explicit bindings', async () => {
-			container.bind(token).toConstantValue('Hello, world!');
+			container.load((bind) => bind(token).toConstantValue('Hello, world!'));
 			const child = container.createChild();
 
 			await expect(child.get(token, { optional: true, multiple: true })).resolves.toStrictEqual(['Hello, world!']);
@@ -104,7 +104,7 @@ describe('child containers', () => {
 
 	it('will inherit configuration from its parent', async () => {
 		const child = container.createChild();
-		child.bind(token).toConstantValue('Hello, world!');
+		child.load((bind) => bind(token).toConstantValue('Hello, world!'));
 
 		await child.get(token);
 
@@ -112,9 +112,9 @@ describe('child containers', () => {
 	});
 
 	it('will allow rebind if only the parent container has bindings available', async () => {
-		container.bind(token).toConstantValue('Hello, world!');
+		container.load((bind) => bind(token).toConstantValue('Hello, world!'));
 		const child = container.createChild();
-		child.rebind(token).toConstantValue('Goodbye, world!');
+		child.load((_bind, _unbind, _isBound, rebind) => rebind(token).toConstantValue('Goodbye, world!'));
 
 		await expect(child.get(token)).resolves.toBe('Goodbye, world!');
 	});

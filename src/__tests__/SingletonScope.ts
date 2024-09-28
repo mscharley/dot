@@ -30,8 +30,10 @@ describe('singleton scope', () => {
 
 	beforeEach(() => {
 		c = new Container({ defaultScope: 'transient' });
-		c.bind(LeafToken).inSingletonScope().to(Leaf);
-		c.bind(NodeToken).inSingletonScope().to(Node);
+		c.load((bind) => {
+			bind(LeafToken).inSingletonScope().to(Leaf);
+			bind(NodeToken).inSingletonScope().to(Node);
+		});
 	});
 
 	it('returns the same thing in two requests', async () => {
@@ -48,7 +50,7 @@ describe('singleton scope', () => {
 	});
 
 	it('returns multiple values bound to the same token as singleton scope', async () => {
-		c.bind(NodeToken).inSingletonScope().to(Node);
+		c.load((bind) => bind(NodeToken).inSingletonScope().to(Node));
 
 		const vs = await c.get(NodeToken, { multiple: true });
 		expect(vs).toHaveLength(2);
@@ -59,7 +61,7 @@ describe('singleton scope', () => {
 		it('unbinding a token clears it from the cache', async () => {
 			const node = await c.get(NodeToken);
 
-			c.rebind(NodeToken).inSingletonScope().to(Node);
+			c.load((_bind, _unbind, _isBound, rebind) => rebind(NodeToken).inSingletonScope().to(Node));
 			const node2 = await c.get(NodeToken);
 
 			expect(node).not.toBe(node2);
@@ -70,7 +72,7 @@ describe('singleton scope', () => {
 		it.skip('unbinding a token clears anything that depends on it from the cache', async () => {
 			const node = await c.get(NodeToken);
 
-			c.rebind(LeafToken).inSingletonScope().to(Leaf);
+			c.load((_bind, _unbind, _isBound, rebind) => rebind(LeafToken).inSingletonScope().to(Leaf));
 			const node2 = await c.get(NodeToken);
 
 			expect(node).not.toBe(node2);

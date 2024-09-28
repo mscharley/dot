@@ -24,7 +24,7 @@ describe('injection options', () => {
 			}
 
 			const c = new Container();
-			c.bind(token).to(Token1);
+			c.load((bind) => bind(token).to(Token1));
 
 			await expect(c.get(token)).resolves.toMatchObject({ id: undefined });
 		});
@@ -40,7 +40,7 @@ describe('injection options', () => {
 			}
 
 			const c = new Container();
-			c.bind(token).to(Token1);
+			c.load((bind) => bind(token).to(Token1));
 
 			await expect(c.get(token)).rejects.toMatchObject({
 				cause: {
@@ -62,7 +62,7 @@ describe('injection options', () => {
 			}
 
 			const c = new Container();
-			c.bind(token).to(Token1);
+			c.load((bind) => bind(token).to(Token1));
 
 			await expect(c.get(token)).resolves.toMatchObject({ id: [] });
 		});
@@ -76,8 +76,10 @@ describe('injection options', () => {
 			}
 
 			const c = new Container();
-			c.bind(token).to(Token1);
-			c.bind(strToken).toConstantValue('Hello');
+			c.load((bind) => {
+				bind(token).to(Token1);
+				bind(strToken).toConstantValue('Hello');
+			});
 
 			await expect(c.get(token)).resolves.toMatchObject({ id: ['Hello'] });
 		});
@@ -91,9 +93,11 @@ describe('injection options', () => {
 			}
 
 			const c = new Container();
-			c.bind(token).to(Token1);
-			c.bind(strToken).toConstantValue('Hello');
-			c.bind(strToken).toConstantValue('world');
+			c.load((bind) => {
+				bind(token).to(Token1);
+				bind(strToken).toConstantValue('Hello');
+				bind(strToken).toConstantValue('world');
+			});
 
 			await expect(c.get(token)).resolves.toMatchObject({ id: ['Hello', 'world'] });
 		});
@@ -107,9 +111,11 @@ describe('injection options', () => {
 			}
 
 			const c = new Container();
-			c.bind(token).to(Token1);
-			c.bind(strToken).toConstantValue('Hello');
-			c.bind(strToken).toConstantValue('world');
+			c.load((bind) => {
+				bind(token).to(Token1);
+				bind(strToken).toConstantValue('Hello');
+				bind(strToken).toConstantValue('world');
+			});
 
 			await expect(c.get(token)).rejects.toMatchObject({
 				cause: {

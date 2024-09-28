@@ -18,7 +18,7 @@ describe('logging', () => {
 		const logger = { info: noop, debug: noop, trace: log as unknown as Logger[LoggerLevel], warn: noop };
 		const c = new Container({ logger, logLevel: 'trace' });
 
-		c.bind(token).toConstantValue('Hello world!');
+		c.load((bind) => bind(token).toConstantValue('Hello world!'));
 		await expect(c.get(token)).resolves.toBe('Hello world!');
 
 		expect(log.mock.calls).toMatchInlineSnapshot(`
@@ -36,6 +36,7 @@ describe('logging', () => {
               "tokenFor": "Symbol(str)",
             },
             "metadata": {},
+            "module": [Function],
             "scope": "transient",
             "token": {
               "tokenFor": "Symbol(str)",

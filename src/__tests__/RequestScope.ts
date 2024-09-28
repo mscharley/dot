@@ -30,8 +30,10 @@ describe('request scope', () => {
 
 	beforeEach(() => {
 		c = new Container({ defaultScope: 'transient' });
-		c.bind(LeafToken).inRequestScope().to(Leaf);
-		c.bind(NodeToken).to(Node);
+		c.load((bind) => {
+			bind(LeafToken).inRequestScope().to(Leaf);
+			bind(NodeToken).to(Node);
+		});
 	});
 
 	it('returns different things in two requests', async () => {
@@ -49,8 +51,10 @@ describe('request scope', () => {
 
 	it('returns multiple values bound to the same token as request scope', async () => {
 		c.unbind(NodeToken);
-		c.bind(NodeToken).inRequestScope().to(Node);
-		c.bind(NodeToken).inRequestScope().to(Node);
+		c.load((bind) => {
+			bind(NodeToken).inRequestScope().to(Node);
+			bind(NodeToken).inRequestScope().to(Node);
+		});
 
 		const vs = await c.get(NodeToken, { multiple: true });
 		expect(vs).toHaveLength(2);

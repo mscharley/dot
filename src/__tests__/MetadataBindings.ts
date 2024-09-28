@@ -27,8 +27,10 @@ describe('metadata bindings', () => {
 
 		beforeEach(() => {
 			c = new Container({ autobindClasses: true, defaultScope: 'transient' });
-			c.bind(token).withMetadata({ name: 'hello', type: 'greeter' }).toConstantValue('Hello');
-			c.bind(token).withMetadata({ name: 'goodbye', type: 'greeter' }).toConstantValue('Goodbye');
+			c.load((bind) => {
+				bind(token).withMetadata({ name: 'hello', type: 'greeter' }).toConstantValue('Hello');
+				bind(token).withMetadata({ name: 'goodbye', type: 'greeter' }).toConstantValue('Goodbye');
+			});
 		});
 
 		it('sets metadata and filters using that metadata', async () => {
@@ -36,7 +38,7 @@ describe('metadata bindings', () => {
 		});
 
 		it('requires metadata for metadata tokens', async () => {
-			await expect(Promise.resolve(c).then((_) => _.bind(token).toConstantValue('Hello'))).rejects.toMatchObject({
+			await expect(Promise.resolve(c).then((_) => _.load((bind) => bind(token).toConstantValue('Hello')))).rejects.toMatchObject({
 				message: 'Bindings for metadata tokens require setting metadata',
 			});
 		});
@@ -69,7 +71,7 @@ describe('metadata bindings', () => {
 			class Test {
 				public constructor(public readonly name: string) {}
 			}
-			c.bind(Test).toSelf();
+			c.load((bind) => bind(Test).toSelf());
 
 			await expect(c.get(Test)).resolves.toMatchObject({ name: 'Hello' });
 		});
@@ -80,7 +82,7 @@ describe('metadata bindings', () => {
 
 		beforeEach(() => {
 			c = new Container({ autobindClasses: true, defaultScope: 'transient' });
-			c.bind(token).withMetadata({ name: 'hello' }).toConstantValue('Hello');
+			c.load((bind) => bind(token).withMetadata({ name: 'hello' }).toConstantValue('Hello'));
 		});
 
 		it('sets metadata and filters using that metadata', async () => {
@@ -88,7 +90,7 @@ describe('metadata bindings', () => {
 		});
 
 		it('requires metadata for metadata tokens', async () => {
-			await expect(Promise.resolve(c).then((_) => _.bind(token).toConstantValue('Hello'))).rejects.toMatchObject({
+			await expect(Promise.resolve(c).then((_) => _.load((bind) => bind(token).toConstantValue('Hello')))).rejects.toMatchObject({
 				message: 'Bindings for metadata tokens require setting metadata',
 			});
 		});
@@ -113,7 +115,7 @@ describe('metadata bindings', () => {
 		it('provides metadata to the factory function', async () => {
 			const factory = jest.fn(({ metadata }: interfaces.FactoryContext<Metadata>) => (): string => metadata.name ?? 'fallback');
 
-			c.bind(token).inSingletonScope().withMetadata({ name: 'Hello', type: 'world' }).toFactory([], factory);
+			c.load((bind) => bind(token).inSingletonScope().withMetadata({ name: 'Hello', type: 'world' }).toFactory([], factory));
 			await c.get(token, { metadata: { name: 'Hello' } });
 			await expect(c.get(token, { metadata: { name: 'Hello' } })).resolves.toBe('Hello');
 			await expect(c.get(token, { metadata: { name: 'Hello' } })).resolves.toBe('Hello');
@@ -123,7 +125,7 @@ describe('metadata bindings', () => {
 		it('allows metadata for transient bindings', async () => {
 			const factory = jest.fn(({ metadata }: interfaces.FactoryContext<Metadata>) => (): string => metadata.name ?? 'fallback');
 
-			c.bind(token).inTransientScope().withMetadata({ name: 'Hello', type: 'world' }).toFactory([], factory);
+			c.load((bind) => bind(token).inTransientScope().withMetadata({ name: 'Hello', type: 'world' }).toFactory([], factory));
 			await expect(c.get(token, { metadata: { name: 'Hello' } })).resolves.toBe('Hello');
 			await expect(c.get(token, { metadata: { name: 'Goodbye' } })).rejects.toMatchObject({ message: 'Unable to resolve token' });
 		});
@@ -131,7 +133,7 @@ describe('metadata bindings', () => {
 		it('doesn\'t require metadata for transient bindings', async () => {
 			const factory = jest.fn(({ metadata }: interfaces.FactoryContext<Metadata>) => (): string => metadata.name ?? 'fallback');
 
-			c.bind(token).inTransientScope().toFactory([], factory);
+			c.load((bind) => bind(token).inTransientScope().toFactory([], factory));
 			await expect(c.get(token, { metadata: { name: 'Hello' } })).resolves.toBe('Hello');
 			await expect(c.get(token, { metadata: { name: 'Goodbye' } })).resolves.toBe('Goodbye');
 		});
@@ -144,8 +146,10 @@ describe('metadata bindings', () => {
 				public constructor(public readonly name: string) {}
 			}
 
-			c.bind(token).inSingletonScope().withMetadata({ name: 'Hello', type: 'world' }).toFactory([], factory);
-			c.bind(Test).toSelf();
+			c.load((bind) => {
+				bind(token).inSingletonScope().withMetadata({ name: 'Hello', type: 'world' }).toFactory([], factory);
+				bind(Test).toSelf();
+			});
 
 			await expect(c.get(Test)).resolves.toMatchObject({ name: 'Hello' });
 		});
@@ -158,8 +162,10 @@ describe('metadata bindings', () => {
 				public constructor(public readonly name: string) {}
 			}
 
-			c.bind(token).inTransientScope().toFactory([], factory);
-			c.bind(Test).toSelf();
+			c.load((bind) => {
+				bind(token).inTransientScope().toFactory([], factory);
+				bind(Test).toSelf();
+			});
 
 			await expect(c.get(Test)).resolves.toMatchObject({ name: 'Hello' });
 		});
@@ -168,7 +174,7 @@ describe('metadata bindings', () => {
 			it('will not return factories with no metadata in the binding', async () => {
 				const factory = jest.fn(({ metadata }: interfaces.FactoryContext<Metadata>) => (): string => metadata.name ?? 'fallback');
 
-				c.bind(token).inTransientScope().toFactory([], factory);
+				c.load((bind) => bind(token).inTransientScope().toFactory([], factory));
 				await expect(c.get(token, { multiple: true })).rejects.toMatchObject({
 					message: 'Unable to resolve token',
 				});
@@ -177,7 +183,7 @@ describe('metadata bindings', () => {
 			it('will return factories with metadata in the binding', async () => {
 				const factory = jest.fn(({ metadata }: interfaces.FactoryContext<Metadata>) => (): string => metadata.name ?? 'fallback');
 
-				c.bind(token).inTransientScope().withMetadata({ name: 'Hello', type: 'greeter' }).toFactory([], factory);
+				c.load((bind) => bind(token).inTransientScope().withMetadata({ name: 'Hello', type: 'greeter' }).toFactory([], factory));
 				await expect(c.get(token, { multiple: true })).resolves.toStrictEqual(['Hello']);
 			});
 		});
@@ -194,20 +200,22 @@ describe('metadata bindings', () => {
 		});
 
 		it('requires metadata for metadata tokens', async () => {
-			await expect(Promise.resolve(c).then((_) => _.bind(token).toConstantValue('Hello'))).rejects.toMatchObject({
+			await expect(Promise.resolve(c).then((_) => _.load((bind) => bind(token).toConstantValue('Hello')))).rejects.toMatchObject({
 				message: 'Bindings for metadata tokens require setting metadata',
 			});
 		});
 
 		it('will return unset metadata when requested', async () => {
-			c.bind(token).withMetadata({}).toConstantValue('Hello');
+			c.load((bind) => bind(token).withMetadata({}).toConstantValue('Hello'));
 
 			await expect(c.get(token)).resolves.toBe('Hello');
 		});
 
 		it('will filter based on explicitly undefined metadata', async () => {
-			c.bind(token).withMetadata({ name: 'greeter' }).toConstantValue('Hello');
-			c.bind(token).withMetadata({}).toConstantValue('Goodbye');
+			c.load((bind) => {
+				bind(token).withMetadata({ name: 'greeter' }).toConstantValue('Hello');
+				bind(token).withMetadata({}).toConstantValue('Goodbye');
+			});
 
 			await expect(c.get(token, { multiple: true })).resolves.toStrictEqual(['Hello', 'Goodbye']);
 			await expect(c.get(token, { multiple: true, metadata: { name: undefined } })).resolves.toStrictEqual(['Goodbye']);

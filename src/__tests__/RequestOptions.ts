@@ -21,7 +21,7 @@ describe('request options', () => {
 	});
 
 	it('is optional', async () => {
-		c.bind(token).toConstantValue('Hello!');
+		c.load((bind) => bind(token).toConstantValue('Hello!'));
 		await expect(c.get(token)).resolves.toBe('Hello!');
 	});
 
@@ -30,8 +30,10 @@ describe('request options', () => {
 	});
 
 	it('allows for multiple fetches', async () => {
-		c.bind(token).toConstantValue('Hello,');
-		c.bind(token).toConstantValue('world!');
+		c.load((bind) => {
+			bind(token).toConstantValue('Hello,');
+			bind(token).toConstantValue('world!');
+		});
 		await expect(c.get(token, { multiple: true })).resolves.toStrictEqual(['Hello,', 'world!']);
 	});
 
@@ -44,25 +46,27 @@ describe('request options', () => {
 
 		it('allows for optional fetches', async () => {
 			// eslint-disable-next-line jest/no-conditional-in-test
-			c.bind(token).toDynamicValue([withOptions(token2, { optional: true })], (num) => (num ?? 10).toString());
+			c.load((bind) => bind(token).toDynamicValue([withOptions(token2, { optional: true })], (num) => (num ?? 10).toString()));
 
 			await expect(c.get(token)).resolves.toBe('10');
 		});
 
 		it('allows for multiple fetches', async () => {
-			c.bind(token2).toConstantValue(10);
-			c.bind(token2).toConstantValue(20);
-			c.bind(token).toDynamicValue([withOptions(token2, { multiple: true })], (nums) =>
-				nums.map((_) => _.toString()).join(', '),
-			);
+			c.load((bind) => {
+				bind(token2).toConstantValue(10);
+				bind(token2).toConstantValue(20);
+				bind(token).toDynamicValue([withOptions(token2, { multiple: true })], (nums) =>
+					nums.map((_) => _.toString()).join(', '),
+				);
+			});
 
 			await expect(c.get(token)).resolves.toBe('10, 20');
 		});
 
 		it('allows for multiple, optional fetches', async () => {
-			c.bind(token).toDynamicValue([withOptions(token2, { multiple: true, optional: true })], (nums) =>
+			c.load((bind) => bind(token).toDynamicValue([withOptions(token2, { multiple: true, optional: true })], (nums) =>
 				nums.map((_) => _.toString()).join(', '),
-			);
+			));
 
 			await expect(c.get(token)).resolves.toBe('');
 		});
@@ -75,7 +79,7 @@ describe('request options', () => {
 				public constructor(public str?: string) {}
 			}
 
-			c.bind(Test).toSelf();
+			c.load((bind) => bind(Test).toSelf());
 
 			await expect(c.get(Test)).resolves.toMatchObject({ str: undefined });
 		});
@@ -86,9 +90,11 @@ describe('request options', () => {
 				public constructor(public str: string[]) {}
 			}
 
-			c.bind(token).toConstantValue('Hello');
-			c.bind(token).toConstantValue('world');
-			c.bind(Test).toSelf();
+			c.load((bind) => {
+				bind(token).toConstantValue('Hello');
+				bind(token).toConstantValue('world');
+				bind(Test).toSelf();
+			});
 
 			await expect(c.get(Test)).resolves.toMatchObject({ str: ['Hello', 'world'] });
 		});
@@ -99,7 +105,7 @@ describe('request options', () => {
 				public constructor(public str: string[]) {}
 			}
 
-			c.bind(Test).toSelf();
+			c.load((bind) => bind(Test).toSelf());
 
 			await expect(c.get(Test)).resolves.toMatchObject({ str: [] });
 		});

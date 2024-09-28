@@ -28,6 +28,7 @@ export class BindingBuilder<in out T, Metadata extends interfaces.MetadataObject
 		public readonly id: interfaces.ServiceIdentifier<T>,
 		containerConfiguration: interfaces.ContainerConfiguration,
 		protected readonly warn: interfaces.LoggerFn,
+		protected readonly module: interfaces.ContainerModule,
 		private readonly container: Pick<Container, 'addBinding'>,
 	) {
 		this.token = tokenForIdentifier(id);
@@ -57,6 +58,7 @@ export class BindingBuilder<in out T, Metadata extends interfaces.MetadataObject
 					scope: this.scope,
 					// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 					metadata: this.metadata ?? ({} as Metadata),
+					module: this.module,
 					value: v,
 				} satisfies StaticBinding<T, Metadata>),
 			);
@@ -68,6 +70,7 @@ export class BindingBuilder<in out T, Metadata extends interfaces.MetadataObject
 				scope: this.scope,
 				// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 				metadata: this.metadata ?? ({} as Metadata),
+				module: this.module,
 				value,
 			} satisfies StaticBinding<T, Metadata>);
 		}
@@ -93,6 +96,7 @@ export class BindingBuilder<in out T, Metadata extends interfaces.MetadataObject
 			scope: this.scope,
 			// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 			metadata: this.metadata ?? ({} as Metadata),
+			module: this.module,
 			injections: dependencies.map((dep, index) => injectionFromIdentifier(dep, index)) as Array<Injection<T, Metadata>>,
 			generator: factory as DynamicBinding<T, Metadata>['generator'],
 		};
@@ -113,6 +117,7 @@ export class BindingBuilder<in out T, Metadata extends interfaces.MetadataObject
 			token: this.token,
 			scope: this.scope,
 			metadata: this.metadata,
+			module: this.module,
 			injections: deps.map((dep, index) => injectionFromIdentifier(dep, index)) as Array<Injection<T, Metadata>>,
 			generator: fn as FactoryBinding<T, Metadata>['generator'],
 		};
@@ -149,6 +154,7 @@ export class ClassBindingBuilder<T extends object, Metadata extends interfaces.M
 			scope: this.scope,
 			// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 			metadata: this.metadata ?? ({} as Metadata),
+			module: this.module,
 			ctr,
 		};
 		this.finaliseBinding(binding);
@@ -168,6 +174,7 @@ export class ClassBindingBuilder<T extends object, Metadata extends interfaces.M
 			scope: this.scope,
 			// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 			metadata: this.metadata ?? ({} as Metadata),
+			module: this.module,
 			ctr: this.id,
 		};
 		this.finaliseBinding(binding);

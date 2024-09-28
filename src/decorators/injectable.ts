@@ -6,11 +6,22 @@
 
 import type * as interfaces from '../interfaces/index.js';
 import { ensureRegistration, getPropertyInjections, registerInjection } from './registry.js';
-import type { ClassDecorator } from './decorators.js';
 import { Container } from '../container/Container.js';
 import type { Injection } from '../models/Injection.js';
 import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
+
+/**
+ * Typesafe definition of a class decorator
+ *
+ * @public
+ */
+export interface ClassDecorator<T, Args extends unknown[]> {
+	// TC39 definition
+	<Ctr extends interfaces.Constructor<T, Args>>(target: Ctr, context: ClassDecoratorContext<Ctr>): undefined;
+	// experimental decorators definition
+	<Ctr extends interfaces.Constructor<T, Args>>(target: Ctr, context?: undefined): Ctr | undefined;
+}
 
 const _injections: Array<Injection<unknown, interfaces.MetadataObject>> = [];
 export const addInjection = <T>(injection: Injection<T, interfaces.MetadataObject>): void => {

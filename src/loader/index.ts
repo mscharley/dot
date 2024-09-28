@@ -1,7 +1,15 @@
 /* eslint-disable no-console */
+/* eslint-disable n/no-unpublished-import */
 
 import type { AssignmentProperty, ModuleDeclaration, Statement, VariableDeclarator } from 'acorn';
-import { Parser } from 'acorn';
+
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+let Parser: typeof import('acorn').Parser | undefined;
+try {
+	Parser = (await import('acorn')).Parser;
+} catch (_e) {
+	console.error('ERROR: Unable to use the dot loader without installing the acorn library, it is not installed automatically. Running `npm i acorn` will resolve this issue.');
+}
 
 // TODO: TypeScript itself doesn't seem to provide typing for these things, but ts-node has some types that may be worth investigating.
 // https://github.com/TypeStrong/ts-node/blob/main/src/esm.ts
@@ -93,7 +101,7 @@ export interface LoadResult {
 
 export async function load(url: string, context: LoadContext, next: (url: string, context: LoadContext) => Promise<LoadResult>): Promise<LoadResult> {
 	const result = await next(url, context);
-	if (context.format !== 'module') {
+	if (Parser == null || context.format !== 'module') {
 		return result;
 	}
 

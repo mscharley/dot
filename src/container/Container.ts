@@ -22,6 +22,8 @@ import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 import type { Token } from '../Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
+export const autoboundContainerModule: interfaces.ContainerModule = () => {};
+
 export class Container implements interfaces.Container {
 	static #currentRequest: Request<unknown> | undefined;
 
@@ -94,13 +96,14 @@ export class Container implements interfaces.Container {
 		}
 	};
 
-	public bind = (<Id extends interfaces.ServiceIdentifier<unknown>>(
+	readonly #bind = (module: interfaces.ContainerModule): interfaces.BindFunction => (<Id extends interfaces.ServiceIdentifier<unknown>>(
 		id: Id,
 	): interfaces.BindingBuilder<interfaces.InjectedType<Id>, interfaces.MetadataForIdentifier<Id>> => {
 		const binding = new ClassBindingBuilder(
 			id as interfaces.ServiceIdentifier<object>,
 			this.config,
 			this.#warn,
+			module,
 			this,
 		) as unknown as BindingBuilder<interfaces.InjectedType<Id>, interfaces.MetadataForIdentifier<Id>>;
 		this.#incompleteBindings.add(binding);
@@ -108,7 +111,7 @@ export class Container implements interfaces.Container {
 		return binding;
 	}) as interfaces.BindFunction;
 
-	public unbind: interfaces.UnbindFunction = (id) => {
+	public readonly unbind: interfaces.UnbindFunction = (id) => {
 		const token = tokenForIdentifier(id);
 		this.#singletonCache.flushToken(token);
 		const bindings = this.#bindings.flatMap((b) => (b.token.identifier === token.identifier ? [token.identifier] : []));
@@ -119,25 +122,36 @@ export class Container implements interfaces.Container {
 		this.#bindings = this.#bindings.filter((b) => !bindings.includes(b.token.identifier));
 	};
 
-	public rebind: interfaces.RebindFunction = (<T>(id: interfaces.ServiceIdentifier<T>) => {
+	readonly #rebind = (module: interfaces.ContainerModule): interfaces.RebindFunction => (<T>(id: interfaces.ServiceIdentifier<T>) => {
 		this.unbind(id);
-		return this.bind(id);
+		return this.#bind(module)(id);
 	}) as interfaces.RebindFunction;
 
-	public load: interfaces.Container['load'] = <M extends interfaces.ContainerModule>(module: M): ReturnType<M> =>
-		module(this.bind, this.unbind, this.has, this.rebind) as ReturnType<typeof module>;
+	public readonly load: interfaces.Container['load'] = <M extends interfaces.ContainerModule>(module: M): ReturnType<M> =>
+		module(this.#bind(module), this.unbind, this.has, this.#rebind(module)) as ReturnType<typeof module>;
 
-	public createChild: interfaces.Container['createChild'] = (options) => {
+	public readonly createChild: interfaces.Container['createChild'] = (options) => {
 		return new Container({ ...this.config, ...options, parent: this });
 	};
 
-	public addBinding = <T, Metadata extends interfaces.MetadataObject>(
+	public readonly addBinding = <T, Metadata extends interfaces.MetadataObject>(
 		builder: BindingBuilder<T, Metadata>,
 		binding: Binding<T, Metadata>,
 	): void => {
 		this.#incompleteBindings.delete(builder);
 		this.#bindings.push(binding as Binding<unknown, interfaces.MetadataObject>);
 	};
+
+	readonly #generateAutoBinding = <T, Metadata extends interfaces.MetadataObject>(ctr: interfaces.Constructor<T>, token: Token<T>): ConstructorBinding<T, Metadata> => ({
+		type: 'constructor',
+		ctr,
+		id: ctr,
+		token,
+		scope: this.config.defaultScope,
+		// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
+		metadata: {} as Metadata,
+		module: autoboundContainerModule,
+	});
 
 	readonly #getBindings = <T, Metadata extends interfaces.MetadataObject>(
 		{ id, options }: Injection<T, Metadata>,
@@ -171,15 +185,7 @@ export class Container implements interfaces.Container {
 			&& typeof id === 'function'
 			&& !(this.config.parent?.has(id) ?? false)
 		) {
-			const binding = {
-				type: 'constructor',
-				ctr: id,
-				id,
-				token,
-				scope: this.config.defaultScope,
-				// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
-				metadata: {} as Metadata,
-			} satisfies ConstructorBinding<T, Metadata>;
+			const binding = this.#generateAutoBinding<T, Metadata>(id, token);
 
 			// Save this binding to make sure that caches work for future attempts to get this class.
 			this.#bindings.push(binding);
@@ -236,7 +242,7 @@ export class Container implements interfaces.Container {
 				}
 			};
 
-	public get: interfaces.Container['get'] = async <
+	public readonly get: interfaces.Container['get'] = async <
 		Id extends interfaces.ServiceIdentifier<unknown>,
 		Options extends Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<Id>>>,
 	>(
@@ -280,7 +286,7 @@ export class Container implements interfaces.Container {
 		return executePlan(plan, request);
 	};
 
-	public has: interfaces.IsBoundFunction = (id) => {
+	public readonly has: interfaces.IsBoundFunction = (id) => {
 		const token = tokenForIdentifier(id);
 		const local = this.#bindings.find((b) => b.token.identifier === token.identifier) != null;
 		return local || (this.config.parent?.has(id) ?? false) || (typeof id === 'function' && this.config.autobindClasses);
@@ -308,7 +314,7 @@ export class Container implements interfaces.Container {
 		}
 	};
 
-	public validate: interfaces.Container['validate'] = (validateAutobindings = true): void => {
+	public readonly validate: interfaces.Container['validate'] = (validateAutobindings = true): void => {
 		for (const binding of this.#bindings) {
 			switch (binding.type) {
 				case 'static':
@@ -332,12 +338,13 @@ export class Container implements interfaces.Container {
 			const registry = getRegistry();
 			registry.forEach((injections, id) => {
 				this.#validateInjections(
-					{ type: 'constructor', id, ctr: id, scope: 'singleton', metadata: {}, token: tokenForIdentifier(id) },
+					this.#generateAutoBinding(id, tokenForIdentifier(id)),
 					injections,
 				);
 			});
 		}
 
-		return this.config.parent?.validate(validateAutobindings);
+		this.config.parent?.validate(validateAutobindings);
+		return undefined;
 	};
 }

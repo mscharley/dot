@@ -33,8 +33,10 @@ describe('property access', () => {
 
 	beforeEach(() => {
 		c = new Container();
-		c.bind(prop).toConstantValue('Hello world!');
-		c.bind(foo).to(Foo);
+		c.load((bind) => {
+			bind(prop).toConstantValue('Hello world!');
+			bind(foo).to(Foo);
+		});
 	});
 
 	it('can be accessed publically from outside the class', async () => {

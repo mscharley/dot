@@ -39,6 +39,7 @@
 		"build:api": "api-extractor run --local",
 		"build:docs": "api-documenter-hugo hugo -i ./reports/docs -o ./docs/content/docs && cd docs && hugo --gc --minify",
 		"clean": "rm -rf dist/ docs/reference/ reports/ temp/ .stryker-tmp/ tsdoc-metadata.json .turbo/cache",
+		"dev": "tsc --watch",
 		"test:api": "api-extractor run",
 		"test:eslint": "eslint",
 		"test:tsc:experimental": "tsc --experimentalDecorators true --noEmit --incremental false",
@@ -63,7 +64,6 @@
 		"url": "https://github.com/sponsors/mscharley"
 	},
 	"dependencies": {
-		"acorn": "^8.12.1",
 		"async-mutex": "^0.5.0",
 		"tslib": "*"
 	},
@@ -79,6 +79,7 @@
 		"@stryker-mutator/typescript-checker": "8.6.0",
 		"@swc/core": "1.7.28",
 		"@swc/jest": "0.2.36",
+		"acorn": "^8.12.1",
 		"esbuild": "0.24.0",
 		"eslint-plugin-notice": "1.0.0",
 		"generic-type-guard": "5.0.0",

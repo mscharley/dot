@@ -20,7 +20,7 @@ class Test {
 describe('static properties', () => {
 	it('can be accessed without @injectable interfering', async () => {
 		const c = new Container();
-		c.bind(Test).toSelf();
+		c.load((bind) => bind(Test).toSelf());
 		expect(Test.value).toBe('Hello, world!');
 		await expect(c.get(Test).then((_) => _.check())).resolves.toBe('Hello, world!');
 	});
