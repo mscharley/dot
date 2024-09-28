@@ -38,18 +38,22 @@ describe('constructor injection', () => {
 
 	beforeEach(() => {
 		c = new Container();
-		c.bind(Test).toSelf();
-		c.bind(UnmanagedTest).toSelf();
+		c.load((bind) => {
+			bind(Test).toSelf();
+			bind(UnmanagedTest).toSelf();
+		});
 	});
 
 	it('can do a basic constructor parameter injection', async () => {
-		c.bind(greetingToken).toConstantValue('Hello');
-		c.bind(nameToken).toConstantValue('John');
+		c.load((bind) => {
+			bind(greetingToken).toConstantValue('Hello');
+			bind(nameToken).toConstantValue('John');
+		});
 		await expect(c.get(Test)).resolves.toMatchObject({ greeting: 'Hello, John.' });
 	});
 
 	it('can resolve optional dependencies', async () => {
-		c.bind(greetingToken).toConstantValue('Hello');
+		c.load((bind) => bind(greetingToken).toConstantValue('Hello'));
 		await expect(c.get(Test)).resolves.toMatchObject({ greeting: 'Hello, world.' });
 	});
 

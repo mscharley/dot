@@ -18,6 +18,7 @@ class Test {
 	public constructor(public readonly name: string) {}
 }
 const testToken = new Token<Test>('test');
+const module = (): void => {};
 
 describe('calculatePlan', () => {
 	it('should return a single step for constantValue injections of classes with injections', () => {
@@ -32,6 +33,7 @@ describe('calculatePlan', () => {
 						id: Test,
 						scope: 'request',
 						metadata: {},
+						module,
 						value: bob,
 					} satisfies StaticBinding<Test, interfaces.MetadataObject>,
 				] as unknown as Array<Binding<T, Meta>>,
@@ -80,6 +82,7 @@ describe('calculatePlan', () => {
 						token: testToken,
 						scope: 'request',
 						metadata: {},
+						module,
 					} satisfies DynamicBinding<Test, interfaces.MetadataObject>,
 				] as unknown as Array<Binding<T, Meta>>,
 

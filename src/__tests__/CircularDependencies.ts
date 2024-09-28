@@ -30,8 +30,10 @@ describe('circular dependencies', () => {
 		}
 
 		const c = new Container();
-		c.bind(t1).to(Id);
-		c.bind(t2).to(Name);
+		c.load((bind) => {
+			bind(t1).to(Id);
+			bind(t2).to(Name);
+		});
 
 		await expect(c.get(t1)).rejects.toMatchObject({
 			code: 'RECURSIVE_RESOLUTION' satisfies ErrorCode,
@@ -43,16 +45,18 @@ describe('circular dependencies', () => {
 	it('throws an error for recursion across dynamic bindings', async () => {
 		const c = new Container();
 
-		c.bind(t1)
-			.inTransientScope()
-			.toDynamicValue([t2], ({ name }) => {
-				return { id: 0, name };
-			});
-		c.bind(t2)
-			.inTransientScope()
-			.toDynamicValue([t1], ({ id }) => {
-				return { id, name: 'world' };
-			});
+		c.load((bind) => {
+			bind(t1)
+				.inTransientScope()
+				.toDynamicValue([t2], ({ name }) => {
+					return { id: 0, name };
+				});
+			bind(t2)
+				.inTransientScope()
+				.toDynamicValue([t1], ({ id }) => {
+					return { id, name: 'world' };
+				});
+		});
 
 		await expect(c.get(t1)).rejects.toMatchObject({
 			code: 'RECURSIVE_RESOLUTION' satisfies ErrorCode,
@@ -79,8 +83,10 @@ describe('circular dependencies', () => {
 		}
 
 		const c = new Container();
-		c.bind(t1).to(Id);
-		c.bind(t2).to(Name);
+		c.load((bind) => {
+			bind(t1).to(Id);
+			bind(t2).to(Name);
+		});
 
 		await expect(c.get(t1)).rejects.toMatchObject({
 			code: 'RECURSIVE_RESOLUTION' satisfies ErrorCode,

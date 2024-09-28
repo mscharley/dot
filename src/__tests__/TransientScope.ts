@@ -30,14 +30,18 @@ describe('transient scope', () => {
 
 	beforeEach(() => {
 		c = new Container({ defaultScope: 'transient' });
-		c.bind(LeafToken).inTransientScope().to(Leaf);
-		c.bind(NodeToken).to(Node);
+		c.load((bind) => {
+			bind(LeafToken).inTransientScope().to(Leaf);
+			bind(NodeToken).to(Node);
+		});
 	});
 
 	it('default scope is transient', async () => {
 		const c2 = new Container();
-		c2.bind(LeafToken).to(Leaf);
-		c2.bind(NodeToken).to(Node);
+		c2.load((bind) => {
+			bind(LeafToken).to(Leaf);
+			bind(NodeToken).to(Node);
+		});
 
 		const node = await c2.get(NodeToken);
 		expect(node.left).not.toBe(node.right);
@@ -58,8 +62,10 @@ describe('transient scope', () => {
 
 	it('returns multiple values bound to the same token as transient scope', async () => {
 		c.unbind(NodeToken);
-		c.bind(NodeToken).inTransientScope().to(Node);
-		c.bind(NodeToken).inTransientScope().to(Node);
+		c.load((bind) => {
+			bind(NodeToken).inTransientScope().to(Node);
+			bind(NodeToken).inTransientScope().to(Node);
+		});
 
 		const vs: Node[] = await c.get(NodeToken, { multiple: true });
 		expect(vs).toHaveLength(2);

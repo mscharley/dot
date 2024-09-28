@@ -31,7 +31,7 @@ describe('autobinding', () => {
 
 	it('dynamic bindings work with autobinding', async () => {
 		const c = new Container({ autobindClasses: true });
-		c.bind(Greeter).toDynamicValue([Name], (name) => new Greeter(name));
+		c.load((bind) => bind(Greeter).toDynamicValue([Name], (name) => new Greeter(name)));
 
 		await expect(c.get(Greeter)).resolves.toBeInstanceOf(Greeter);
 	});
@@ -46,7 +46,7 @@ describe('autobinding', () => {
 
 	it('will prefer to load something from a parent container', async () => {
 		const c = new Container();
-		c.bind(Greeter).toConstantValue(new Greeter({ name: 'John' }));
+		c.load((bind) => bind(Greeter).toConstantValue(new Greeter({ name: 'John' })));
 
 		const child = c.createChild({ autobindClasses: true });
 		await expect(child.get(Greeter)).resolves.toMatchObject({ greeting: 'Hello, John!' });

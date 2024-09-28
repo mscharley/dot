@@ -26,7 +26,7 @@ describe('exception handling', () => {
 	describe('should allow errors from client code to be accessible to client code', () => {
 		it('class constructor', async () => {
 			const c = new Container();
-			c.bind(token).to(Test);
+			c.load((bind) => bind(token).to(Test));
 
 			await expect(c.get(token)).rejects.toMatchObject({
 				cause: {
@@ -39,11 +39,13 @@ describe('exception handling', () => {
 
 		it('dynamic value', async () => {
 			const c = new Container();
-			c.bind(token)
-				.inTransientScope()
-				.toDynamicValue([], () => {
-					throw new Error('Oops, something bad happened.');
-				});
+			c.load((bind) =>
+				bind(token)
+					.inTransientScope()
+					.toDynamicValue([], () => {
+						throw new Error('Oops, something bad happened.');
+					}),
+			);
 
 			await expect(c.get(token)).rejects.toMatchObject({
 				cause: {
@@ -57,11 +59,13 @@ describe('exception handling', () => {
 		it('async dynamic value', async () => {
 			const c = new Container();
 
-			c.bind(token)
-				.inTransientScope()
-				.toDynamicValue([], async () => {
-					throw new Error('Oops, something bad happened.');
-				});
+			c.load((bind) =>
+				bind(token)
+					.inTransientScope()
+					.toDynamicValue([], async () => {
+						throw new Error('Oops, something bad happened.');
+					}),
+			);
 
 			await expect(c.get(token)).rejects.toMatchObject({
 				cause: {
@@ -76,7 +80,7 @@ describe('exception handling', () => {
 	describe('resolution errors should include a path to where the error happened', () => {
 		it('should return a simple error', async () => {
 			const c = new Container();
-			c.bind(token).to(Test);
+			c.load((bind) => bind(token).to(Test));
 
 			await expect(c.get(token)).rejects.toMatchObject({
 				cause: {
@@ -98,11 +102,13 @@ describe('exception handling', () => {
 			}
 			const greeterToken = new Token<Greeter>('greeter');
 
-			c.bind(token).to(Test);
-			c.bind(nameToken)
-				.inTransientScope()
-				.toDynamicValue([token], ({ id }) => `dummy-${id}`);
-			c.bind(greeterToken).to(Greeter);
+			c.load((bind) => {
+				bind(token).to(Test);
+				bind(nameToken)
+					.inTransientScope()
+					.toDynamicValue([token], ({ id }) => `dummy-${id}`);
+				bind(greeterToken).to(Greeter);
+			});
 
 			await expect(c.get(greeterToken)).rejects.toMatchObject({
 				cause: {

@@ -6,9 +6,20 @@
 
 import type * as interfaces from '../interfaces/index.js';
 import { addInjection } from './injectable.js';
-import type { ClassFieldDecorator } from './decorators.js';
 import { Container } from '../container/Container.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
+
+/**
+ * Typesafe definition of a class field decorator
+ *
+ * @public
+ */
+export interface ClassFieldDecorator<T extends object, Property> {
+	// TC39 definition
+	(target: undefined, context: ClassFieldDecoratorContext<T, Property>): (originalValue: Property | undefined) => Property;
+	// experimental decorators definition
+	(target: T, propertyName: string | symbol): undefined;
+}
 
 /**
  * Type for the `@inject` decorator itself

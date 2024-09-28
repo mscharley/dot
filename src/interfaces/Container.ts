@@ -4,7 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import type { BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions.js';
+import type { IsBoundFunction, UnbindFunction } from './Functions.js';
 import type { MetadataForIdentifier, ServiceIdentifier } from './ServiceIdentifier.js';
 import type { ContainerConfiguration } from './ContainerConfiguration.js';
 import type { ContainerFactory } from './ContainerFactory.js';
@@ -28,28 +28,24 @@ export interface Container {
 	 */
 	readonly config: ContainerConfiguration;
 
-	/** {@inheritdoc interfaces.BindFunction} */
-	bind: BindFunction;
 	/** {@inheritdoc interfaces.UnbindFunction} */
-	unbind: UnbindFunction;
-	/** {@inheritdoc interfaces.RebindFunction} */
-	rebind: RebindFunction;
+	readonly unbind: UnbindFunction;
 	/** {@inheritdoc interfaces.IsBoundFunction} */
-	has: IsBoundFunction;
+	readonly has: IsBoundFunction;
 
 	/**
 	 * Load a preconfigured module into this container
 	 */
-	load: <M extends ContainerModule>(module: M) => ReturnType<M>;
+	readonly load: <M extends ContainerModule>(module: M) => ReturnType<M>;
 	/**
 	 * Create a child container
 	 */
-	createChild: ContainerFactory;
+	readonly createChild: ContainerFactory;
 
 	/**
 	 * Make a request from this container
 	 */
-	get: {
+	readonly get: {
 		/* eslint-disable @typescript-eslint/unified-signatures */
 		<Id extends ServiceIdentifier<unknown>>(
 			id: Id,
@@ -91,5 +87,5 @@ export interface Container {
 	 * container.validate(); // Works
 	 * ```
 	 */
-	validate: (validateAutobindings?: boolean) => void;
+	readonly validate: (validateAutobindings?: boolean) => void;
 }

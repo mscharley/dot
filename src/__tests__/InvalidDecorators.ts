@@ -34,9 +34,11 @@ class Service {
 describe('invalid decorator', () => {
 	it('fails to build a service', async () => {
 		const c = new Container();
-		c.bind(leaf).to(Leaf);
-		c.bind(node).to(Node);
-		c.bind(service).to(Service);
+		c.load((bind) => {
+			bind(leaf).to(Leaf);
+			bind(node).to(Node);
+			bind(service).to(Service);
+		});
 
 		await expect(c.get(service)).rejects.toMatchObject({
 			code: 'INVALID_OPERATION' satisfies ErrorCode,
@@ -46,8 +48,10 @@ describe('invalid decorator', () => {
 
 	it('fails to build a node', async () => {
 		const c = new Container();
-		c.bind(leaf).to(Leaf);
-		c.bind(node).to(Node);
+		c.load((bind) => {
+			bind(leaf).to(Leaf);
+			bind(node).to(Node);
+		});
 
 		await expect(c.get(node)).rejects.toMatchObject({
 			code: 'INVALID_OPERATION' satisfies ErrorCode,
@@ -60,13 +64,13 @@ describe('invalid decorator', () => {
 
 		const c = new Container();
 
-		c.bind(Test).toSelf();
+		c.load((bind) => bind(Test).toSelf());
 		await expect(c.get(Test)).rejects.toMatchObject({
 			message: 'No @injectable() decorator for class: Constructor<Test>',
 			code: 'INVALID_OPERATION' satisfies ErrorCode,
 		});
 
-		c.rebind(Test).to(Test);
+		c.load((_bind, _unbind, _isBound, rebind) => rebind(Test).to(Test));
 		await expect(c.get(Test)).rejects.toMatchObject({
 			message: 'No @injectable() decorator for class: Constructor<Test>',
 			code: 'INVALID_OPERATION' satisfies ErrorCode,
@@ -78,10 +82,10 @@ describe('invalid decorator', () => {
 
 		const c = new Container();
 
-		c.bind(Test).toConstantValue(new Test());
+		c.load((bind) => bind(Test).toConstantValue(new Test()));
 		await expect(c.get(Test)).resolves.toBeInstanceOf(Test);
 
-		c.rebind(Test).toDynamicValue([], () => new Test());
+		c.load((_bind, _unbind, _isBound, rebind) => rebind(Test).toDynamicValue([], () => new Test()));
 		await expect(c.get(Test)).resolves.toBeInstanceOf(Test);
 	});
 });
