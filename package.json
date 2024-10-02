@@ -29,7 +29,7 @@
 		"./loader": {
 			"import": {
 				"types": "./dist/loader.d.ts",
-				"default": "./dist/loader.js"
+				"default": "./dist/loader/index.js"
 			}
 		}
 	},

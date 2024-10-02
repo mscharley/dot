@@ -92,6 +92,8 @@ interface Container {
         } & Partial<InjectOptions<MetadataForIdentifier<Id>>>): Promise<InjectedType<[Id, typeof options]>>;
         <Id extends ServiceIdentifier<unknown>>(id: Id, options?: Partial<InjectOptions<MetadataForIdentifier<Id>>>): Promise<InjectedType<[Id, typeof options]>>;
     };
+    // @beta
+    readonly getRequiredContainerModules: (injections: ReadonlyArray<ServiceIdentifier<unknown>>) => ContainerModuleMeta[];
     // Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: This type of declaration is not supported yet by the resolver
     //
     // (undocumented)
@@ -119,6 +121,14 @@ type ContainerFactory = (options?: Partial<ContainerConfiguration>) => Container
 
 // @public
 type ContainerModule = AsyncContainerModule | SyncContainerModule;
+
+// @beta
+interface ContainerModuleMeta {
+    // (undocumented)
+    name: string;
+    // (undocumented)
+    url: string;
+}
 
 // Warning: (ae-unresolved-link) The @link reference could not be resolved: This type of declaration is not supported yet by the resolver
 //
@@ -207,6 +217,7 @@ declare namespace interfaces {
         ContainerFactory,
         AsyncContainerModule,
         ContainerModule,
+        ContainerModuleMeta,
         SyncContainerModule,
         DirectInjection,
         FactoryContext,
