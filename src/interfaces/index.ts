@@ -12,7 +12,7 @@ export type { ClassBinder } from './ClassBinder.js';
 export type { Container } from './Container.js';
 export type { ContainerConfiguration } from './ContainerConfiguration.js';
 export type { ContainerFactory } from './ContainerFactory.js';
-export type { AsyncContainerModule, ContainerModule, SyncContainerModule } from './ContainerModule.js';
+export type { AsyncContainerModule, ContainerModule, ContainerModuleMeta, SyncContainerModule } from './ContainerModule.js';
 export type { DirectInjection } from './DirectInjection.js';
 export type { FactoryContext } from './FactoryContext.js';
 export type { Constructor, Fn, BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions.js';

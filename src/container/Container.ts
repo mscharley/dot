@@ -134,6 +134,58 @@ export class Container implements interfaces.Container {
 		return new Container({ ...this.config, ...options, parent: this });
 	};
 
+	public readonly getRequiredContainerModules: interfaces.Container['getRequiredContainerModules'] = (services) => {
+		this.#ensureBindingsCompleted();
+		const defaultOptions: interfaces.InjectOptions<interfaces.MetadataObject> = {
+			multiple: false,
+			optional: false,
+			metadata: {},
+		};
+
+		const plan = services.flatMap((id) => {
+			const request: Request<unknown> = {
+				container: this,
+				stack: {},
+				singletonCache: this.#singletonCache,
+				id,
+				token: tokenForIdentifier<unknown, interfaces.MetadataObject>(id),
+			};
+			return calculatePlan<unknown>(
+				this.#getBindings,
+				this.#resolveBinding(request),
+				{
+					type: 'request',
+					options: defaultOptions,
+					id,
+				} satisfies RequestInjection<unknown, interfaces.MetadataObject>,
+				[],
+				this.config.parent,
+			);
+		});
+
+		return plan.flatMap((step) => {
+			switch (step.type) {
+				case 'createClass':
+					if (step.binding == null) {
+						return [];
+					} else {
+						const meta = (step.binding.module as unknown as Record<symbol, undefined | interfaces.ContainerModuleMeta>)[Symbol.for('__dot_import_stats')];
+						if (meta == null) {
+							throw new Error("It appears you haven't used the custom loader.");
+						}
+						return [meta];
+					}
+				case 'fetchFromCache':
+					return [];
+				case 'aggregateMultiple':
+					return [];
+				case 'requestFromParent':
+					return step.parent.getRequiredContainerModules([step.token]);
+				default: return isNever(step, 'Invalid step in plan');
+			}
+		});
+	};
+
 	public readonly addBinding = <T, Metadata extends interfaces.MetadataObject>(
 		builder: BindingBuilder<T, Metadata>,
 		binding: Binding<T, Metadata>,

@@ -2,6 +2,7 @@
 /* eslint-disable n/no-unpublished-import */
 
 import type { AssignmentProperty, ModuleDeclaration, Statement, VariableDeclarator } from 'acorn';
+import type { ContainerModuleMeta } from '../interfaces/ContainerModule.js';
 
 // eslint-disable-next-line @typescript-eslint/consistent-type-imports
 let Parser: typeof import('acorn').Parser | undefined;
@@ -14,19 +15,14 @@ try {
 // TODO: TypeScript itself doesn't seem to provide typing for these things, but ts-node has some types that may be worth investigating.
 // https://github.com/TypeStrong/ts-node/blob/main/src/esm.ts
 
-interface ExportEntry {
-	url: string;
-	name: string;
-}
-
 // export async function resolve(specifier: string, context: any, next: (specifier: string, context: any) => Promise<any>): Promise<any> {
 // 	return next(specifier, context);
 // }
 
-const generateMetadataAssignment = (meta: ExportEntry): string =>
+const generateMetadataAssignment = (meta: ContainerModuleMeta): string =>
 	`if (${meta.name} != null && ['function', 'object'].includes(typeof ${meta.name})) ${meta.name}[Symbol.for('__dot_import_stats')] = ${JSON.stringify(meta)};`;
 
-const variableDeclaratorEntries = (url: string) => (d: VariableDeclarator): ExportEntry[] => {
+const variableDeclaratorEntries = (url: string) => (d: VariableDeclarator): ContainerModuleMeta[] => {
 	switch (d.id.type) {
 		case 'Identifier':
 			return [{ url, name: d.id.name }];
@@ -46,7 +42,7 @@ const variableDeclaratorEntries = (url: string) => (d: VariableDeclarator): Expo
 	}
 };
 
-const exportEntries = (url: string) => (node: Statement | ModuleDeclaration): ExportEntry[] => {
+const exportEntries = (url: string) => (node: Statement | ModuleDeclaration): ContainerModuleMeta[] => {
 	switch (node.type) {
 		case 'ExportNamedDeclaration':
 			switch (node.declaration?.type) {

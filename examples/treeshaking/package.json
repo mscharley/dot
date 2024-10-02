@@ -1,0 +1,22 @@
+{
+	"name": "@mscharley/dot-examples-treeshaking",
+	"version": "0.0.0-development",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"clean": "rm -rf dist",
+		"build": "tsc && node ./dist/build.js && ncc build ./dist/index.js -o ./dist/bundled && ncc build ./dist/opt/index.js -o ./dist/bundled.opt",
+		"unoptimised": "node -e 'import(\"./dist/bundled/index.js\").then(({ run, main }) => run(main))'",
+		"optimised": "node -e 'import(\"./dist/bundled.opt/index.js\").then(({ main }) => main())'"
+	},
+	"license": "MIT",
+	"dependencies": {
+		"@mscharley/dot": "file:../.."
+	},
+	"devDependencies": {
+		"@types/fs-extra": "^11.0.4",
+		"@vercel/ncc": "^0.38.2",
+		"fs-extra": "^11.2.0",
+		"typescript": "5.6.2"
+	}
+}

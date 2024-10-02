@@ -4,11 +4,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import type { ContainerModule, ContainerModuleMeta } from './ContainerModule.js';
 import type { IsBoundFunction, UnbindFunction } from './Functions.js';
 import type { MetadataForIdentifier, ServiceIdentifier } from './ServiceIdentifier.js';
 import type { ContainerConfiguration } from './ContainerConfiguration.js';
 import type { ContainerFactory } from './ContainerFactory.js';
-import type { ContainerModule } from './ContainerModule.js';
 import type { InjectedType } from './InjectionIdentifier.js';
 import type { InjectOptions } from './InjectOptions.js';
 
@@ -41,6 +41,16 @@ export interface Container {
 	 * Create a child container
 	 */
 	readonly createChild: ContainerFactory;
+	/**
+	 * Fetch a list of all the container modules necessary to satisfy a particular set of requests
+	 *
+	 * @remarks
+	 *
+	 * This is mostly useful for build systems to generate partial containers to satisfy particular entrypoints.
+	 *
+	 * @beta
+	 */
+	readonly getRequiredContainerModules: (injections: ReadonlyArray<ServiceIdentifier<unknown>>) => ContainerModuleMeta[];
 
 	/**
 	 * Make a request from this container
