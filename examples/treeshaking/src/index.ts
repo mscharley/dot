@@ -1,7 +1,7 @@
 import { DatabaseConnection } from './database.js';
 import { entry } from './framework/index.js';
 
-export const main = entry([DatabaseConnection], async (db) => {
+export const main = entry([DatabaseConnection, DatabaseConnection], async (db, _db2) => {
 	await db.migrate();
 });
 
