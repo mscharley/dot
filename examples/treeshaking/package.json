@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"clean": "rm -rf dist",
-		"build": "tsc && node ./dist/build.js",
+		"build": "tsc && node ./dist/framework/build.js",
 		"unoptimised": "node -e 'import(\"./dist/bundled/index.js\").then(({ run, main }) => run(main))'",
 		"optimised": "node -e 'import(\"./dist/bundled.opt/index.js\").then(({ main }) => main())'"
 	},
