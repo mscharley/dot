@@ -11,7 +11,10 @@ await mkdirp('./dist/opt');
 
 // Load the application.
 register('@mscharley/dot/loader', pathToFileURL('./'));
-const { generateContainer, main } = await import('./index.js');
+const [{ generateContainer }, { main }] = await Promise.all([
+	import('./index.js'),
+	import('../index.js'),
+]);
 
 const c = await generateContainer();
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
