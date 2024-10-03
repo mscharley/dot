@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"clean": "rm -rf dist",
-		"build": "tsc && node ./dist/build.js && ncc build ./dist/index.js -o ./dist/bundled && ncc build ./dist/opt/index.js -o ./dist/bundled.opt",
+		"build": "tsc && node ./dist/build.js",
 		"unoptimised": "node -e 'import(\"./dist/bundled/index.js\").then(({ run, main }) => run(main))'",
 		"optimised": "node -e 'import(\"./dist/bundled.opt/index.js\").then(({ main }) => main())'"
 	},
@@ -14,9 +14,10 @@
 		"@mscharley/dot": "file:../.."
 	},
 	"devDependencies": {
+		"@rollup/plugin-node-resolve": "^15.3.0",
 		"@types/fs-extra": "^11.0.4",
-		"@vercel/ncc": "^0.38.2",
 		"fs-extra": "^11.2.0",
+		"rollup": "^4.24.0",
 		"typescript": "5.6.2"
 	}
 }
