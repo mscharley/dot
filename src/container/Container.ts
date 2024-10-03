@@ -163,7 +163,7 @@ export class Container implements interfaces.Container {
 			);
 		});
 
-		return plan.flatMap((step) => {
+		const entries = plan.flatMap((step): Array<[string, interfaces.ContainerModuleMeta]> => {
 			switch (step.type) {
 				case 'createClass':
 					if (step.binding == null) {
@@ -173,17 +173,18 @@ export class Container implements interfaces.Container {
 						if (meta == null) {
 							throw new Error("It appears you haven't used the custom loader.");
 						}
-						return [meta];
+						return [[`${meta.name}::${meta.url}`, meta]];
 					}
 				case 'fetchFromCache':
 					return [];
 				case 'aggregateMultiple':
 					return [];
 				case 'requestFromParent':
-					return step.parent.getRequiredContainerModules([step.token]);
+					return step.parent.getRequiredContainerModules([step.token]).map((m) => [`${m.name}::${m.url}`, m]);
 				default: return isNever(step, 'Invalid step in plan');
 			}
 		});
+		return Object.values(Object.fromEntries(entries));
 	};
 
 	public readonly addBinding = <T, Metadata extends interfaces.MetadataObject>(

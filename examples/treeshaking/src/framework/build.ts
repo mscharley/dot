@@ -20,12 +20,13 @@ const c = await generateContainer();
 // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
 const deps = main.dependencies.map((d): interfaces.ContainerModuleMeta => (d as any)[Symbol.for('__dot_import_stats')]);
 const modules = c.getRequiredContainerModules(main.dependencies);
+const onlyUnique = <T>(value: T, index: number, array: T[]): boolean => array.indexOf(value) === index;
 
 const optimisedOutputFile = './dist/opt/index.js';
 await writeFile(optimisedOutputFile, `import { createContainer } from "@mscharley/dot";
 
 ${modules.map(({ name, url }) => `import { ${name} } from "${relative(dirname(optimisedOutputFile), fileURLToPath(url))}";`).join('\n')}
-${deps.map(({ name, url }) => `import { ${name} } from "${relative(dirname(optimisedOutputFile), fileURLToPath(url))}";`).join('\n')}
+${deps.filter(onlyUnique).map(({ name, url }) => `import { ${name} } from "${relative(dirname(optimisedOutputFile), fileURLToPath(url))}";`).join('\n')}
 
 console.log("Code loaded.");
 
@@ -33,7 +34,7 @@ export const main = async () => {
     const c = createContainer();
 ${modules.map(({ name }) => `    await c.load(${name});`).join('\n')}
 
-    const args = await Promise.all([${deps.map(({ name }) => `c.get(${name})`).join('\n')}]);
+    const args = await Promise.all([${deps.map(({ name }) => `c.get(${name})`).join(', ')}]);
 
     (${main.handler.toString()})(...args);
 };
