@@ -23,20 +23,19 @@ const modules = c.getRequiredContainerModules(main.dependencies);
 const onlyUnique = <T>(value: T, index: number, array: T[]): boolean => array.indexOf(value) === index;
 
 const optimisedOutputFile = './dist/opt/index.js';
-await writeFile(optimisedOutputFile, `import { createContainer } from "@mscharley/dot";
+await writeFile(optimisedOutputFile, `import { createContainer } from '@mscharley/dot';
+${modules.map(({ name, url }) => `import { ${name} } from '${relative(dirname(optimisedOutputFile), fileURLToPath(url))}';`).join('\n')}
+${deps.filter(onlyUnique).map(({ name, url }) => `import { ${name} } from '${relative(dirname(optimisedOutputFile), fileURLToPath(url))}';`).join('\n')}
 
-${modules.map(({ name, url }) => `import { ${name} } from "${relative(dirname(optimisedOutputFile), fileURLToPath(url))}";`).join('\n')}
-${deps.filter(onlyUnique).map(({ name, url }) => `import { ${name} } from "${relative(dirname(optimisedOutputFile), fileURLToPath(url))}";`).join('\n')}
-
-console.log("Code loaded.");
+console.log('Code loaded.');
 
 export const main = async () => {
-    const c = createContainer();
-${modules.map(({ name }) => `    await c.load(${name});`).join('\n')}
+	const c = createContainer();
+${modules.map(({ name }) => `\tawait c.load(${name});`).join('\n')}
 
-    const args = await Promise.all([${deps.map(({ name }) => `c.get(${name})`).join(', ')}]);
+	const args = await Promise.all([${deps.map(({ name }) => `c.get(${name})`).join(', ')}]);
 
-    (${main.handler.toString()})(...args);
+	(${main.handler.toString()})(...args);
 };
 `);
 
