@@ -10,6 +10,5 @@ export type ImportTestDependency = TokenType<typeof ImportTestDependency>;
 export class ImportTest {
 	public constructor(public readonly dep: ImportTestDependency) {}
 
-	// eslint-disable-next-line @typescript-eslint/no-magic-numbers
 	public id = 10;
 }

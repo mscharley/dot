@@ -19,10 +19,10 @@ temp/
 .nvmrc
 .vscode/
 api-extractor.json
-tsconfig.*.json
+tsconfig*.json
 tsdoc-metadata.json
 stryker.conf.json
-jest.config.ts
+*.config.js
 renovate.json
 
 # Previous versions

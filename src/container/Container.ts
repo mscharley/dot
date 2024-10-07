@@ -186,49 +186,49 @@ export class Container implements interfaces.Container {
 
 	readonly #resolveBinding
 		= (request: Request<unknown>) =>
-		<T, Metadata extends interfaces.MetadataObject>(binding: Binding<T, Metadata>, injection: Injection<T, Metadata>, resolutionPath: Array<Token<unknown>>): T | Promise<T> => {
-			const getArgsForParameterInjections = (injections: Array<Injection<unknown, interfaces.MetadataObject>>): unknown[] =>
-				injections
+			<T, Metadata extends interfaces.MetadataObject>(binding: Binding<T, Metadata>, injection: Injection<T, Metadata>, resolutionPath: Array<Token<unknown>>): T | Promise<T> => {
+				const getArgsForParameterInjections = (injections: Array<Injection<unknown, interfaces.MetadataObject>>): unknown[] =>
+					injections
 					// eslint-disable-next-line @typescript-eslint/no-magic-numbers
-					.sort((a, b) => ('index' in a && 'index' in b ? (a.index < b.index ? -1 : 1) : 0))
-					.map((i) =>
-						i.type === 'unmanagedConstructorParameter'
-							? i.value.generator()
-							: this.resolve(tokenForIdentifier(i.id), request, resolutionPath),
-					);
+						.sort((a, b) => ('index' in a && 'index' in b ? (a.index < b.index ? -1 : 1) : 0))
+						.map((i) =>
+							i.type === 'unmanagedConstructorParameter'
+								? i.value.generator()
+								: this.resolve(tokenForIdentifier(i.id), request, resolutionPath),
+						);
 
-			switch (binding.type) {
-				case 'static':
-					return binding.value;
-				case 'dynamic': {
-					const args = getArgsForParameterInjections(binding.injections);
-					return binding.generator(...args);
-				}
-				case 'factory': {
-					const args = getArgsForParameterInjections(binding.injections);
-					const ctx: interfaces.FactoryContext<Metadata> = {
-						container: { config: this.config, createChild: this.createChild },
-						metadata: {
-							...binding.metadata,
-							...injection.options.metadata,
-						},
-					};
-					return binding.generator(ctx)(...args);
-				}
-				case 'constructor': {
-					const args = getArgsForParameterInjections(getConstructorParameterInjections(binding.ctr));
-
-					Container.#currentRequest = request;
-					try {
-						return new binding.ctr(...args);
-					} finally {
-						Container.#currentRequest = undefined;
+				switch (binding.type) {
+					case 'static':
+						return binding.value;
+					case 'dynamic': {
+						const args = getArgsForParameterInjections(binding.injections);
+						return binding.generator(...args);
 					}
+					case 'factory': {
+						const args = getArgsForParameterInjections(binding.injections);
+						const ctx: interfaces.FactoryContext<Metadata> = {
+							container: { config: this.config, createChild: this.createChild },
+							metadata: {
+								...binding.metadata,
+								...injection.options.metadata,
+							},
+						};
+						return binding.generator(ctx)(...args);
+					}
+					case 'constructor': {
+						const args = getArgsForParameterInjections(getConstructorParameterInjections(binding.ctr));
+
+						Container.#currentRequest = request;
+						try {
+							return new binding.ctr(...args);
+						} finally {
+							Container.#currentRequest = undefined;
+						}
+					}
+					default:
+						return isNever(binding, 'Unknown binding found');
 				}
-				default:
-					return isNever(binding, 'Unknown binding found');
-			}
-		};
+			};
 
 	public get: interfaces.Container['get'] = async <
 		Id extends interfaces.ServiceIdentifier<unknown>,

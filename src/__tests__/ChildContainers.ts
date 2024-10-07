@@ -81,14 +81,14 @@ describe('child containers', () => {
 	});
 
 	describe('optional injections', () => {
-		it("will request optional injections from it's parent", async () => {
+		it('will request optional injections from it\'s parent', async () => {
 			container.bind(token).toConstantValue('Hello, world!');
 			const child = container.createChild();
 
 			await expect(child.get(token, { optional: true })).resolves.toBe('Hello, world!');
 		});
 
-		it("will requests multiple optional injections from it's parent if it has no explicit bindings", async () => {
+		it('will requests multiple optional injections from it\'s parent if it has no explicit bindings', async () => {
 			container.bind(token).toConstantValue('Hello, world!');
 			const child = container.createChild();
 

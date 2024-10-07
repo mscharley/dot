@@ -1,9 +1,0 @@
-dist/
-docs/
-examples/
-docs/
-jest.config.ts
-dot.cjs
-dot.js
-dot.d.ts
-dot.v4.d.ts

@@ -6,7 +6,7 @@ export const injectionFromIdentifier = <T>(
 	id: interfaces.InjectionIdentifier<T>,
 	index: number,
 ): Injection<T, interfaces.InjectedMetadata<typeof id>> => {
-	const token = Array.isArray(id) ? id[0] : id as Exclude<typeof id, unknown[]>;
+	const token = Array.isArray(id) ? id[0] : id;
 	const partialOpts = Array.isArray(id) ? id[1] : {};
 	if (typeof token === 'function' || isToken(token)) {
 		return {

@@ -118,7 +118,7 @@ export const calculatePlan = <T>(
 		const binding = binds[0]!;
 		return planBinding(binding, input, [...resolutionPath, token], resolveBinding, (i) =>
 			calculatePlan(getBindings, resolveBinding, i, [...resolutionPath, token], parent),
-		) as Plan;
+		);
 	} else {
 		return [
 			...(binds.flatMap((b) =>

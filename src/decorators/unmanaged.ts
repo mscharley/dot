@@ -23,6 +23,6 @@ import { Token } from '../Token.js';
  * @public
  */
 export const unmanaged = <T>(defaultValue: T, name?: string): interfaces.DirectInjection<T> => ({
-	token: new Token(`unmanaged:${name ?? `${defaultValue}`}`),
+	token: new Token(`unmanaged:${name ?? `${defaultValue as string}`}`),
 	generator: () => defaultValue,
 });

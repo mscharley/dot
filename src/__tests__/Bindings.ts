@@ -47,11 +47,13 @@ describe('bindings', () => {
 
 	describe('bind()', () => {
 		describe('toConstantValue()', () => {
-			it("can't be scoped", () => {
+			it('can\'t be scoped', () => {
 				expect.assertions(0);
 				const c = new Container();
+				/* eslint-disable @typescript-eslint/no-unused-expressions */
 				// @ts-expect-error This error is the actual test
 				c.bind(token).inSingletonScope().toConstantValue;
+				/* eslint-enable @typescript-eslint/no-unused-expressions */
 			});
 
 			it('acts like singleton scope', async () => {
@@ -110,7 +112,7 @@ describe('bindings', () => {
 				});
 			});
 
-			it("doesn't print warnings if used with any kind of explicit scope", () => {
+			it('doesn\'t print warnings if used with any kind of explicit scope', () => {
 				const warn = jest.fn<LoggerFn>();
 				const c = new Container({
 					logger: { warn: warn as unknown as LoggerFn, debug: noop, info: noop, trace: noop },
@@ -209,7 +211,7 @@ describe('bindings', () => {
 				await expect(v).resolves.toBe('10');
 			});
 
-			it("doesn't print warnings if used with any kind of explicit scope", () => {
+			it('doesn\'t print warnings if used with any kind of explicit scope', () => {
 				const warn = jest.fn<LoggerFn>();
 				const c = new Container({
 					logger: { warn: warn as unknown as LoggerFn, debug: noop, info: noop, trace: noop },

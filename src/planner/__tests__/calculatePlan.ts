@@ -76,7 +76,7 @@ describe('calculatePlan', () => {
 						metadata: {},
 					} satisfies DynamicBinding<Test, interfaces.MetadataObject>,
 				] as unknown as Array<Binding<T, Meta>>,
-			// eslint-disable-next-line @typescript-eslint/no-magic-numbers
+
 			resolveBinding as Parameters<typeof calculatePlan>[1],
 			{
 				type: 'request',

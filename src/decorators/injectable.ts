@@ -55,30 +55,30 @@ const _configureInjectable = <T extends object, Tokens extends Array<interfaces.
 export const injectable = <T extends object, Tokens extends Array<interfaces.InjectionIdentifier<unknown>>>(
 	...constructorTokens: Tokens
 ): ClassDecorator<T, interfaces.ArgsForInjectionIdentifiers<Tokens>> =>
-		((target, context) => {
-			/* c8 ignore start */
-			if (context == null) {
-				// experimental
-				const klass = ((): typeof target =>
-					// @ts-expect-error - TypeScript doesn't like this construct when using the generic interface types.
-					class extends target {
-						public constructor(...args: interfaces.ArgsForInjectionIdentifiers<Tokens>) {
-							super(...(args as never));
-							getPropertyInjections(klass).forEach(({ name, id }) => {
-								const token = tokenForIdentifier(id);
-								// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
-								(this as any)[name] = Container.resolvePropertyInjection(token, [token]);
-							});
-						}
-					})();
-				_configureInjectable(klass, constructorTokens);
+	((target, context) => {
+		/* c8 ignore start */
+		if (context == null) {
+			// experimental
+			const klass = ((): typeof target =>
+			// @ts-expect-error - TypeScript doesn't like this construct when using the generic interface types.
+				class extends target {
+					public constructor(...args: interfaces.ArgsForInjectionIdentifiers<Tokens>) {
+						super(...(args as never));
+						getPropertyInjections(klass).forEach(({ name, id }) => {
+							const token = tokenForIdentifier(id);
+							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
+							(this as any)[name] = Container.resolvePropertyInjection(token, [token]);
+						});
+					}
+				})();
+			_configureInjectable(klass, constructorTokens);
 
-				return klass;
+			return klass;
 			/* c8 ignore end */
-			} else {
-				// tc39
-				_configureInjectable(target, constructorTokens);
+		} else {
+			// tc39
+			_configureInjectable(target, constructorTokens);
 
-				return undefined;
-			}
-		}) as ClassDecorator<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>;
+			return undefined;
+		}
+	}) as ClassDecorator<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>;

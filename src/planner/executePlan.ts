@@ -52,7 +52,7 @@ const createClass = async (
 		throw new TokenResolutionError(
 			'Encountered an error while creating a class',
 			step.resolutionPath,
-			err instanceof Error ? err : new Error(`${err}`),
+			err instanceof Error ? err : new Error(`${err as string}`),
 		);
 	}
 };

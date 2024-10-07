@@ -35,7 +35,7 @@ describe('metadata bindings', () => {
 			});
 		});
 
-		it("shouldn't allow autobound classes when fetching with metadata", async () => {
+		it('shouldn\'t allow autobound classes when fetching with metadata', async () => {
 			@injectable()
 			class Test {}
 
@@ -122,7 +122,7 @@ describe('metadata bindings', () => {
 			await expect(c.get(token, { metadata: { name: 'Goodbye' } })).rejects.toMatchObject({ message: 'Unable to resolve token' });
 		});
 
-		it("doesn't require metadata for transient bindings", async () => {
+		it('doesn\'t require metadata for transient bindings', async () => {
 			const factory = jest.fn(({ metadata }: interfaces.FactoryContext<Metadata>) => (): string => metadata.name ?? 'fallback');
 
 			c.bind(token).inTransientScope().toFactory([], factory);
