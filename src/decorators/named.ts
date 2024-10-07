@@ -20,4 +20,4 @@ export const named = <Id extends NamedToken<unknown>>(
 	name: string,
 	options?: Partial<interfaces.InjectOptions<{ name: string }>>,
 ): [Id, Partial<interfaces.InjectOptions<{ name: string }>>] =>
-		[id, { ...options, metadata: { name } }];
+	[id, { ...options, metadata: { name } }];

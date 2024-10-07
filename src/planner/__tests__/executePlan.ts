@@ -61,13 +61,13 @@ describe('executePlan', () => {
 		});
 	});
 
-	it("throws an error if the plan doesn't generate the type of thing it is supposed to", async () => {
+	it('throws an error if the plan doesn\'t generate the type of thing it is supposed to', async () => {
 		await expect(async () => executePlan([], basicRequest(strToken))).rejects.toMatchObject({
 			message: 'Unable to resolve final request: Token<Symbol(string)>',
 		});
 	});
 
-	it("throws an error if there aren't enough services in the stack", async () => {
+	it('throws an error if there aren\'t enough services in the stack', async () => {
 		await expect(async () =>
 			executePlan(
 				[
