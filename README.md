@@ -2,13 +2,6 @@
 
 [![npm](https://img.shields.io/npm/v/@mscharley/dot.svg)](https://www.npmjs.com/package/@mscharley/dot)
 
-**Source:** [https://github.com/mscharley/dot](https://github.com/mscharley/dot)  
-**Author:** Matthew Scharley  
-**Contributors:** [See contributors on GitHub][gh-contrib]  
-**Bugs/Support:** [Github Issues][gh-issues]  
-**License:** [MIT license][license]  
-**Status:** Active
-
 ## Synopsis
 
 A small, well-tested IOC framework for TypeScript and JavaScript with a focus on type safety and forward compatibility.
