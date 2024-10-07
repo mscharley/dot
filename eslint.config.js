@@ -10,10 +10,7 @@ export default [
 			'docs/',
 			'examples/',
 			'reports/',
-			'dot.cjs',
-			'dot.js',
-			'dot.d.ts',
-			'dot.v4.d.ts',
+			'dot.*',
 		],
 	},
 	{
