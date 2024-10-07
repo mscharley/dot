@@ -1,5 +1,17 @@
 # @mscharley/dot
 
+## 2.0.0
+
+### Major Changes
+
+- 3e3cf60: Remove support for node 16.x
+- d7cb139: Changed license from MIT to MPL-2.0
+
+### Patch Changes
+
+- 233c01e: fix(deps): update dependency typescript to v5.5.2
+- c56d8f5: fix(deps): update dependency typescript to v5.6.2
+
 ## 1.6.1
 
 ### Patch Changes
