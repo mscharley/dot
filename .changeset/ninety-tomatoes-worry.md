@@ -1,5 +1,5 @@
 ---
-'@mscharley/dot': major
+'@mscharley/dot': patch
 ---
 
 Beta support for treeshaking containers.
