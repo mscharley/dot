@@ -21,6 +21,15 @@ describe('node-loader', () => {
 		return expect(load('test.js', { format: 'module' }, next).then((v) => v.source.toString('utf8')));
 	};
 
+	it('passes through non-module results', async () => {
+		const result = {
+			source: Buffer.from('Hello world!', 'utf8'),
+		};
+		next.mockImplementationOnce(async () => Promise.resolve(result));
+
+		await expect(load('test.txt', { format: 'text' }, next)).resolves.toBe(result);
+	});
+
 	it('can inject for a constant export', async () => {
 		await expectLoadContents('export const foo = {};').resolves.toMatchInlineSnapshot(`
 "export const foo = {};

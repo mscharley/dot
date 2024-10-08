@@ -14,6 +14,7 @@ import type { ContainerModuleMeta } from '../interfaces/ContainerModule.js';
 let Parser: typeof import('acorn').Parser | undefined;
 try {
 	Parser = (await import('acorn')).Parser;
+/* c8 ignore next 3 */
 } catch (_e) {
 	console.error('ERROR: Unable to use the dot loader without installing the acorn library, it is not installed automatically. Running `npm i acorn` will resolve this issue.');
 }
@@ -61,7 +62,7 @@ const exportEntries = (url: string) => (node: Statement | ModuleDeclaration): Co
 				case 'ClassDeclaration':
 					return [{ url, name: node.declaration.id.name }];
 
-				default:
+				/* c8 ignore next */ default:
 					return [];
 			}
 
