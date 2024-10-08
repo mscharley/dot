@@ -1,14 +1,20 @@
 {
 	"$schema": "https://turbo.build/schema.json",
 	"globalPassThroughEnv": ["ASDF_*", "NODE_*", "PNPM_*"],
+	"globalDependencies": ["package.json", "pnpm-lock.yaml"],
 	"tasks": {
+		"clean": {
+			"cache": false
+		},
 		"build": {
 			"dependsOn": ["build:tsc", "build:api", "build:esbuild:cjs", "build:esbuild:esm"]
 		},
 		"build:tsc": {
+			"inputs": ["src/**"]
 		},
 		"build:api": {
-			"dependsOn": ["build:tsc"]
+			"dependsOn": ["build:tsc"],
+			"inputs": ["dist/**/*.d.ts", "api-extractor.json"]
 		},
 		"build:esbuild:cjs": {
 			"dependsOn": ["build:tsc"]
