@@ -17,6 +17,7 @@ export type { DirectInjection } from './DirectInjection.js';
 export type { FactoryContext } from './FactoryContext.js';
 export type { Constructor, Fn, BindFunction, IsBoundFunction, RebindFunction, UnbindFunction } from './Functions.js';
 export type { ArgsForInjectionIdentifiers, InjectedMetadata, InjectedType, InjectionIdentifier } from './InjectionIdentifier.js';
+export type { InjectionMetadata } from './InjectionMetadata.js';
 export type { InjectOptions } from './InjectOptions.js';
 export type { Logger, LoggerFn, LoggerLevel } from './Logger.js';
 export type { MetadataObject } from './MetadataObject.js';

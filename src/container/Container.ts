@@ -15,6 +15,7 @@ import { ClassBindingBuilder } from './BindingBuilder.js';
 import { executePlan } from '../planner/executePlan.js';
 import { isMetadataToken } from '../util/isToken.js';
 import { isNever } from '../util/isNever.js';
+import { isNotNullOrUndefined } from '../util/isNotNullOrUndefined.js';
 import { noop } from '../util/noop.js';
 import type { Request } from '../models/Request.js';
 import { ResolutionCache } from './ResolutionCache.js';
@@ -134,7 +135,7 @@ export class Container implements interfaces.Container {
 		return new Container({ ...this.config, ...options, parent: this });
 	};
 
-	public readonly getRequiredContainerModules: interfaces.Container['getRequiredContainerModules'] = (services) => {
+	public readonly getInjectionMetadata: interfaces.Container['getInjectionMetadata'] = (services) => {
 		this.#ensureBindingsCompleted();
 		const defaultOptions: interfaces.InjectOptions<interfaces.MetadataObject> = {
 			multiple: false,
@@ -180,11 +181,24 @@ export class Container implements interfaces.Container {
 				case 'aggregateMultiple':
 					return [];
 				case 'requestFromParent':
-					return step.parent.getRequiredContainerModules([step.token]).map((m) => [`${m.name}::${m.url}`, m]);
+					return step.parent.getInjectionMetadata([step.token]).dependencies.map((m) => [`${m.name}::${m.url}`, m]);
+
+				/* c8 ignore next */
 				default: return isNever(step, 'Invalid step in plan');
 			}
 		});
-		return Object.values(Object.fromEntries(entries));
+
+		const injections = services
+			.map((d): undefined | interfaces.ContainerModuleMeta => (d as unknown as Record<symbol, undefined | interfaces.ContainerModuleMeta>)[Symbol.for('__dot_import_stats')])
+			.filter(isNotNullOrUndefined);
+		if (injections.length !== services.length) {
+			throw new Error('Unable to load metadata for some of your requested injections.');
+		}
+
+		return {
+			injections,
+			dependencies: Object.values(Object.fromEntries(entries)),
+		};
 	};
 
 	public readonly addBinding = <T, Metadata extends interfaces.MetadataObject>(
@@ -290,6 +304,8 @@ export class Container implements interfaces.Container {
 							Container.#currentRequest = undefined;
 						}
 					}
+
+					/* c8 ignore next 2 */
 					default:
 						return isNever(binding, 'Unknown binding found');
 				}
@@ -382,6 +398,8 @@ export class Container implements interfaces.Container {
 					this.#validateInjections(binding, getInjections(binding.ctr));
 					continue;
 				}
+
+				/* c8 ignore next 2 */
 				default:
 					return isNever(binding, 'Invalid binding');
 			}

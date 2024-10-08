@@ -1,6 +1,5 @@
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import type { interfaces } from '@mscharley/dot';
 import { mkdirp } from 'fs-extra/esm';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import { register } from 'node:module';
@@ -17,9 +16,7 @@ const [{ generateContainer }, { main }] = await Promise.all([
 ]);
 
 const c = await generateContainer();
-// eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-const deps = main.dependencies.map((d): interfaces.ContainerModuleMeta => (d as any)[Symbol.for('__dot_import_stats')]);
-const modules = c.getRequiredContainerModules(main.dependencies);
+const { dependencies: modules, injections: deps } = c.getInjectionMetadata(main.dependencies);
 const onlyUnique = <T>(value: T, index: number, array: T[]): boolean => array.indexOf(value) === index;
 
 const optimisedOutputFile = './dist/opt/index.js';

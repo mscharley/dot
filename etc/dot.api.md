@@ -93,7 +93,7 @@ interface Container {
         <Id extends ServiceIdentifier<unknown>>(id: Id, options?: Partial<InjectOptions<MetadataForIdentifier<Id>>>): Promise<InjectedType<[Id, typeof options]>>;
     };
     // @beta
-    readonly getRequiredContainerModules: (injections: ReadonlyArray<ServiceIdentifier<unknown>>) => ContainerModuleMeta[];
+    readonly getInjectionMetadata: (injections: ReadonlyArray<ServiceIdentifier<unknown>>) => InjectionMetadata;
     // Warning: (ae-unresolved-inheritdoc-reference) The @inheritDoc reference could not be resolved: This type of declaration is not supported yet by the resolver
     //
     // (undocumented)
@@ -196,6 +196,20 @@ type InjectedType<T extends InjectionIdentifier<unknown>> = T extends [ServiceId
 type InjectionIdentifier<T> = ServiceIdentifier<T> | [ServiceIdentifier<T>, Partial<InjectOptions<MetadataObject>> | undefined] | DirectInjection<T>;
 
 // @public
+interface InjectionMetadata {
+    // Warning: (ae-incompatible-release-tags) The symbol "dependencies" is marked as @public, but its signature references "ContainerModuleMeta" which is marked as @beta
+    // Warning: (ae-incompatible-release-tags) The symbol "dependencies" is marked as @public, but its signature references "ContainerModuleMeta" which is marked as @beta
+    //
+    // (undocumented)
+    dependencies: ContainerModuleMeta[];
+    // Warning: (ae-incompatible-release-tags) The symbol "injections" is marked as @public, but its signature references "ContainerModuleMeta" which is marked as @beta
+    // Warning: (ae-incompatible-release-tags) The symbol "injections" is marked as @public, but its signature references "ContainerModuleMeta" which is marked as @beta
+    //
+    // (undocumented)
+    injections: ContainerModuleMeta[];
+}
+
+// @public
 interface InjectOptions<Metadata extends MetadataObject> {
     metadata: Partial<Metadata>;
     multiple: boolean;
@@ -231,6 +245,7 @@ declare namespace interfaces {
         InjectedMetadata,
         InjectedType,
         InjectionIdentifier,
+        InjectionMetadata,
         InjectOptions,
         Logger,
         LoggerFn,
