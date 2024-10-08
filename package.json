@@ -22,13 +22,13 @@
 	"exports": {
 		".": {
 			"import": {
-				"types": "./dist/index.d.ts",
+				"types": "./dist/dot.d.ts",
 				"default": "./dist/index.js"
 			}
 		},
 		"./loader": {
 			"import": {
-				"types": "./dist/loader.d.ts",
+				"types": "./dist/loader/index.d.ts",
 				"default": "./dist/loader/index.js"
 			}
 		}
