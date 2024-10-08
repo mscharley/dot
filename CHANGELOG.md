@@ -1,5 +1,15 @@
 # @mscharley/dot
 
+## 2.0.1
+
+### Patch Changes
+
+- 39fcd74: Remove support for CommonJS
+- 39fcd74: Remove support for TypeScript 4.x
+- 75f9a98: Beta support for treeshaking containers.
+
+  This isn't a breaking change for existing code.
+
 ## 2.0.0
 
 ### Major Changes
