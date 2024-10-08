@@ -1,6 +1,6 @@
 {
 	"$schema": "https://turbo.build/schema.json",
-	"globalPassThroughEnv": ["ASDF_*"],
+	"globalPassThroughEnv": ["ASDF_*", "NODE_*", "PNPM_*"],
 	"tasks": {
 		"build": {
 			"dependsOn": ["build:tsc", "build:api", "build:esbuild:cjs", "build:esbuild:esm"]
@@ -15,6 +15,11 @@
 		},
 		"build:esbuild:esm": {
 			"dependsOn": ["build:tsc"]
+		},
+		"build:docs": {
+			"dependsOn": ["build:api"],
+			"env": ["HUGO_*"],
+			"passThroughEnv": ["GO_*"]
 		},
 		"test": {
 			"dependsOn": ["build:tsc", "test:eslint", "test:api", "test:tsc:experimental", "test:jest", "test:cjs-esm-compat"]

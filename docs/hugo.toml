@@ -29,3 +29,11 @@ sidebar_cache_limit = 100
 proxy = "direct"
 [[module.imports]]
 path = "github.com/google/docsy"
+
+[security.exec]
+osEnv = [
+	# This is the default value.
+	'(?i)^((HTTPS?|NO)_PROXY|PATH(EXT)?|APPDATA|TE?MP|TERM)$',
+	# Allow ASDF variables as well
+	'^ASDF_',
+]

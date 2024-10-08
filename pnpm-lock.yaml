@@ -4,6 +4,8 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+packageExtensionsChecksum: 3acee494cfa8a9a6e6cd06a792c985aa
+
 importers:
 
   .:
@@ -11,6 +13,15 @@ importers:
       async-mutex:
         specifier: ^0.5.0
         version: 0.5.0
+      autoprefixer:
+        specifier: 10.4.20
+        version: 10.4.20(postcss@8.4.47)
+      postcss:
+        specifier: 8.4.47
+        version: 8.4.47
+      postcss-cli:
+        specifier: 11.0.0
+        version: 11.0.0(autoprefixer@10.4.20(postcss@8.4.47))(postcss@8.4.47)
       tslib:
         specifier: '*'
         version: 2.7.0
@@ -48,9 +59,6 @@ importers:
       '@swc/jest':
         specifier: 0.2.36
         version: 0.2.36(@swc/core@1.7.28)
-      autoprefixer:
-        specifier: 10.4.20
-        version: 10.4.20(postcss@8.4.47)
       esbuild:
         specifier: 0.24.0
         version: 0.24.0
@@ -63,12 +71,6 @@ importers:
       jest:
         specifier: 29.7.0
         version: 29.7.0(@types/node@22.7.5)(ts-node@10.9.2(@swc/core@1.7.28)(@types/node@22.7.5)(typescript@5.6.2))
-      postcss:
-        specifier: 8.4.47
-        version: 8.4.47
-      postcss-cli:
-        specifier: 11.0.0
-        version: 11.0.0(postcss@8.4.47)
       stryker-cli:
         specifier: 1.0.2
         version: 1.0.2
@@ -81,6 +83,18 @@ importers:
       typescript:
         specifier: 5.6.2
         version: 5.6.2
+
+  docs:
+    devDependencies:
+      autoprefixer:
+        specifier: 10.4.20
+        version: 10.4.20(postcss@8.4.47)
+      postcss:
+        specifier: 8.4.47
+        version: 8.4.47
+      postcss-cli:
+        specifier: 11.0.0
+        version: 11.0.0(postcss@8.4.47)
 
 packages:
 
@@ -6651,6 +6665,26 @@ snapshots:
 
   possible-typed-array-names@1.0.0: {}
 
+  postcss-cli@11.0.0(autoprefixer@10.4.20(postcss@8.4.47))(postcss@8.4.47):
+    dependencies:
+      autoprefixer: 10.4.20(postcss@8.4.47)
+      chokidar: 3.6.0
+      dependency-graph: 0.11.0
+      fs-extra: 11.2.0
+      get-stdin: 9.0.0
+      globby: 14.0.2
+      picocolors: 1.1.0
+      postcss: 8.4.47
+      postcss-load-config: 5.1.0(postcss@8.4.47)
+      postcss-reporter: 7.1.0(postcss@8.4.47)
+      pretty-hrtime: 1.0.3
+      read-cache: 1.0.0
+      slash: 5.1.0
+      yargs: 17.7.2
+    transitivePeerDependencies:
+      - jiti
+      - tsx
+
   postcss-cli@11.0.0(postcss@8.4.47):
     dependencies:
       chokidar: 3.6.0
@@ -6659,7 +6693,7 @@ snapshots:
       get-stdin: 9.0.0
       globby: 14.0.2
       picocolors: 1.1.0
-      postcss: 8.4.47
+      postcss: 8.4.47(autoprefixer@10.4.20)
       postcss-load-config: 5.1.0(postcss@8.4.47)
       postcss-reporter: 7.1.0(postcss@8.4.47)
       pretty-hrtime: 1.0.3
@@ -6687,6 +6721,13 @@ snapshots:
 
   postcss@8.4.47:
     dependencies:
+      nanoid: 3.3.7
+      picocolors: 1.1.0
+      source-map-js: 1.2.1
+
+  postcss@8.4.47(autoprefixer@10.4.20):
+    dependencies:
+      autoprefixer: 10.4.20(postcss@8.4.47)
       nanoid: 3.3.7
       picocolors: 1.1.0
       source-map-js: 1.2.1
