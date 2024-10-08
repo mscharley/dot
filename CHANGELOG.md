@@ -1,5 +1,11 @@
 # @mscharley/dot
 
+## 2.0.2
+
+### Patch Changes
+
+- 44bd077: Attempt to fix the release tags
+
 ## 2.0.1
 
 ### Patch Changes
