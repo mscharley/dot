@@ -2,6 +2,7 @@ dist/
 node_modules/
 reports/
 temp/
+.turbo/
 tsdoc-metadata.json
 *.tgz
 
