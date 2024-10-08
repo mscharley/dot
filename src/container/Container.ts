@@ -171,7 +171,7 @@ export class Container implements interfaces.Container {
 					} else {
 						const meta = (step.binding.module as unknown as Record<symbol, undefined | interfaces.ContainerModuleMeta>)[Symbol.for('__dot_import_stats')];
 						if (meta == null) {
-							throw new Error("It appears you haven't used the custom loader.");
+							throw new Error('It appears you haven\'t used the custom loader.');
 						}
 						return [[`${meta.name}::${meta.url}`, meta]];
 					}
