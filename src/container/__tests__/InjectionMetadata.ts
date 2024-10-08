@@ -54,7 +54,6 @@ describe('injectionMetadata', () => {
 		const c2 = c.createChild();
 		c2.load(module);
 
-		process.stdout.write('<<<<< HERE\n');
 		expect(c2.getInjectionMetadata([t])).toMatchObject({
 			injections: [{ name: 'token' }],
 			dependencies: [{ name: 'module2' }, { name: 'module' }],

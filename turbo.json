@@ -7,7 +7,7 @@
 			"cache": false
 		},
 		"build": {
-			"dependsOn": ["build:tsc", "build:api", "build:esbuild:cjs", "build:esbuild:esm"]
+			"dependsOn": ["build:tsc", "build:api"]
 		},
 		"build:tsc": {
 			"inputs": ["src/**"]
@@ -15,12 +15,6 @@
 		"build:api": {
 			"dependsOn": ["build:tsc"],
 			"inputs": ["dist/**/*.d.ts", "api-extractor.json"]
-		},
-		"build:esbuild:cjs": {
-			"dependsOn": ["build:tsc"]
-		},
-		"build:esbuild:esm": {
-			"dependsOn": ["build:tsc"]
 		},
 		"build:docs": {
 			"dependsOn": ["build:api"],
