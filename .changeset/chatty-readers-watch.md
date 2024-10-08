@@ -1,5 +1,5 @@
 ---
-'@mscharley/dot': major
+'@mscharley/dot': patch
 ---
 
 Remove support for CommonJS
