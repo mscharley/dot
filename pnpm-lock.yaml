@@ -60,7 +60,7 @@ importers:
         specifier: 0.2.36
         version: 0.2.36(@swc/core@1.7.28)
       acorn:
-        specifier: ^8.12.1
+        specifier: 8.12.1
         version: 8.12.1
       esbuild:
         specifier: 0.24.0
@@ -86,18 +86,6 @@ importers:
       typescript:
         specifier: 5.6.2
         version: 5.6.2
-
-  docs:
-    devDependencies:
-      autoprefixer:
-        specifier: 10.4.20
-        version: 10.4.20(postcss@8.4.47)
-      postcss:
-        specifier: 8.4.47
-        version: 8.4.47
-      postcss-cli:
-        specifier: 11.0.0
-        version: 11.0.0(postcss@8.4.47)
 
 packages:
 
@@ -2732,6 +2720,7 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
     peerDependencies:
+      autoprefixer: '*'
       postcss: ^8.0.0
 
   postcss-load-config@5.1.0:
@@ -6688,25 +6677,6 @@ snapshots:
       - jiti
       - tsx
 
-  postcss-cli@11.0.0(postcss@8.4.47):
-    dependencies:
-      chokidar: 3.6.0
-      dependency-graph: 0.11.0
-      fs-extra: 11.2.0
-      get-stdin: 9.0.0
-      globby: 14.0.2
-      picocolors: 1.1.0
-      postcss: 8.4.47(autoprefixer@10.4.20)
-      postcss-load-config: 5.1.0(postcss@8.4.47)
-      postcss-reporter: 7.1.0(postcss@8.4.47)
-      pretty-hrtime: 1.0.3
-      read-cache: 1.0.0
-      slash: 5.1.0
-      yargs: 17.7.2
-    transitivePeerDependencies:
-      - jiti
-      - tsx
-
   postcss-load-config@5.1.0(postcss@8.4.47):
     dependencies:
       lilconfig: 3.1.2
@@ -6724,13 +6694,6 @@ snapshots:
 
   postcss@8.4.47:
     dependencies:
-      nanoid: 3.3.7
-      picocolors: 1.1.0
-      source-map-js: 1.2.1
-
-  postcss@8.4.47(autoprefixer@10.4.20):
-    dependencies:
-      autoprefixer: 10.4.20(postcss@8.4.47)
       nanoid: 3.3.7
       picocolors: 1.1.0
       source-map-js: 1.2.1
