@@ -1,0 +1,32 @@
+{
+	"$schema": "https://turbo.build/schema.json",
+	"globalPassThroughEnv": ["ASDF_*"],
+	"tasks": {
+		"build": {
+			"dependsOn": ["build:tsc", "build:api", "build:esbuild:cjs", "build:esbuild:esm"]
+		},
+		"build:tsc": {
+		},
+		"build:api": {
+			"dependsOn": ["build:tsc"]
+		},
+		"build:esbuild:cjs": {
+			"dependsOn": ["build:tsc"]
+		},
+		"build:esbuild:esm": {
+			"dependsOn": ["build:tsc"]
+		},
+		"test": {
+			"dependsOn": ["build:tsc", "test:eslint", "test:api", "test:tsc:experimental", "test:jest", "test:cjs-esm-compat"]
+		},
+		"test:jest": {
+			"dependsOn": ["test:jest:experimental", "test:jest:tc39"]
+		},
+		"test:cjs-esm-compat": {
+			"dependsOn": ["build:tsc"]
+		},
+		"rebuild-test": {
+			"dependsOn": ["clean", "build", "test", "stryker", "build:docs"]
+		}
+	}
+}

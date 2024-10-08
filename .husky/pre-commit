@@ -1,4 +1,0 @@
-#!/usr/bin/env sh
-
-npm run build:tsc
-npm run test:api
