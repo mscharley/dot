@@ -22,16 +22,7 @@
 			"passThroughEnv": ["GO_*"]
 		},
 		"test": {
-			"dependsOn": ["build:tsc", "test:eslint", "test:api", "test:tsc:experimental", "test:jest", "test:cjs-esm-compat"]
-		},
-		"test:jest": {
-			"dependsOn": ["test:jest:experimental", "test:jest:tc39"]
-		},
-		"test:cjs-esm-compat": {
-			"dependsOn": ["build:tsc"]
-		},
-		"rebuild-test": {
-			"dependsOn": ["clean", "build", "test", "stryker", "build:docs"]
+			"dependsOn": ["test:eslint", "test:api", "test:tsc:experimental", "test:jest:experimental", "test:jest:tc39"]
 		}
 	}
 }
