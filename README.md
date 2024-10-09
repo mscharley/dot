@@ -30,7 +30,7 @@ Known implementations:
 
 ## Usage
 
-[For usage examples, please see the documentation.](https://mscharley.github.io/dot/docs/dot.html#example)
+[For usage examples, please see the documentation.](https://mscharley.github.io/dot/docs/dot/_root/#example)
 
 ## Inspiration
 
