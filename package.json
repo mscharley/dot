@@ -72,7 +72,7 @@
 		"@jest/globals": "29.7.0",
 		"@microsoft/api-extractor": "7.47.9",
 		"@mscharley/api-documenter-hugo": "1.0.5",
-		"@mscharley/eslint-config": "4.0.3",
+		"@mscharley/eslint-config": "4.0.4",
 		"@mscharley/prettier-config": "3.0.7",
 		"@stryker-mutator/core": "8.6.0",
 		"@stryker-mutator/jest-runner": "8.6.0",
