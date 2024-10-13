@@ -53,9 +53,6 @@ importers:
       '@stryker-mutator/typescript-checker':
         specifier: 8.6.0
         version: 8.6.0(@stryker-mutator/core@8.6.0)(typescript@5.6.3)
-      '@swc/core':
-        specifier: 1.7.35
-        version: 1.7.35
       '@swc/jest':
         specifier: 0.2.36
         version: 0.2.36(@swc/core@1.7.35)
