@@ -6,6 +6,7 @@
 
 /* eslint-disable no-console */
 /* eslint-disable n/no-unpublished-import */
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 
 import type { AssignmentProperty, ModuleDeclaration, Statement, VariableDeclarator } from 'acorn';
 import type { ContainerModuleMeta } from '../interfaces/ContainerModule.js';
