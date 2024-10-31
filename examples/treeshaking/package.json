@@ -1,17 +1,21 @@
 {
 	"name": "@mscharley/dot-examples-treeshaking",
 	"version": "0.0.0-development",
+	"engines": {
+		"node": "22"
+	},
 	"private": true,
 	"type": "module",
 	"scripts": {
 		"clean": "rm -rf dist",
 		"build": "tsc && node ./dist/framework/build.js",
 		"unoptimised": "node -e 'import(\"./dist/bundled/index.js\").then(({ run, main }) => run(main))'",
-		"optimised": "node -e 'import(\"./dist/bundled.opt/index.js\").then(({ main }) => main())'"
+		"optimised": "node -e 'import(\"./dist/bundled.opt/index.js\").then(({ main }) => main())'",
+		"test": "eslint ."
 	},
 	"license": "MIT",
 	"dependencies": {
-		"@mscharley/dot": "file:../.."
+		"@mscharley/dot": "workspace:*"
 	},
 	"devDependencies": {
 		"@rollup/plugin-node-resolve": "^15.3.0",

@@ -1,0 +1,30 @@
+# TypeScript tests
+src/demo
+src/**/__tests__
+src/**/__mocks__
+src/**/__utils__
+examples
+
+# Dev files
+reports/
+docs/
+temp/
+.changeset/
+.prettier*
+.github/
+.husky
+.nvmrc
+.tool-versions
+.vscode/
+api-extractor.json
+tsconfig*.json
+tsdoc-metadata.json
+stryker.conf.json
+*.config.js
+renovate.json
+turbo.json
+.turbo
+*.tsbuildinfo
+
+# Previous versions
+*.tgz
