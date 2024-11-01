@@ -44,9 +44,7 @@
 		"test:tsc:experimental": "tsc --experimentalDecorators true --noEmit --incremental false",
 		"test:jest:tc39": "DECORATOR_TYPE=tc39 NODE_OPTIONS='--experimental-vm-modules' jest",
 		"test:jest:experimental": "DECORATOR_TYPE=experimental NODE_OPTIONS='--experimental-vm-modules' jest",
-		"stryker": "DECORATOR_TYPE=tc39 NODE_OPTIONS='--experimental-vm-modules' stryker run",
-		"cs-version": "turbo build:tsc && changeset version",
-		"cs-release": "changeset publish"
+		"stryker": "DECORATOR_TYPE=tc39 NODE_OPTIONS='--experimental-vm-modules' stryker run"
 	},
 	"author": "Matthew Scharley <matt@scharley.me>",
 	"license": "MPL-2.0",

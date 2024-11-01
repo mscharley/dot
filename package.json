@@ -4,7 +4,9 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"lint": "eslint ."
+		"lint": "eslint .",
+		"cs-version": "turbo build:tsc && changeset version",
+		"cs-release": "changeset publish"
 	},
 	"devDependencies": {
 		"@mscharley/eslint-config": "^4.0.6",
