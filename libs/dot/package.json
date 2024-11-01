@@ -65,7 +65,6 @@
 		"tslib": "*"
 	},
 	"devDependencies": {
-		"@changesets/cli": "2.27.9",
 		"@jest/globals": "29.7.0",
 		"@microsoft/api-extractor": "7.47.9",
 		"@stryker-mutator/core": "8.6.0",
