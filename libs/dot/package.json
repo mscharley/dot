@@ -1,0 +1,85 @@
+{
+	"name": "@mscharley/dot",
+	"version": "2.0.2",
+	"publishConfig": {
+		"provenance": true
+	},
+	"description": "A lightweight inversion of control framework for JavaScript and TypeScript",
+	"engines": {
+		"node": ">= 18"
+	},
+	"keywords": [
+		"node",
+		"javascript",
+		"typescript",
+		"dependency injection",
+		"di",
+		"ioc"
+	],
+	"type": "module",
+	"module": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": {
+				"types": "./dist/dot.d.ts",
+				"default": "./dist/index.js"
+			}
+		},
+		"./loader": {
+			"import": {
+				"types": "./dist/loader/index.d.ts",
+				"default": "./dist/loader/index.js"
+			}
+		}
+	},
+	"scripts": {
+		"prepack": "turbo clean && turbo build",
+		"build:tsc": "tsc",
+		"build:api": "api-extractor run --local",
+		"dev": "tsc --watch",
+		"clean": "rm -rf dist/ docs/reference/ reports/ temp/ .stryker-tmp/ tsdoc-metadata.json",
+		"test:eslint": "eslint",
+		"test:api": "api-extractor run",
+		"test:tsc:experimental": "tsc --experimentalDecorators true --noEmit --incremental false",
+		"test:jest:tc39": "DECORATOR_TYPE=tc39 NODE_OPTIONS='--experimental-vm-modules' jest",
+		"test:jest:experimental": "DECORATOR_TYPE=experimental NODE_OPTIONS='--experimental-vm-modules' jest",
+		"stryker": "DECORATOR_TYPE=tc39 NODE_OPTIONS='--experimental-vm-modules' stryker run",
+		"cs-version": "turbo build:tsc && changeset version",
+		"cs-release": "changeset publish"
+	},
+	"author": "Matthew Scharley <matt@scharley.me>",
+	"license": "MPL-2.0",
+	"bugs": {
+		"url": "https://github.com/mscharley/dot/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/mscharley/dot.git"
+	},
+	"homepage": "https://github.com/mscharley/dot#readme",
+	"funding": {
+		"type": "individual",
+		"url": "https://github.com/sponsors/mscharley"
+	},
+	"dependencies": {
+		"async-mutex": "^0.5.0",
+		"tslib": "*"
+	},
+	"devDependencies": {
+		"@changesets/cli": "2.27.9",
+		"@jest/globals": "29.7.0",
+		"@microsoft/api-extractor": "7.47.9",
+		"@stryker-mutator/core": "8.6.0",
+		"@stryker-mutator/jest-runner": "8.6.0",
+		"@stryker-mutator/typescript-checker": "8.6.0",
+		"@swc/jest": "0.2.36",
+		"acorn": "8.12.1",
+		"esbuild": "0.24.0",
+		"generic-type-guard": "5.0.2",
+		"jest": "29.7.0",
+		"stryker-cli": "1.0.2",
+		"ts-node": "10.9.2",
+		"typescript": "5.6.3"
+	}
+}

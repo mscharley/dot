@@ -2,6 +2,7 @@ import { dirname, join, relative } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { mkdirp } from 'fs-extra/esm';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
+// eslint-disable-next-line n/no-unsupported-features/node-builtins
 import { register } from 'node:module';
 import { rollup } from 'rollup';
 import { writeFile } from 'node:fs/promises';

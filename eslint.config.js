@@ -1,30 +1,36 @@
-import { configs, withStyles } from '@mscharley/eslint-config';
+import { configs, disableTypeCheckedRules, withStyles } from '@mscharley/eslint-config';
 
 export default [
 	...configs.recommended,
 	...configs.node,
 	...withStyles(),
 	...configs.license['MPL-2.0'](),
+	disableTypeCheckedRules('libs/*/*.config.js'),
 	{
 		ignores: [
-			'dist/',
+			'examples/*/dist/',
+			'examples/*/reports/',
+			'libs/*/dist/',
+			'libs/*/reports/',
 			'docs/',
-			'examples/',
-			'reports/',
-			'dot.*',
+			'libs/dot/dot.*',
 		],
 	},
 	{
 		files: [
-			'src/models/**',
-			'src/interfaces/**',
+			'libs/dot/src/models/**',
+			'libs/dot/src/interfaces/**',
 		],
 		rules: {
 			'@typescript-eslint/no-type-alias': 'off',
 		},
 	},
 	{
-		files: ['*.config.js'],
+		files: [
+			'examples/**',
+			'libs/*/*.config.js',
+			'*.config.js',
+		],
 		rules: {
 			'notice/notice': 'off',
 		},

@@ -1,0 +1,15 @@
+{
+	"name": "@mscharley/dot-docs",
+	"version": "0.0.0-development",
+	"private": true,
+	"scripts": {
+		"build:docs": "api-documenter-hugo hugo -i ../libs/dot/reports/docs -o ./content/docs && hugo --gc --minify"
+	},
+	"dependencies": {
+		"@mscharley/dot": "workspace:*",
+		"@mscharley/api-documenter-hugo": "1.0.6",
+		"autoprefixer": "10.4.20",
+		"postcss": "8.4.47",
+		"postcss-cli": "11.0.0"
+	}
+}

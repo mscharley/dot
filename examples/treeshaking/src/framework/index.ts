@@ -25,6 +25,6 @@ export const entry = <Tokens extends Array<interfaces.ServiceIdentifier<unknown>
 export const run = async <Tokens extends Array<interfaces.ServiceIdentifier<unknown>>>(def: EntryPoint<Tokens>): Promise<void> => {
 	const c = await generateContainer();
 	const deps = await Promise.all(def.dependencies.map(async (d) => c.get(d))) as interfaces.ArgsForInjectionIdentifiers<Tokens>;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-argument
 	await def.handler(...(deps as any));
 };

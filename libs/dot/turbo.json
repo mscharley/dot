@@ -1,0 +1,36 @@
+{
+	"$schema": "https://turbo.build/schema.json",
+	"extends": ["//"],
+	"tasks": {
+		"build": {
+			"dependsOn": ["build:tsc", "build:api"]
+		},
+		"build:tsc": {
+			"inputs": ["src/**"]
+		},
+		"build:api": {
+			"dependsOn": ["build:tsc"],
+			"inputs": ["dist/**/*.d.ts", "api-extractor.json"],
+			"outputs": ["etc/*.api.md"]
+		},
+		"test": {
+			"dependsOn": ["test:eslint", "test:api", "test:tsc:experimental", "test:jest:experimental", "test:jest:tc39"]
+		},
+		"test:eslint": {
+			"inputs": ["src/**"]
+		},
+		"test:api": {
+			"inputs": ["src/**", "etc/*.api.md"]
+		},
+		"test:tsc:experimental": {
+			"inputs": ["src/**"]
+		},
+		"test:jest:experimental": {
+			"inputs": ["src/**"]
+		},
+		"test:jest:tc39": {
+			"dependsOn": ["test:jest:experimental"],
+			"inputs": ["src/**"]
+		}
+	}
+}
