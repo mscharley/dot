@@ -44,12 +44,16 @@ const variableDeclaratorEntries = (url: string) => (d: VariableDeclarator): Cont
 			return d.id.elements
 				.flatMap((prop) => (prop != null && prop.type === 'Identifier') ? [{ url, name: prop.name }] : []);
 
+		case 'RestElement':
+		case 'MemberExpression':
+		case 'AssignmentPattern':
 		default:
 			console.warn(url, 'Unknown variable declaration in named export:', JSON.stringify(d, undefined, 2));
 			return [];
 	}
 };
 
+// eslint-disable-next-line complexity
 const exportEntries = (url: string) => (node: Statement | ModuleDeclaration): ContainerModuleMeta[] => {
 	switch (node.type) {
 		case 'ExportNamedDeclaration':
@@ -63,6 +67,7 @@ const exportEntries = (url: string) => (node: Statement | ModuleDeclaration): Co
 				case 'ClassDeclaration':
 					return [{ url, name: node.declaration.id.name }];
 
+				/* c8 ignore next */ case undefined:
 				/* c8 ignore next */ default:
 					return [];
 			}
@@ -86,10 +91,55 @@ const exportEntries = (url: string) => (node: Statement | ModuleDeclaration): Co
 				case 'FunctionExpression':
 					return [];
 
+				/* c8 ignore next */ case 'MemberExpression':
+				/* c8 ignore next */ case 'MetaProperty':
+				/* c8 ignore next */ case 'NewExpression':
+				/* c8 ignore next */ case 'ThisExpression':
+				/* c8 ignore next */ case 'CallExpression':
+				/* c8 ignore next */ case 'UnaryExpression':
+				/* c8 ignore next */ case 'YieldExpression':
+				/* c8 ignore next */ case 'ClassExpression':
+				/* c8 ignore next */ case 'AwaitExpression':
+				/* c8 ignore next */ case 'ChainExpression':
+				/* c8 ignore next */ case 'ClassDeclaration':
+				/* c8 ignore next */ case 'UpdateExpression':
+				/* c8 ignore next */ case 'BinaryExpression':
+				/* c8 ignore next */ case 'ImportExpression':
+				/* c8 ignore next */ case 'LogicalExpression':
+				/* c8 ignore next */ case 'SequenceExpression':
+				/* c8 ignore next */ case 'AssignmentExpression':
+				/* c8 ignore next */ case 'ConditionalExpression':
+				/* c8 ignore next */ case 'ArrowFunctionExpression':
+				/* c8 ignore next */ case 'ParenthesizedExpression':
+				/* c8 ignore next */ case 'TaggedTemplateExpression':
 				default:
 					console.warn(url, 'Unknown default declaration type:', JSON.stringify(node, undefined, 2));
 					return [];
 			}
+
+		/* c8 ignore next */ case 'ClassDeclaration':
+		/* c8 ignore next */ case 'ExportAllDeclaration':
+		/* c8 ignore next */ case 'IfStatement':
+		/* c8 ignore next */ case 'TryStatement':
+		/* c8 ignore next */ case 'ForStatement':
+		/* c8 ignore next */ case 'WithStatement':
+		/* c8 ignore next */ case 'BlockStatement':
+		/* c8 ignore next */ case 'EmptyStatement':
+		/* c8 ignore next */ case 'BreakStatement':
+		/* c8 ignore next */ case 'ThrowStatement':
+		/* c8 ignore next */ case 'WhileStatement':
+		/* c8 ignore next */ case 'ForInStatement':
+		/* c8 ignore next */ case 'ForOfStatement':
+		/* c8 ignore next */ case 'ReturnStatement':
+		/* c8 ignore next */ case 'SwitchStatement':
+		/* c8 ignore next */ case 'LabeledStatement':
+		/* c8 ignore next */ case 'DoWhileStatement':
+		/* c8 ignore next */ case 'DebuggerStatement':
+		/* c8 ignore next */ case 'ContinueStatement':
+		/* c8 ignore next */ case 'ImportDeclaration':
+		/* c8 ignore next */ case 'ExpressionStatement':
+		/* c8 ignore next */ case 'FunctionDeclaration':
+		/* c8 ignore next */ case 'VariableDeclaration':
 		default:
 			return [];
 	}
