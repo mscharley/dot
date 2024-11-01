@@ -1,5 +1,11 @@
 # @mscharley/dot
 
+## 2.1.0
+
+### Minor Changes
+
+- a9bbf68: Remove some extraneous peer dependencies
+
 ## 2.0.2
 
 ### Patch Changes
