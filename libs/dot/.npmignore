@@ -1,21 +1,16 @@
 # TypeScript tests
-src/demo
 src/**/__tests__
+dist/**/__tests__
 src/**/__mocks__
+dist/**/__mocks__
 src/**/__utils__
+dist/**/__utils__
 examples
 
 # Dev files
 reports/
 docs/
 temp/
-.changeset/
-.prettier*
-.github/
-.husky
-.nvmrc
-.tool-versions
-.vscode/
 api-extractor.json
 tsconfig*.json
 tsdoc-metadata.json
