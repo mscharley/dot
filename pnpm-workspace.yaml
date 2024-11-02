@@ -2,3 +2,4 @@ packages:
   - 'libs/*'
   - 'examples/*'
   - 'docs'
+  - 'docusaurus'

@@ -2,20 +2,9 @@
 	"$schema": "https://turbo.build/schema.json",
 	"extends": ["//"],
 	"tasks": {
-		"build:docs": {
-			"dependsOn": ["^build"],
-			"inputs": [
-				"archetypes/**",
-				"content/**",
-				"layouts/**",
-				"resources/**",
-				"_config.yml",
-				"go.mod",
-				"go.sum",
-				"hugo.toml",
-				"index.md"
-			],
-			"outputs": ["public/**"]
+		"build": {
+			"inputs": ["blog/**", "docs/**", "src/**", "static/**", "docusaurus.config.ts"],
+			"outputs": ["build/**"]
 		}
 	}
 }

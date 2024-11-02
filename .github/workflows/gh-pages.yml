@@ -35,11 +35,6 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 0
-      - name: Install Hugo CLI
-        run: |
-          HUGO_VERSION="$(grep '^hugo ' .tool-versions | awk 'BEGIN { FS="_" } { print $2 }')"
-          wget -O ${{ runner.temp }}/hugo.deb https://github.com/gohugoio/hugo/releases/download/v${HUGO_VERSION}/hugo_extended_${HUGO_VERSION}_linux-amd64.deb \
-          && sudo dpkg -i ${{ runner.temp }}/hugo.deb
       - name: Install Dart Sass
         run: sudo snap install dart-sass
       - name: Setup Pages
@@ -53,16 +48,12 @@ jobs:
           cache: pnpm
       - name: Install dependencies
         run: pnpm install
-      - name: Build with Hugo
-        env:
-          # For maximum backward compatibility with Hugo modules
-          HUGO_ENVIRONMENT: production
-          HUGO_ENV: production
-        run: pnpx turbo build:docs -- --baseURL "${{ steps.pages.outputs.base_url }}/"
+      - name: Build with Docusaurus
+        run: pnpx turbo build --filter ./docs
       - name: Upload artifact
         uses: actions/upload-pages-artifact@56afc609e74202658d3ffba0e8f6dda462b719fa # v3.0.1
         with:
-          path: ./docs/public
+          path: ./docs/build
 
   # Deployment job
   deploy:

@@ -12,8 +12,6 @@ export default [
 			'examples/*/reports/',
 			'libs/*/dist/',
 			'libs/*/reports/',
-			'docs/',
-			'libs/dot/dot.*',
 		],
 	},
 	{
@@ -27,6 +25,7 @@ export default [
 	},
 	{
 		files: [
+			'docs/**',
 			'examples/**',
 			'libs/*/*.config.js',
 			'*.config.js',
