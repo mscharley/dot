@@ -12,8 +12,8 @@ importers:
         specifier: 2.27.10
         version: 2.27.10
       '@mscharley/eslint-config':
-        specifier: 4.1.0
-        version: 4.1.0(@typescript-eslint/eslint-plugin@8.12.2(@typescript-eslint/parser@8.12.2(eslint@9.13.0)(typescript@5.7.2))(eslint@9.13.0)(typescript@5.7.2))(@typescript-eslint/parser@8.12.2(eslint@9.13.0)(typescript@5.7.2))(jest@29.7.0(@types/node@22.8.5))(typescript@5.7.2)
+        specifier: 4.1.1
+        version: 4.1.1(@typescript-eslint/eslint-plugin@8.12.2(@typescript-eslint/parser@8.12.2(eslint@9.13.0)(typescript@5.7.2))(eslint@9.13.0)(typescript@5.7.2))(@typescript-eslint/parser@8.12.2(eslint@9.13.0)(typescript@5.7.2))(jest@29.7.0(@types/node@22.8.5))(typescript@5.7.2)
       '@mscharley/prettier-config':
         specifier: 3.1.0
         version: 3.1.0
@@ -808,10 +808,10 @@ packages:
     resolution: {integrity: sha512-jSA8EMvi8IQW5xv4B2b4q9kASG2GTnB3kTcjgiW9GtDWVr+zu2eyY7PgHkcGGW0THQJutM4vH5cq6JMxQNtGIw==}
     hasBin: true
 
-  '@mscharley/eslint-config@4.1.0':
-    resolution: {integrity: sha512-8dwZ4IHeWy0AeHcuUHyglD3b0YsKToSfhe6V7SQ1Vunvw+wzsfBOtv2UwPfHWRtVYH78crDfM7HmsJXSBuEPow==}
+  '@mscharley/eslint-config@4.1.1':
+    resolution: {integrity: sha512-6+43LE8P/NIyru3yBFtndZz0iGIN6knhuEGzv7aGCjsGjqWKipKcLwIbkjzu3Lra1ftLAXBpMKbByAepLvHJHw==}
     peerDependencies:
-      typescript: ^5.6.3
+      typescript: ^5.7.2
 
   '@mscharley/prettier-config@3.1.0':
     resolution: {integrity: sha512-ylQyWgPdQvPt9c6EBrXge/M2ADgc+2IwK0UwtJ2n49ZcNboxo5+aF0YYxq6btyQw/r6csWIAlvRg334DH17FzA==}
@@ -4539,7 +4539,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@mscharley/eslint-config@4.1.0(@typescript-eslint/eslint-plugin@8.12.2(@typescript-eslint/parser@8.12.2(eslint@9.13.0)(typescript@5.7.2))(eslint@9.13.0)(typescript@5.7.2))(@typescript-eslint/parser@8.12.2(eslint@9.13.0)(typescript@5.7.2))(jest@29.7.0(@types/node@22.8.5))(typescript@5.7.2)':
+  '@mscharley/eslint-config@4.1.1(@typescript-eslint/eslint-plugin@8.12.2(@typescript-eslint/parser@8.12.2(eslint@9.13.0)(typescript@5.7.2))(eslint@9.13.0)(typescript@5.7.2))(@typescript-eslint/parser@8.12.2(eslint@9.13.0)(typescript@5.7.2))(jest@29.7.0(@types/node@22.8.5))(typescript@5.7.2)':
     dependencies:
       '@stylistic/eslint-plugin': 2.10.1(eslint@9.13.0)(typescript@5.7.2)
       '@types/eslint': 9.6.1
@@ -5835,7 +5835,7 @@ snapshots:
       '@types/json-schema': 7.0.15
       ajv: 6.12.6
       chalk: 4.1.2
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
       debug: 4.3.7
       escape-string-regexp: 4.0.0
       eslint-scope: 8.2.0
@@ -5883,7 +5883,7 @@ snapshots:
 
   execa@5.1.1:
     dependencies:
-      cross-spawn: 7.0.3
+      cross-spawn: 7.0.6
       get-stream: 6.0.1
       human-signals: 2.1.0
       is-stream: 2.0.1
