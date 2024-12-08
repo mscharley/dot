@@ -67,9 +67,9 @@
 	"devDependencies": {
 		"@jest/globals": "29.7.0",
 		"@microsoft/api-extractor": "7.48.0",
-		"@stryker-mutator/core": "8.6.0",
-		"@stryker-mutator/jest-runner": "8.6.0",
-		"@stryker-mutator/typescript-checker": "8.6.0",
+		"@stryker-mutator/core": "8.7.0",
+		"@stryker-mutator/jest-runner": "8.7.0",
+		"@stryker-mutator/typescript-checker": "8.7.0",
 		"@swc/jest": "0.2.37",
 		"acorn": "8.14.0",
 		"esbuild": "0.24.0",
