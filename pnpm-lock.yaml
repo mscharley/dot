@@ -12,8 +12,8 @@ importers:
         specifier: 2.27.11
         version: 2.27.11
       '@mscharley/eslint-config':
-        specifier: 4.1.1
-        version: 4.1.1(@typescript-eslint/eslint-plugin@8.12.2(@typescript-eslint/parser@8.12.2(eslint@9.13.0)(typescript@5.7.3))(eslint@9.13.0)(typescript@5.7.3))(@typescript-eslint/parser@8.12.2(eslint@9.13.0)(typescript@5.7.3))(jest@29.7.0(@types/node@22.8.5))(typescript@5.7.3)
+        specifier: 4.1.2
+        version: 4.1.2(@typescript-eslint/eslint-plugin@8.12.2(@typescript-eslint/parser@8.12.2(eslint@9.13.0)(typescript@5.7.3))(eslint@9.13.0)(typescript@5.7.3))(@typescript-eslint/parser@8.12.2(eslint@9.13.0)(typescript@5.7.3))(jest@29.7.0(@types/node@22.8.5))(typescript@5.7.3)
       '@mscharley/prettier-config':
         specifier: 3.1.0
         version: 3.1.0
@@ -814,10 +814,10 @@ packages:
     resolution: {integrity: sha512-jSA8EMvi8IQW5xv4B2b4q9kASG2GTnB3kTcjgiW9GtDWVr+zu2eyY7PgHkcGGW0THQJutM4vH5cq6JMxQNtGIw==}
     hasBin: true
 
-  '@mscharley/eslint-config@4.1.1':
-    resolution: {integrity: sha512-6+43LE8P/NIyru3yBFtndZz0iGIN6knhuEGzv7aGCjsGjqWKipKcLwIbkjzu3Lra1ftLAXBpMKbByAepLvHJHw==}
+  '@mscharley/eslint-config@4.1.2':
+    resolution: {integrity: sha512-cIR+d0H/qvW+UxLTq64CEzaMU8iJds1O9ItMi2PytMKc8ayQ6BEPkJL2AGQZB9GpxhJFEEvdfGBF894i7UKrJg==}
     peerDependencies:
-      typescript: ^5.7.2
+      typescript: ^5.7.3
 
   '@mscharley/prettier-config@3.1.0':
     resolution: {integrity: sha512-ylQyWgPdQvPt9c6EBrXge/M2ADgc+2IwK0UwtJ2n49ZcNboxo5+aF0YYxq6btyQw/r6csWIAlvRg334DH17FzA==}
@@ -2594,12 +2594,14 @@ packages:
 
   lodash.get@4.4.2:
     resolution: {integrity: sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ==}
+    deprecated: This package is deprecated. Use the optional chaining (?.) operator instead.
 
   lodash.groupby@4.6.0:
     resolution: {integrity: sha512-5dcWxm23+VAoz+awKmBaiBvzox8+RqMgFhi7UvX9DHZr2HdxHXM/Wrf8cfKpsW37RNrvtPn6hSwNqurSILbmJw==}
 
   lodash.isequal@4.5.0:
     resolution: {integrity: sha512-pDo3lu8Jhfjqls6GkMgpahsF9kCyayhgykjyLMNFTKWrpVdAQtYyB4muAMWozBB4ig/dtWAmsMxLEI8wuz+DYQ==}
+    deprecated: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
 
   lodash.merge@4.6.2:
     resolution: {integrity: sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==}
@@ -4525,7 +4527,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@mscharley/eslint-config@4.1.1(@typescript-eslint/eslint-plugin@8.12.2(@typescript-eslint/parser@8.12.2(eslint@9.13.0)(typescript@5.7.3))(eslint@9.13.0)(typescript@5.7.3))(@typescript-eslint/parser@8.12.2(eslint@9.13.0)(typescript@5.7.3))(jest@29.7.0(@types/node@22.8.5))(typescript@5.7.3)':
+  '@mscharley/eslint-config@4.1.2(@typescript-eslint/eslint-plugin@8.12.2(@typescript-eslint/parser@8.12.2(eslint@9.13.0)(typescript@5.7.3))(eslint@9.13.0)(typescript@5.7.3))(@typescript-eslint/parser@8.12.2(eslint@9.13.0)(typescript@5.7.3))(jest@29.7.0(@types/node@22.8.5))(typescript@5.7.3)':
     dependencies:
       '@stylistic/eslint-plugin': 2.10.1(eslint@9.13.0)(typescript@5.7.3)
       '@types/eslint': 9.6.1
