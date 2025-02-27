@@ -1,5 +1,11 @@
 # @mscharley/dot
 
+## 2.1.1
+
+### Patch Changes
+
+- 8674207: fix(deps): update dependency typescript to v5.7.2
+
 ## 2.1.0
 
 ### Minor Changes
