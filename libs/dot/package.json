@@ -71,7 +71,7 @@
 		"@stryker-mutator/jest-runner": "8.7.1",
 		"@stryker-mutator/typescript-checker": "8.7.1",
 		"@swc/jest": "0.2.37",
-		"acorn": "8.14.0",
+		"acorn": "8.14.1",
 		"esbuild": "0.25.0",
 		"generic-type-guard": "5.0.3",
 		"jest": "29.7.0",
