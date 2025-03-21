@@ -10,7 +10,7 @@
 	},
 	"devDependencies": {
 		"@changesets/cli": "2.28.1",
-		"@mscharley/eslint-config": "4.2.5",
+		"@mscharley/eslint-config": "4.2.6",
 		"@mscharley/prettier-config": "3.1.2",
 		"turbo": "2.4.4"
 	},
