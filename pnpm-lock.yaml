@@ -15,8 +15,8 @@ importers:
         specifier: 4.2.6
         version: 4.2.6(@typescript-eslint/eslint-plugin@8.27.0(@typescript-eslint/parser@8.27.0(eslint@9.22.0)(typescript@5.8.2))(eslint@9.22.0)(typescript@5.8.2))(@typescript-eslint/parser@8.27.0(eslint@9.22.0)(typescript@5.8.2))(is-bun-module@1.2.1)(jest@29.7.0(@types/node@22.8.5))(typescript@5.8.2)
       '@mscharley/prettier-config':
-        specifier: 3.1.2
-        version: 3.1.2
+        specifier: 3.1.3
+        version: 3.1.3(prettier-plugin-toml@2.0.2(prettier@3.5.3))(prettier@3.5.3)
       turbo:
         specifier: 2.4.4
         version: 2.4.4
@@ -825,8 +825,11 @@ packages:
   '@mscharley/eslint-config@4.2.6':
     resolution: {integrity: sha512-EWKTfCiQnuvkl9uKDgpaJORtprUome92Q+0MeKNTKcnGlocA5O8xRqIr05qGkc7RQk3vTMTJQG2tVa8zro9isQ==}
 
-  '@mscharley/prettier-config@3.1.2':
-    resolution: {integrity: sha512-a2zAvul2A/sbuBrDioorsGp4msbfTSsgCUc8ViunqCagojpCr32HBvdL/zL2NdPay4DSF7KRJZVwpkiOPQ154g==}
+  '@mscharley/prettier-config@3.1.3':
+    resolution: {integrity: sha512-IRDMD0kFSVsgSorR/TIA6MoYHciwUoOvVGVZDoqmNm07fNfL8ra25RG9dR8HW4xcYbIi33jB6TlGruz5Tl9ToQ==}
+    peerDependencies:
+      prettier: ^3.5.3
+      prettier-plugin-toml: ^2.0.2
 
   '@napi-rs/wasm-runtime@0.2.7':
     resolution: {integrity: sha512-5yximcFK5FNompXfJFoWanu5l8v1hNGqNHh9du1xETp9HWk/B/PzvchX55WYOPaIeNglG8++68AAiauBAtbnzw==}
@@ -1131,6 +1134,12 @@ packages:
 
   '@swc/types@0.1.13':
     resolution: {integrity: sha512-JL7eeCk6zWCbiYQg2xQSdLXQJl8Qoc9rXmG2cEKvHe3CKwMHwHGpfOb8frzNLmbycOo6I51qxnLnn9ESf4I20Q==}
+
+  '@taplo/core@0.1.1':
+    resolution: {integrity: sha512-BG/zLGf5wiNXGEVPvUAAX/4ilB3PwDUY2o0MV0y47mZbDZ9ad9UK/cIQsILat3bqbPJsALVbU6k3cskNZ3vAQg==}
+
+  '@taplo/lib@0.4.0-alpha.2':
+    resolution: {integrity: sha512-DV/Re3DPVY+BhBtLZ3dmP4mP6YMLSsgq9qGLXwOV38lvNF/fBlgvQswzlXmzCEefL/3q2eMoefZpOI/+GLuCNA==}
 
   '@tsconfig/node10@1.0.11':
     resolution: {integrity: sha512-DcRjDCujK/kCk/cUe8Xz8ZSpm8mS3mNNpta+jGCA6USEDfktlNvm1+IuZ9eTcDbNk41BHwpHHeW+N1lKCz4zOw==}
@@ -2972,6 +2981,12 @@ packages:
     resolution: {integrity: sha512-vkcDPrRZo1QZLbn5RLGPpg/WmIQ65qoWWhcGKf/b5eplkkarX0m9z8ppCat4mlOqUsWpyNuYgO3VRyrYHSzX5g==}
     engines: {node: '>= 0.8.0'}
 
+  prettier-plugin-toml@2.0.2:
+    resolution: {integrity: sha512-tUIIhyfdVX5DMsLGKX/2qaEwi3W48OkUSR7XC91PRI5jFzhexmaYWkrSP1Xh/eWUcEc0TVMQenM3lB09xLQstQ==}
+    engines: {node: '>=16.0.0'}
+    peerDependencies:
+      prettier: ^3.0.3
+
   prettier@2.8.8:
     resolution: {integrity: sha512-tdN8qQGvNjw4CHbY+XXk0JgCXn9QiF21a55rBe5LJAU+kDyC4WQn4+awm2Xfk2lQMk5fKup9XgzTZtGkjBdP9Q==}
     engines: {node: '>=10.13.0'}
@@ -4631,9 +4646,10 @@ snapshots:
       - supports-color
       - typescript
 
-  '@mscharley/prettier-config@3.1.2':
+  '@mscharley/prettier-config@3.1.3(prettier-plugin-toml@2.0.2(prettier@3.5.3))(prettier@3.5.3)':
     dependencies:
       prettier: 3.5.3
+      prettier-plugin-toml: 2.0.2(prettier@3.5.3)
 
   '@napi-rs/wasm-runtime@0.2.7':
     dependencies:
@@ -4948,6 +4964,12 @@ snapshots:
   '@swc/types@0.1.13':
     dependencies:
       '@swc/counter': 0.1.3
+
+  '@taplo/core@0.1.1': {}
+
+  '@taplo/lib@0.4.0-alpha.2':
+    dependencies:
+      '@taplo/core': 0.1.1
 
   '@tsconfig/node10@1.0.11': {}
 
@@ -7140,6 +7162,11 @@ snapshots:
       source-map-js: 1.2.1
 
   prelude-ls@1.2.1: {}
+
+  prettier-plugin-toml@2.0.2(prettier@3.5.3):
+    dependencies:
+      '@taplo/lib': 0.4.0-alpha.2
+      prettier: 3.5.3
 
   prettier@2.8.8: {}
 
