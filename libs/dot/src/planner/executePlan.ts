@@ -75,7 +75,10 @@ const aggregateMultiple = (step: AggregateMultiple<unknown>, stepStack: unknown[
 	stepStack.push(value.flat());
 };
 
-export const executePlan = async <T>(plan: Plan, { container, singletonCache, stack, token }: Request<T>): Promise<T> => {
+export const executePlan = async <T>(
+	plan: Plan,
+	{ container, singletonCache, stack, token }: Request<T>,
+): Promise<T> => {
 	const caches: Caches = {
 		singleton: singletonCache,
 		request: new ResolutionCache(),

@@ -34,7 +34,11 @@ const planBinding = <T, Metadata extends interfaces.MetadataObject>(
 	binding: Binding<T, Metadata>,
 	input: Injection<T, Metadata>,
 	resolutionPath: Array<Token<unknown>>,
-	resolveBinding: <U, Meta extends interfaces.MetadataObject>(binding: Binding<U, Meta>, injection: Injection<U, Meta>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
+	resolveBinding: <U, Meta extends interfaces.MetadataObject>(
+		binding: Binding<U, Meta>,
+		injection: Injection<U, Meta>,
+		resolutionPath: Array<Token<unknown>>,
+	) => U | Promise<U>,
 	resolveInjection: (injection: Injection<unknown, interfaces.MetadataObject>) => Plan,
 ): Plan => {
 	const cache = binding.scope === 'transient' ? undefined : binding.scope;
@@ -72,7 +76,11 @@ const planBinding = <T, Metadata extends interfaces.MetadataObject>(
 
 export const calculatePlan = <T>(
 	getBindings: <U, Meta extends interfaces.MetadataObject>(injection: Injection<U, Meta>) => Array<Binding<U, Meta>>,
-	resolveBinding: <U, Meta extends interfaces.MetadataObject>(binding: Binding<U, Meta>, injection: Injection<U, Meta>, resolutionPath: Array<Token<unknown>>) => U | Promise<U>,
+	resolveBinding: <U, Meta extends interfaces.MetadataObject>(
+		binding: Binding<U, Meta>,
+		injection: Injection<U, Meta>,
+		resolutionPath: Array<Token<unknown>>,
+	) => U | Promise<U>,
 	input: Injection<T, interfaces.MetadataObject>,
 	resolutionPath: Array<Token<unknown>>,
 	parent?: interfaces.Container,
