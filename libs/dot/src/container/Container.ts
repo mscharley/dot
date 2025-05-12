@@ -97,25 +97,28 @@ export class Container implements interfaces.Container {
 		}
 	};
 
-	readonly #bind = (module: interfaces.ContainerModule): interfaces.BindFunction => (<Id extends interfaces.ServiceIdentifier<unknown>>(
-		id: Id,
-	): interfaces.BindingBuilder<interfaces.InjectedType<Id>, interfaces.MetadataForIdentifier<Id>> => {
-		const binding = new ClassBindingBuilder(
-			id as interfaces.ServiceIdentifier<object>,
-			this.config,
-			this.#warn,
-			module,
-			this,
-		) as unknown as BindingBuilder<interfaces.InjectedType<Id>, interfaces.MetadataForIdentifier<Id>>;
-		this.#incompleteBindings.add(binding);
+	readonly #bind = (module: interfaces.ContainerModule): interfaces.BindFunction => (
+		<Id extends interfaces.ServiceIdentifier<unknown>>(
+			id: Id,
+		): interfaces.BindingBuilder<interfaces.InjectedType<Id>, interfaces.MetadataForIdentifier<Id>> => {
+			const binding = new ClassBindingBuilder(
+				id as interfaces.ServiceIdentifier<object>,
+				this.config,
+				this.#warn,
+				module,
+				this,
+			) as unknown as BindingBuilder<interfaces.InjectedType<Id>, interfaces.MetadataForIdentifier<Id>>;
+			this.#incompleteBindings.add(binding);
 
-		return binding;
-	}) as interfaces.BindFunction;
+			return binding;
+		}
+	) as interfaces.BindFunction;
 
 	public readonly unbind: interfaces.UnbindFunction = (id) => {
 		const token = tokenForIdentifier(id);
 		this.#singletonCache.flushToken(token);
-		const bindings = this.#bindings.flatMap((b) => (b.token.identifier === token.identifier ? [token.identifier] : []));
+		const bindings
+			= this.#bindings.flatMap((b) => (b.token.identifier === token.identifier ? [token.identifier] : []));
 		if (bindings.length === 0 && !this.has(id)) {
 			throw new Error(`Unable to unbind token because it is not bound: ${token.identifier.toString()}`);
 		}
@@ -123,10 +126,12 @@ export class Container implements interfaces.Container {
 		this.#bindings = this.#bindings.filter((b) => !bindings.includes(b.token.identifier));
 	};
 
-	readonly #rebind = (module: interfaces.ContainerModule): interfaces.RebindFunction => (<T>(id: interfaces.ServiceIdentifier<T>) => {
-		this.unbind(id);
-		return this.#bind(module)(id);
-	}) as interfaces.RebindFunction;
+	readonly #rebind = (module: interfaces.ContainerModule): interfaces.RebindFunction => (
+		<T>(id: interfaces.ServiceIdentifier<T>) => {
+			this.unbind(id);
+			return this.#bind(module)(id);
+		}
+	) as interfaces.RebindFunction;
 
 	public readonly load: interfaces.Container['load'] = <M extends interfaces.ContainerModule>(module: M): ReturnType<M> =>
 		module(this.#bind(module), this.unbind, this.has, this.#rebind(module)) as ReturnType<typeof module>;
@@ -209,7 +214,10 @@ export class Container implements interfaces.Container {
 		this.#bindings.push(binding as Binding<unknown, interfaces.MetadataObject>);
 	};
 
-	readonly #generateAutoBinding = <T, Metadata extends interfaces.MetadataObject>(ctr: interfaces.Constructor<T>, token: Token<T>): ConstructorBinding<T, Metadata> => ({
+	readonly #generateAutoBinding = <T, Metadata extends interfaces.MetadataObject>(
+		ctr: interfaces.Constructor<T>,
+		token: Token<T>,
+	): ConstructorBinding<T, Metadata> => ({
 		type: 'constructor',
 		ctr,
 		id: ctr,
@@ -231,7 +239,8 @@ export class Container implements interfaces.Container {
 				const hasRequestMetadata = metadataFilters.length > 0;
 				const hasBindingMetadata = b.metadata != null;
 				const transientMetadataFactory = b.type === 'factory' && b.scope === 'transient' && isMetadataToken(id);
-				const filtersPassed = metadataFilters.map(([k, v]) => b.metadata?.[k] === v).reduce((acc, v) => acc && v, true);
+				const filtersPassed
+					= metadataFilters.map(([k, v]) => b.metadata?.[k] === v).reduce((acc, v) => acc && v, true);
 				const matchesMetadataFilters = !transientMetadataFactory && filtersPassed;
 				const validTransientMetadataFactory = transientMetadataFactory && (
 					(hasBindingMetadata && hasRequestMetadata && filtersPassed)
@@ -263,10 +272,14 @@ export class Container implements interfaces.Container {
 		return [];
 	};
 
-	readonly #resolveBinding
-		= (request: Request<unknown>) =>
-			<T, Metadata extends interfaces.MetadataObject>(binding: Binding<T, Metadata>, injection: Injection<T, Metadata>, resolutionPath: Array<Token<unknown>>): T | Promise<T> => {
-				const getArgsForParameterInjections = (injections: Array<Injection<unknown, interfaces.MetadataObject>>): unknown[] =>
+	readonly #resolveBinding = (request: Request<unknown>) =>
+		<T, Metadata extends interfaces.MetadataObject>(
+			binding: Binding<T, Metadata>,
+			injection: Injection<T, Metadata>,
+			resolutionPath: Array<Token<unknown>>,
+		): T | Promise<T> => {
+			const getArgsForParameterInjections
+				= (injections: Array<Injection<unknown, interfaces.MetadataObject>>): unknown[] =>
 					injections
 					// eslint-disable-next-line @typescript-eslint/no-magic-numbers
 						.sort((a, b) => ('index' in a && 'index' in b ? (a.index < b.index ? -1 : 1) : 0))
@@ -276,40 +289,40 @@ export class Container implements interfaces.Container {
 								: this.resolve(tokenForIdentifier(i.id), request, resolutionPath),
 						);
 
-				switch (binding.type) {
-					case 'static':
-						return binding.value;
-					case 'dynamic': {
-						const args = getArgsForParameterInjections(binding.injections);
-						return binding.generator(...args);
-					}
-					case 'factory': {
-						const args = getArgsForParameterInjections(binding.injections);
-						const ctx: interfaces.FactoryContext<Metadata> = {
-							container: { config: this.config, createChild: this.createChild },
-							metadata: {
-								...binding.metadata,
-								...injection.options.metadata,
-							},
-						};
-						return binding.generator(ctx)(...args);
-					}
-					case 'constructor': {
-						const args = getArgsForParameterInjections(getConstructorParameterInjections(binding.ctr));
-
-						Container.#currentRequest = request;
-						try {
-							return new binding.ctr(...args);
-						} finally {
-							Container.#currentRequest = undefined;
-						}
-					}
-
-					/* c8 ignore next 2 */
-					default:
-						return isNever(binding, 'Unknown binding found');
+			switch (binding.type) {
+				case 'static':
+					return binding.value;
+				case 'dynamic': {
+					const args = getArgsForParameterInjections(binding.injections);
+					return binding.generator(...args);
 				}
-			};
+				case 'factory': {
+					const args = getArgsForParameterInjections(binding.injections);
+					const ctx: interfaces.FactoryContext<Metadata> = {
+						container: { config: this.config, createChild: this.createChild },
+						metadata: {
+							...binding.metadata,
+							...injection.options.metadata,
+						},
+					};
+					return binding.generator(ctx)(...args);
+				}
+				case 'constructor': {
+					const args = getArgsForParameterInjections(getConstructorParameterInjections(binding.ctr));
+
+					Container.#currentRequest = request;
+					try {
+						return new binding.ctr(...args);
+					} finally {
+						Container.#currentRequest = undefined;
+					}
+				}
+
+				/* c8 ignore next 2 */
+				default:
+					return isNever(binding, 'Unknown binding found');
+			}
+		};
 
 	public readonly get: interfaces.Container['get'] = async <
 		Id extends interfaces.ServiceIdentifier<unknown>,

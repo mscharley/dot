@@ -14,16 +14,24 @@ export class ResolutionCache {
 	readonly #mutexes = new Map<Binding<unknown, interfaces.MetadataObject>, Mutex>();
 	readonly #cache = new Map<Binding<unknown, interfaces.MetadataObject>, unknown>();
 
-	public readonly lock = async (key: Binding<unknown, interfaces.MetadataObject>): Promise<MutexInterface.Releaser> => {
-		const mutex = this.#mutexes.get(key) ?? new Mutex();
-		this.#mutexes.set(key, mutex);
-		return mutex.acquire();
-	};
+	public readonly lock
+		= async (key: Binding<unknown, interfaces.MetadataObject>): Promise<MutexInterface.Releaser> => {
+			const mutex = this.#mutexes.get(key) ?? new Mutex();
+			this.#mutexes.set(key, mutex);
+			return mutex.acquire();
+		};
 
-	public readonly get = this.#cache.get.bind(this.#cache) as <T>(binding: Binding<T, interfaces.MetadataObject>) => T;
-	public readonly set = this.#cache.set.bind(this.#cache) as <T>(binding: Binding<T, interfaces.MetadataObject>, value: T) => void;
-	public readonly has = this.#cache.has.bind(this.#cache) as <T>(binding: Binding<T, interfaces.MetadataObject>) => boolean;
-	public readonly delete = this.#cache.delete.bind(this.#cache) as <T>(binding: Binding<T, interfaces.MetadataObject>) => boolean;
+	public readonly get
+		= this.#cache.get.bind(this.#cache) as <T>(binding: Binding<T, interfaces.MetadataObject>) => T;
+
+	public readonly set
+		= this.#cache.set.bind(this.#cache) as <T>(binding: Binding<T, interfaces.MetadataObject>, value: T) => void;
+
+	public readonly has
+		= this.#cache.has.bind(this.#cache) as <T>(binding: Binding<T, interfaces.MetadataObject>) => boolean;
+
+	public readonly delete
+		= this.#cache.delete.bind(this.#cache) as <T>(binding: Binding<T, interfaces.MetadataObject>) => boolean;
 
 	public readonly flushToken = <T>(token: Token<T>): void => {
 		const keys = [...this.#cache.keys()];

@@ -20,7 +20,10 @@ import type * as interfaces from '../interfaces/index.js';
  *
  * @public
  */
-export const withOptions = <Id extends interfaces.ServiceIdentifier<unknown>, Options extends Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<Id>>>>(
+export const withOptions = <
+	Id extends interfaces.ServiceIdentifier<unknown>,
+	Options extends Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<Id>>>,
+>(
 	id: Id,
 	options: Options,
 ): [Id, Options] => [id, options];

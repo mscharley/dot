@@ -34,7 +34,8 @@ export type BindFunction = {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	<Id extends Constructor<any, any>>(id: Id): ClassBindingBuilder<InjectedType<Id>, MetadataObject>;
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	<Id extends Exclude<ServiceIdentifier<object>, Constructor<any, any>>>(id: Id): ObjectBindingBuilder<InjectedType<Id>, MetadataForIdentifier<Id>>;
+	<Id extends Exclude<ServiceIdentifier<object>, Constructor<any, any>>>(id: Id):
+	ObjectBindingBuilder<InjectedType<Id>, MetadataForIdentifier<Id>>;
 	<Id extends ServiceIdentifier<unknown>>(id: Id): BindingBuilder<InjectedType<Id>, MetadataForIdentifier<Id>>;
 };
 

@@ -45,8 +45,9 @@ describe('request options', () => {
 		const token2 = new Token<number>('num');
 
 		it('allows for optional fetches', async () => {
-			// eslint-disable-next-line jest/no-conditional-in-test
-			c.load((bind) => bind(token).toDynamicValue([withOptions(token2, { optional: true })], (num) => (num ?? 10).toString()));
+			c.load((bind) => bind(token)
+				// eslint-disable-next-line jest/no-conditional-in-test
+				.toDynamicValue([withOptions(token2, { optional: true })], (num) => (num ?? 10).toString()));
 
 			await expect(c.get(token)).resolves.toBe('10');
 		});
@@ -64,9 +65,10 @@ describe('request options', () => {
 		});
 
 		it('allows for multiple, optional fetches', async () => {
-			c.load((bind) => bind(token).toDynamicValue([withOptions(token2, { multiple: true, optional: true })], (nums) =>
-				nums.map((_) => _.toString()).join(', '),
-			));
+			c.load((bind) => bind(token)
+				.toDynamicValue([withOptions(token2, { multiple: true, optional: true })], (nums) =>
+					nums.map((_) => _.toString()).join(', '),
+				));
 
 			await expect(c.get(token)).resolves.toBe('');
 		});

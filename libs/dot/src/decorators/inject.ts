@@ -16,7 +16,8 @@ import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
  */
 export interface ClassFieldDecorator<T extends object, Property> {
 	// TC39 definition
-	(target: undefined, context: ClassFieldDecoratorContext<T, Property>): (originalValue: Property | undefined) => Property;
+	(target: undefined, context: ClassFieldDecoratorContext<T, Property>):
+	(originalValue: Property | undefined) => Property;
 	// experimental decorators definition
 	(target: T, propertyName: string | symbol): undefined;
 }
@@ -31,9 +32,18 @@ export interface ClassFieldDecorator<T extends object, Property> {
  * @public
  */
 export interface InjectDecoratorFactory {
-	<T>(id: interfaces.ServiceIdentifier<T>, options: Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<typeof id>>> & { multiple: true }): ClassFieldDecorator<object, T[]>;
-	<T>(id: interfaces.ServiceIdentifier<T>, options: Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<typeof id>>> & { optional: true }): ClassFieldDecorator<object, T | undefined>;
-	<T>(id: interfaces.ServiceIdentifier<T>, options?: Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<typeof id>>>): ClassFieldDecorator<object, T>;
+	<T>(
+		id: interfaces.ServiceIdentifier<T>,
+		options: Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<typeof id>>> & { multiple: true },
+	): ClassFieldDecorator<object, T[]>;
+	<T>(
+		id: interfaces.ServiceIdentifier<T>,
+		options: Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<typeof id>>> & { optional: true },
+	): ClassFieldDecorator<object, T | undefined>;
+	<T>(
+		id: interfaces.ServiceIdentifier<T>,
+		options?: Partial<interfaces.InjectOptions<interfaces.MetadataForIdentifier<typeof id>>>,
+	): ClassFieldDecorator<object, T>;
 }
 
 /**

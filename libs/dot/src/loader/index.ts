@@ -153,7 +153,11 @@ export interface LoadResult {
 	source: Buffer;
 }
 
-export async function load(url: string, context: LoadContext, next: (url: string, context: LoadContext) => Promise<LoadResult>): Promise<LoadResult> {
+export async function load(
+	url: string,
+	context: LoadContext,
+	next: (url: string, context: LoadContext) => Promise<LoadResult>,
+): Promise<LoadResult> {
 	const result = await next(url, context);
 	if (Parser == null || context.format !== 'module') {
 		return result;

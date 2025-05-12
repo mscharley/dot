@@ -17,7 +17,8 @@ import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 import type { Token } from '../Token.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
-export class BindingBuilder<in out T, Metadata extends interfaces.MetadataObject> implements interfaces.BindingBuilder<T, Metadata> {
+export class BindingBuilder<in out T, Metadata extends interfaces.MetadataObject>
+implements interfaces.BindingBuilder<T, Metadata> {
 	protected scope: interfaces.ScopeOptions;
 	protected explicitScope = false;
 	protected metadata: Metadata | undefined;
@@ -97,7 +98,7 @@ export class BindingBuilder<in out T, Metadata extends interfaces.MetadataObject
 			// eslint-disable-next-line @typescript-eslint/consistent-type-assertions
 			metadata: this.metadata ?? ({} as Metadata),
 			module: this.module,
-			injections: dependencies.map((dep, index) => injectionFromIdentifier(dep, index)) as Array<Injection<T, Metadata>>,
+			injections: dependencies.map((dep, index) => injectionFromIdentifier(dep, index) as Injection<T, Metadata>),
 			generator: factory as DynamicBinding<T, Metadata>['generator'],
 		};
 		this.finaliseBinding(binding);
