@@ -74,8 +74,8 @@ importers:
         specifier: 29.7.0
         version: 29.7.0
       '@microsoft/api-extractor':
-        specifier: 7.52.7
-        version: 7.52.7(@types/node@22.8.5)
+        specifier: 7.52.8
+        version: 7.52.8(@types/node@22.8.5)
       '@stryker-mutator/core':
         specifier: 8.7.1
         version: 8.7.1
@@ -808,8 +808,8 @@ packages:
   '@microsoft/api-extractor-model@7.30.6':
     resolution: {integrity: sha512-znmFn69wf/AIrwHya3fxX6uB5etSIn6vg4Q4RB/tb5VDDs1rqREc+AvMC/p19MUN13CZ7+V/8pkYPTj7q8tftg==}
 
-  '@microsoft/api-extractor@7.52.7':
-    resolution: {integrity: sha512-YLdPS644MfbLJt4hArP1WcldcaEUBh9wnFjcLEcQnVG0AMznbLh2sdE0F5Wr+w6+Lyp5/XUPvRAg3sYGSP3GCw==}
+  '@microsoft/api-extractor@7.52.8':
+    resolution: {integrity: sha512-cszYIcjiNscDoMB1CIKZ3My61+JOhpERGlGr54i6bocvGLrcL/wo9o+RNXMBrb7XgLtKaizZWUpqRduQuHQLdg==}
     hasBin: true
 
   '@microsoft/tsdoc-config@0.17.1':
@@ -4834,7 +4834,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@microsoft/api-extractor@7.52.7(@types/node@22.8.5)':
+  '@microsoft/api-extractor@7.52.8(@types/node@22.8.5)':
     dependencies:
       '@microsoft/api-extractor-model': 7.30.6(@types/node@22.8.5)
       '@microsoft/tsdoc': 0.15.1
