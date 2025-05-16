@@ -12,8 +12,8 @@ importers:
         specifier: 2.29.4
         version: 2.29.4
       '@mscharley/eslint-config':
-        specifier: 4.2.10
-        version: 4.2.10(@typescript-eslint/eslint-plugin@8.32.0(@typescript-eslint/parser@8.32.0(eslint@9.26.0)(typescript@5.8.3))(eslint@9.26.0)(typescript@5.8.3))(@typescript-eslint/parser@8.32.0(eslint@9.26.0)(typescript@5.8.3))(jest@29.7.0(@types/node@22.8.5))(typescript@5.8.3)
+        specifier: 4.2.11
+        version: 4.2.11(@typescript-eslint/eslint-plugin@8.32.0(@typescript-eslint/parser@8.32.0(eslint@9.26.0)(typescript@5.8.3))(eslint@9.26.0)(typescript@5.8.3))(@typescript-eslint/parser@8.32.0(eslint@9.26.0)(typescript@5.8.3))(jest@29.7.0(@types/node@22.8.5))(typescript@5.8.3)
       '@mscharley/prettier-config':
         specifier: 3.1.4
         version: 3.1.4(prettier-plugin-toml@2.0.5(prettier@3.5.3))(prettier@3.5.3)
@@ -826,8 +826,8 @@ packages:
     resolution: {integrity: sha512-jSA8EMvi8IQW5xv4B2b4q9kASG2GTnB3kTcjgiW9GtDWVr+zu2eyY7PgHkcGGW0THQJutM4vH5cq6JMxQNtGIw==}
     hasBin: true
 
-  '@mscharley/eslint-config@4.2.10':
-    resolution: {integrity: sha512-UXjBR8+1KQV+b8jyBssgfbT7JyBmGoc8LTajdbgZ2kSTHHrsm57a/F+tq15qaEoowmXdm388JpwgjysNpQEZeg==}
+  '@mscharley/eslint-config@4.2.11':
+    resolution: {integrity: sha512-jyiPdmHel+H7A8GnwnhNcYra6iW3ZiPD8rN03UD3EgOGTUnpPpn/WNxfpFwK6VCNFsKtVATdZci7GHWYvxDeeg==}
 
   '@mscharley/prettier-config@3.1.4':
     resolution: {integrity: sha512-ItyaSDZnWugdXnmNzKs9Hmx+/iRjPXGcxCUzoDE+Pp4KViFSyfSJBZ40Oo3/U4+3O/+dfy9vl2yt3QYb4AYahQ==}
@@ -4888,7 +4888,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@mscharley/eslint-config@4.2.10(@typescript-eslint/eslint-plugin@8.32.0(@typescript-eslint/parser@8.32.0(eslint@9.26.0)(typescript@5.8.3))(eslint@9.26.0)(typescript@5.8.3))(@typescript-eslint/parser@8.32.0(eslint@9.26.0)(typescript@5.8.3))(jest@29.7.0(@types/node@22.8.5))(typescript@5.8.3)':
+  '@mscharley/eslint-config@4.2.11(@typescript-eslint/eslint-plugin@8.32.0(@typescript-eslint/parser@8.32.0(eslint@9.26.0)(typescript@5.8.3))(eslint@9.26.0)(typescript@5.8.3))(@typescript-eslint/parser@8.32.0(eslint@9.26.0)(typescript@5.8.3))(jest@29.7.0(@types/node@22.8.5))(typescript@5.8.3)':
     dependencies:
       '@eslint/js': 9.26.0
       '@stylistic/eslint-plugin': 4.2.0(eslint@9.26.0)(typescript@5.8.3)
