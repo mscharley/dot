@@ -1,5 +1,11 @@
 # @mscharley/dot
 
+## 2.1.2
+
+### Patch Changes
+
+- 88c2563: fix(deps): update dependency typescript to v5.8.2
+
 ## 2.1.1
 
 ### Patch Changes
