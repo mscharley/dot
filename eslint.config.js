@@ -1,4 +1,5 @@
 import { configs, disableTypeCheckedRules, withStyles } from '@mscharley/eslint-config';
+import pluginDocusaurus from '@docusaurus/eslint-plugin';
 
 export default [
 	...configs.recommended,
@@ -12,6 +13,8 @@ export default [
 			'examples/*/reports/',
 			'libs/*/dist/',
 			'libs/*/reports/',
+			'docs/.docusaurus/',
+			'docs/build/',
 		],
 	},
 	{
@@ -32,6 +35,18 @@ export default [
 		],
 		rules: {
 			'notice/notice': 'off',
+		},
+	},
+	{
+		files: [
+			'docs/**',
+		],
+		plugins: {
+			'@docusaurus': pluginDocusaurus,
+		},
+		rules: {
+			...pluginDocusaurus.configs.recommended.rules,
+			'import/no-unresolved': 'off',
 		},
 	},
 ];

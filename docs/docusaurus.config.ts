@@ -1,5 +1,6 @@
 import type * as Preset from '@docusaurus/preset-classic';
 import type { Config } from '@docusaurus/types';
+import type { DotSidebars } from './sidebars';
 import { themes as prismThemes } from 'prism-react-renderer';
 
 const config: Config = {
@@ -11,7 +12,7 @@ const config: Config = {
 	url: 'https://mscharley.github.io',
 	// Set the /<baseUrl>/ pathname under which your site is served
 	// For GitHub pages deployment, it is often '/<projectName>/'
-	baseUrl: '/dot',
+	baseUrl: '/dot/',
 	trailingSlash: true,
 
 	// GitHub pages deployment config.
@@ -20,7 +21,7 @@ const config: Config = {
 	projectName: 'dot', // Usually your repo name.
 
 	onBrokenLinks: 'throw',
-	onBrokenMarkdownLinks: 'warn',
+	onBrokenMarkdownLinks: 'throw',
 
 	// Even if you don't use internationalization, you can use this field to set
 	// useful metadata like html lang. For example, if your site is Chinese, you
@@ -67,23 +68,19 @@ const config: Config = {
 		// Replace with your project's social card
 		image: 'img/docusaurus-social-card.jpg',
 		navbar: {
-			title: 'My Site',
+			title: 'DOT',
 			logo: {
-				alt: 'My Site Logo',
+				alt: 'DOT logo',
 				src: 'img/logo.svg',
 			},
 			items: [
 				{
 					type: 'docSidebar',
-					sidebarId: 'tutorialSidebar',
+					sidebarId: 'docsSidebar' satisfies DotSidebars,
 					position: 'left',
-					label: 'Tutorial',
+					label: 'Documentation',
 				},
 				{ to: '/blog', label: 'Blog', position: 'left' },
-				{
-					type: 'docsVersionDropdown',
-					position: 'right',
-				},
 				{
 					href: 'https://github.com/mscharley/dot',
 					label: 'GitHub',
@@ -98,7 +95,7 @@ const config: Config = {
 					title: 'Docs',
 					items: [
 						{
-							label: 'Tutorial',
+							label: 'Documentation',
 							to: '/docs/intro',
 						},
 					],
