@@ -82,6 +82,14 @@ describe('bindings', () => {
 				await result;
 				expect(await c.get(token)).toMatchObject({ id: 10 });
 			});
+
+			it('supports binding proxies', async () => {
+				const c = new Container();
+				c.load((bind) => {
+					bind(token).toConstantValue(new Proxy({ id: 10 }, {}) as never);
+				});
+				await expect(c.get(token)).resolves.toMatchObject({ id: 10 });
+			});
 		});
 
 		describe('toDynamicValue()', () => {
@@ -179,6 +187,14 @@ describe('bindings', () => {
 				});
 
 				await expect(c.get(output)).resolves.toMatchObject({ greeting: 'Hello, world - id: 10' });
+			});
+
+			it('supports binding proxies', async () => {
+				const c = new Container();
+				c.load((bind) => {
+					bind(token).toDynamicValue([], () => new Proxy({ id: 10 }, {}) as never);
+				});
+				await expect(c.get(token)).resolves.toMatchObject({ id: 10 });
 			});
 		});
 
@@ -287,6 +303,14 @@ describe('bindings', () => {
 
 				await expect(c.get(output)).resolves.toMatchObject({ greeting: 'Hello, world - id: 10' });
 			});
+
+			it('supports binding proxies', async () => {
+				const c = new Container();
+				c.load((bind) => {
+					bind(token).toFactory([], () => (): TokenType<typeof token> => new Proxy({ id: 10 }, {}) as never);
+				});
+				await expect(c.get(token)).resolves.toMatchObject({ id: 10 });
+			});
 		});
 
 		describe('to()', () => {
@@ -349,6 +373,19 @@ describe('bindings', () => {
 			const c = new Container();
 			c.load((bind, _unbind, _isBound, rebind) => {
 				bind(token).toConstantValue({ id: 10 });
+				rebind(token).toConstantValue({ id: 20 });
+			});
+
+			await expect(c.get(token)).resolves.toMatchObject({ id: 20 });
+		});
+
+		it('can rebind tokens from other modules', async () => {
+			const c = new Container();
+
+			c.load((bind) => {
+				bind(token).toConstantValue({ id: 10 });
+			});
+			c.load((_bind, _unbind, _isBound, rebind) => {
 				rebind(token).toConstantValue({ id: 20 });
 			});
 
