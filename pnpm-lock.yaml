@@ -98,8 +98,8 @@ importers:
         specifier: 0.25.5
         version: 0.25.5
       generic-type-guard:
-        specifier: 5.0.5
-        version: 5.0.5
+        specifier: 5.1.0
+        version: 5.1.0
       jest:
         specifier: 30.0.3
         version: 30.0.3(@types/node@22.15.33)(ts-node@10.9.2(@swc/core@1.7.35)(@types/node@22.15.33)(typescript@5.8.3))
@@ -2262,8 +2262,8 @@ packages:
   functions-have-names@1.2.3:
     resolution: {integrity: sha512-xckBUXyTIqT97tq2x2AMb+g163b5JFysYk0x4qxNFwbfQkmNZoiRHb6sPzI9/QV33WeuvVYBUIiD4NzNIyqaRQ==}
 
-  generic-type-guard@5.0.5:
-    resolution: {integrity: sha512-+TtEw7B0Sd7ABtB11ojpx9SU1+Hd9ADoyQmgWFjmmPb7q4ykVAnXzsjwMfGeuIM6UAu+UpwztCdJN9UT0zrgug==}
+  generic-type-guard@5.1.0:
+    resolution: {integrity: sha512-Hgn1v+DIsDAvGIeXS2fuF0MYWNaolU/DEA/1m5E3QrCrQOQq+YXY/tNIZzSCQ8I9FrBm/kmPsYQxI08+ydW4xw==}
     engines: {node: '>= 18'}
 
   gensync@1.0.0-beta.2:
@@ -6425,7 +6425,7 @@ snapshots:
 
   functions-have-names@1.2.3: {}
 
-  generic-type-guard@5.0.5: {}
+  generic-type-guard@5.1.0: {}
 
   gensync@1.0.0-beta.2: {}
 
