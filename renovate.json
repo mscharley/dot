@@ -11,6 +11,10 @@
 			"minor": {
 				"semanticCommitType": "fix"
 			}
+		},
+		{
+			"matchDepNames": ["go", "golang"],
+			"groupName": "golang"
 		}
 	]
 }
