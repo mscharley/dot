@@ -73,7 +73,7 @@
 		"@swc/jest": "0.2.39",
 		"@types/node": "22.18.5",
 		"acorn": "8.15.0",
-		"esbuild": "0.25.9",
+		"esbuild": "0.25.10",
 		"generic-type-guard": "5.1.0",
 		"jest": "30.0.5",
 		"stryker-cli": "1.0.2",
