@@ -10,8 +10,8 @@
 	},
 	"devDependencies": {
 		"@changesets/cli": "2.29.7",
-		"@mscharley/eslint-config": "4.2.14",
-		"@mscharley/prettier-config": "3.1.5",
+		"@mscharley/eslint-config": "4.2.17",
+		"@mscharley/prettier-config": "3.1.7",
 		"turbo": "2.5.6"
 	},
 	"packageManager": "pnpm@10.16.1+sha512.0e155aa2629db8672b49e8475da6226aa4bdea85fdcdfdc15350874946d4f3c91faaf64cbdc4a5d1ab8002f473d5c3fcedcd197989cf0390f9badd3c04678706",
