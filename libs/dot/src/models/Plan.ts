@@ -41,10 +41,10 @@ export interface ParentRequest<T = unknown, Metadata extends interfaces.Metadata
 	options: interfaces.InjectOptions<Metadata>;
 }
 
-export type PlanStep<T = unknown, Metadata extends interfaces.MetadataObject = interfaces.MetadataObject> =
-	AggregateMultiple<T> |
-	CreateInstance<T> |
-	FetchFromCache<T> |
-	ParentRequest<T, Metadata>;
+export type PlanStep<T = unknown, Metadata extends interfaces.MetadataObject = interfaces.MetadataObject>
+	= AggregateMultiple<T>
+		| CreateInstance<T>
+		| FetchFromCache<T>
+		| ParentRequest<T, Metadata>;
 
 export type Plan = PlanStep[];
