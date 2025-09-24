@@ -78,7 +78,6 @@
 		"esbuild": "0.25.10",
 		"generic-type-guard": "5.1.0",
 		"jest": "30.1.3",
-		"stryker-cli": "1.0.2",
 		"ts-node": "10.9.2",
 		"typescript": "5.9.2"
 	}
