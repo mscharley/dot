@@ -12,6 +12,7 @@ on:
 jobs:
   node:
     uses: mscharley/.github/.github/workflows/node-ci.yml@main
+    permissions: {}
     strategy:
       matrix:
         node-version: [18.x, 20.x, 22.x, 24.x, current]
@@ -21,3 +22,4 @@ jobs:
 
   stryker:
     uses: mscharley/.github/.github/workflows/stryker.yml@main
+    permissions: {}
