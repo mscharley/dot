@@ -14,18 +14,18 @@ import type { MetadataObject } from './MetadataObject.js';
  *
  * @public
  */
-export type InjectionIdentifier<T> =
-	| ServiceIdentifier<T>
-	| [ServiceIdentifier<T>, Partial<InjectOptions<MetadataObject>> | undefined]
-	| DirectInjection<T>;
+export type InjectionIdentifier<T>
+	= | ServiceIdentifier<T>
+		| [ServiceIdentifier<T>, Partial<InjectOptions<MetadataObject>> | undefined]
+		| DirectInjection<T>;
 
 /**
  * Helper type which is used to map an {@link @mscharley/dot#interfaces.InjectionIdentifier | InjectionIdentifier} into the type that will be injected
  *
  * @public
  */
-export type InjectedType<T extends InjectionIdentifier<unknown>> =
-	T extends [ ServiceIdentifier<infer U>, { multiple: true } ] ? U[]
+export type InjectedType<T extends InjectionIdentifier<unknown>>
+	= T extends [ ServiceIdentifier<infer U>, { multiple: true } ] ? U[]
 		: T extends [ServiceIdentifier<infer U>, { optional: true }] ? U | undefined
 			: T extends [ServiceIdentifier<infer U>, unknown] ? U
 				: T extends ServiceIdentifier<infer U> ? U
@@ -37,8 +37,8 @@ export type InjectedType<T extends InjectionIdentifier<unknown>> =
  *
  * @public
  */
-export type InjectedMetadata<T extends InjectionIdentifier<unknown>> =
-	T extends [ServiceIdentifierWithMetadata<unknown, infer U>, unknown] ? U
+export type InjectedMetadata<T extends InjectionIdentifier<unknown>>
+	= T extends [ServiceIdentifierWithMetadata<unknown, infer U>, unknown] ? U
 		: T extends ServiceIdentifierWithMetadata<unknown, infer U> ? U
 			: MetadataObject;
 

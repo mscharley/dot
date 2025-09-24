@@ -30,8 +30,8 @@ export type ServiceIdentifierWithMetadata<T, Metadata extends MetadataObject> = 
 /**
  * @public
  */
-export type MetadataForIdentifier<Id extends ServiceIdentifier<unknown>> =
-	Id extends ServiceIdentifierWithMetadata<unknown, infer Metadata> ? Metadata : MetadataObject;
+export type MetadataForIdentifier<Id extends ServiceIdentifier<unknown>>
+	= Id extends ServiceIdentifierWithMetadata<unknown, infer Metadata> ? Metadata : MetadataObject;
 
 /**
  * @public

@@ -34,8 +34,8 @@ export interface RequestInjection<T, Metadata extends interfaces.MetadataObject>
 	readonly options: interfaces.InjectOptions<Metadata>;
 }
 
-export type Injection<T, Metadata extends interfaces.MetadataObject> =
-	| PropertyInjection<T, Metadata>
-	| UnmanagedConstructorParameterInjection<T, Metadata>
-	| ConstructorParameterInjection<T, Metadata>
-	| RequestInjection<T, Metadata>;
+export type Injection<T, Metadata extends interfaces.MetadataObject>
+	= | PropertyInjection<T, Metadata>
+		| UnmanagedConstructorParameterInjection<T, Metadata>
+		| ConstructorParameterInjection<T, Metadata>
+		| RequestInjection<T, Metadata>;

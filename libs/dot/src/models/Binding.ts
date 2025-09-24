@@ -50,8 +50,8 @@ export interface FactoryBinding<out T, in out Metadata extends interfaces.Metada
 	generator: (ctx: interfaces.FactoryContext<Metadata>) => (...args: unknown[]) => T | Promise<T>;
 }
 
-export type Binding<T, Metadata extends interfaces.MetadataObject> =
-	ConstructorBinding<T, Metadata> |
-	StaticBinding<T, Metadata> |
-	DynamicBinding<T, Metadata> |
-	FactoryBinding<T, Metadata>;
+export type Binding<T, Metadata extends interfaces.MetadataObject>
+	= ConstructorBinding<T, Metadata>
+		| StaticBinding<T, Metadata>
+		| DynamicBinding<T, Metadata>
+		| FactoryBinding<T, Metadata>;
