@@ -11,6 +11,7 @@
 			"program": "jest",
 			"args": ["-u", "--show-seed", "--randomize", "--no-cache"],
 			"env": {
+				"DECORATOR_TYPE": "tc39",
 				"NODE_OPTIONS": "${env:NODE_OPTIONS} --experimental-vm-modules"
 			},
 			"cwd": "${workspaceFolder}/libs/dot"
@@ -25,6 +26,7 @@
 			"program": "jest",
 			"args": ["-u", "--show-seed", "--randomize", "--no-cache", "${file}"],
 			"env": {
+				"DECORATOR_TYPE": "tc39",
 				"NODE_OPTIONS": "${env:NODE_OPTIONS} --experimental-vm-modules"
 			},
 			"cwd": "${workspaceFolder}/libs/dot"
