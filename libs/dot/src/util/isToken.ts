@@ -21,4 +21,4 @@ export const isToken = (o: unknown): o is AnyToken<unknown> =>
  * @public
  */
 export const isMetadataToken = (o: unknown): o is MetadataToken<unknown, interfaces.MetadataObject> =>
-	isToken(o) && 'guard' in o;
+	isToken(o) && 'guard' in o && typeof o.guard === 'function';

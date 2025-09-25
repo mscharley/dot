@@ -115,7 +115,7 @@ export default {
 	// projects: undefined,
 
 	// Use this configuration option to add custom reporters to Jest
-	reporters: ['summary'],
+	// reporters: ['summary'],
 
 	// Automatically reset mock state before every test
 	resetMocks: true,
