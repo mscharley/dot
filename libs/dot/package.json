@@ -42,9 +42,9 @@
 		"test:eslint": "eslint",
 		"test:api": "api-extractor run",
 		"test:tsc:experimental": "tsc --experimentalDecorators true --noEmit --incremental false",
-		"test:jest:tc39": "DECORATOR_TYPE=tc39 NODE_OPTIONS='--experimental-vm-modules' jest",
-		"test:jest:experimental": "DECORATOR_TYPE=experimental NODE_OPTIONS='--experimental-vm-modules' jest",
-		"stryker": "DECORATOR_TYPE=tc39 NODE_OPTIONS='--experimental-vm-modules' stryker run"
+		"test:jest:tc39": "DECORATOR_TYPE=tc39 NODE_OPTIONS=\"$NODE_OPTIONS --no-warnings --experimental-vm-modules\" jest",
+		"test:jest:experimental": "DECORATOR_TYPE=experimental NODE_OPTIONS=\"$NODE_OPTIONS --no-warnings --experimental-vm-modules\" jest",
+		"stryker": "DECORATOR_TYPE=tc39 NODE_OPTIONS=\"$NODE_OPTIONS --no-warnings --experimental-vm-modules\" stryker run"
 	},
 	"author": "Matthew Scharley <matt@scharley.me>",
 	"license": "MPL-2.0",
