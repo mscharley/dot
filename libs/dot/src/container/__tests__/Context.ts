@@ -5,10 +5,10 @@
  */
 
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { getConstructorParameterInjections, getInjections, getPropertyInjections, registerInjection } from '../registry.js';
-import { Container } from '../../container/Container.js';
-import { inject } from '../inject.js';
-import { injectable } from '../injectable.js';
+import { Container } from '../Container.js';
+import { Context } from '../Context.js';
+import { inject } from '../../decorators/inject.js';
+import { injectable } from '../../decorators/injectable.js';
 import { Token } from '../../Token.js';
 
 const strToken = new Token<string>('registry.string');
@@ -18,7 +18,7 @@ class TestClass {
 	@inject(strToken)
 	public str!: string;
 }
-registerInjection(TestClass, {
+Context.global.registerInjection(TestClass, {
 	type: 'request',
 	options: { multiple: false, optional: false, metadata: {} },
 	id: new Token<TestClass>('registry.class'),
@@ -35,22 +35,22 @@ describe('registry', () => {
 	describe('registerInjection', () => {
 		it('succeeds for an unseen class', () => {
 			class Unseen {}
-			registerInjection(Unseen, {
+			Context.global.registerInjection(Unseen, {
 				type: 'request',
 				options: { multiple: false, optional: false, metadata: {} },
 				id: new Token('Unseen'),
 			});
-			expect(getInjections(Unseen)).toMatchSnapshot();
+			expect(Context.global.getInjections(Unseen)).toMatchSnapshot();
 		});
 	});
 
 	describe('getInjections', () => {
 		it('can get all injections registered', () => {
-			expect(getInjections(TestClass)).toMatchSnapshot();
+			expect(Context.global.getInjections(TestClass)).toMatchSnapshot();
 		});
 
 		it('throws an error for a random class', () => {
-			expect(() => getInjections(class FirstTest {})).toThrow(
+			expect(() => Context.global.getInjections(class FirstTest {})).toThrow(
 				'No @injectable() decorator for class: Constructor<FirstTest>',
 			);
 		});
@@ -58,11 +58,11 @@ describe('registry', () => {
 
 	describe('getPropertyInjections', () => {
 		it('can get all property injections', () => {
-			expect(getPropertyInjections(TestClass)).toMatchSnapshot();
+			expect(Context.global.getPropertyInjections(TestClass)).toMatchSnapshot();
 		});
 
 		it('throws an error for a random class', () => {
-			expect(() => getPropertyInjections(class SecondTest {})).toThrow(
+			expect(() => Context.global.getPropertyInjections(class SecondTest {})).toThrow(
 				'No @injectable() decorator for class: Constructor<SecondTest>',
 			);
 		});
@@ -70,11 +70,11 @@ describe('registry', () => {
 
 	describe('getConstructorParameterInjections', () => {
 		it('can get all property injections', () => {
-			expect(getConstructorParameterInjections(TestClass)).toMatchSnapshot();
+			expect(Context.global.getConstructorParameterInjections(TestClass)).toMatchSnapshot();
 		});
 
 		it('throws an error for a random class', () => {
-			expect(() => getConstructorParameterInjections(class ThirdTest {})).toThrow(
+			expect(() => Context.global.getConstructorParameterInjections(class ThirdTest {})).toThrow(
 				'No @injectable() decorator for class: Constructor<ThirdTest>',
 			);
 		});

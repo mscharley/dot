@@ -6,12 +6,12 @@
 
 import type * as interfaces from '../interfaces/index.js';
 import type { Binding, ConstructorBinding } from '../models/Binding.js';
-import { getConstructorParameterInjections, getInjections, getRegistry } from '../decorators/registry.js';
 import type { Injection, RequestInjection } from '../models/Injection.js';
 import { InvalidOperationError, TokenResolutionError } from '../Error.js';
 import type { BindingBuilder } from './BindingBuilder.js';
 import { calculatePlan } from '../planner/calculatePlan.js';
 import { ClassBindingBuilder } from './BindingBuilder.js';
+import { Context } from './Context.js';
 import { executePlan } from '../planner/executePlan.js';
 import { isMetadataToken } from '../util/isToken.js';
 import { isNever } from '../util/isNever.js';
@@ -308,7 +308,8 @@ export class Container implements interfaces.Container {
 					return binding.generator(ctx)(...args);
 				}
 				case 'constructor': {
-					const args = getArgsForParameterInjections(getConstructorParameterInjections(binding.ctr));
+					const args
+						= getArgsForParameterInjections(Context.global.getConstructorParameterInjections(binding.ctr));
 
 					Container.#currentRequest = request;
 					try {
@@ -408,7 +409,7 @@ export class Container implements interfaces.Container {
 					continue;
 				}
 				case 'constructor': {
-					this.#validateInjections(binding, getInjections(binding.ctr));
+					this.#validateInjections(binding, Context.global.getInjections(binding.ctr));
 					continue;
 				}
 
@@ -419,7 +420,7 @@ export class Container implements interfaces.Container {
 		}
 
 		if (this.config.autobindClasses && validateAutobindings) {
-			const registry = getRegistry();
+			const registry = Context.global.registry;
 			registry.forEach((injections, id) => {
 				this.#validateInjections(
 					this.#generateAutoBinding(id, tokenForIdentifier(id)),

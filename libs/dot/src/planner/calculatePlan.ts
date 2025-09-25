@@ -8,7 +8,7 @@ import type * as interfaces from '../interfaces/index.js';
 import type { AggregateMultiple, CreateInstance, FetchFromCache, Plan } from '../models/Plan.js';
 import { InvalidOperationError, RecursiveResolutionError, TokenResolutionError } from '../Error.js';
 import type { Binding } from '../models/Binding.js';
-import { getInjections } from '../decorators/registry.js';
+import { Context } from '../container/Context.js';
 import type { Injection } from '../models/Injection.js';
 import { isNever } from '../util/isNever.js';
 import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
@@ -23,7 +23,7 @@ const resolveInjections = <T, Metadata extends interfaces.MetadataObject>(
 		case 'dynamic':
 			return binding.injections;
 		case 'constructor':
-			return getInjections(binding.ctr) as Array<Injection<T, Metadata>>;
+			return Context.global.getInjections(binding.ctr) as Array<Injection<T, Metadata>>;
 		case 'static':
 			return [];
 		default: return isNever(binding, 'Invalid binding');

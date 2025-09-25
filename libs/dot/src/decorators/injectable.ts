@@ -5,8 +5,8 @@
  */
 
 import type * as interfaces from '../interfaces/index.js';
-import { ensureRegistration, getPropertyInjections, registerInjection } from './registry.js';
 import { Container } from '../container/Container.js';
+import { Context } from '../container/Context.js';
 import type { Injection } from '../models/Injection.js';
 import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
@@ -32,12 +32,12 @@ const _configureInjectable = <T extends object, Tokens extends Array<interfaces.
 	klass: interfaces.Constructor<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>,
 	constructorTokens: Tokens,
 ): void => {
-	ensureRegistration(klass);
+	Context.global.ensureRegistration(klass);
 	_injections.splice(0).forEach((injection) => {
-		registerInjection(klass, injection);
+		Context.global.registerInjection(klass, injection);
 	});
 	constructorTokens.forEach((t, index) => {
-		registerInjection(klass, injectionFromIdentifier(t, index));
+		Context.global.registerInjection(klass, injectionFromIdentifier(t, index));
 	});
 };
 
@@ -81,7 +81,7 @@ export const injectable = <T extends object, Tokens extends Array<interfaces.Inj
 				class extends target {
 					public constructor(...args: interfaces.ArgsForInjectionIdentifiers<Tokens>) {
 						super(...(args as never));
-						getPropertyInjections(klass).forEach(({ name, id }) => {
+						Context.global.getPropertyInjections(klass).forEach(({ name, id }) => {
 							const token = tokenForIdentifier(id);
 							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
 							(this as any)[name] = Container.resolvePropertyInjection(token, [token]);
