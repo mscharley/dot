@@ -12,15 +12,10 @@ import type {
 	UnmanagedConstructorParameterInjection,
 } from '../models/Injection.js';
 import { InvalidOperationError } from '../Error.js';
-import { makeGlobalCache } from '../util/makeGlobalCache.js';
 import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 
-const registryCache = Symbol.for('@mscharley/dot:registry-cache');
 const registry
-	= makeGlobalCache<
-		interfaces.Constructor<unknown, unknown[]>,
-		Array<Injection<unknown, interfaces.MetadataObject>>
-	>(registryCache);
+	= new Map<interfaces.Constructor<unknown, unknown[]>, Array<Injection<unknown, interfaces.MetadataObject>>>();
 
 export const ensureRegistration = <T>(klass: interfaces.Constructor<T>): void => {
 	registry.set(klass, registry.get(klass) ?? []);
