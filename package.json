@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"cs-version": "turbo build && changeset version",
-		"cs-release": "changeset publish"
+		"cs-release": "turbo build && changeset publish"
 	},
 	"devDependencies": {
 		"@changesets/cli": "2.29.7",
