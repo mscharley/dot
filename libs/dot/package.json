@@ -34,7 +34,6 @@
 		}
 	},
 	"scripts": {
-		"prepack": "turbo clean && turbo build --force",
 		"build:tsc": "tsc",
 		"build:api": "api-extractor run --local",
 		"dev": "tsc --watch",
