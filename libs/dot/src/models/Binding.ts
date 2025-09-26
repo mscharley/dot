@@ -6,6 +6,7 @@
 
 import type * as interfaces from '../interfaces/index.js';
 import type { AnyToken } from '../Token.js';
+import type { Context } from '../container/Context.js';
 import type { Injection } from './Injection.js';
 
 export interface ConstructorBinding<out T, in out Metadata extends interfaces.MetadataObject> {
@@ -16,6 +17,7 @@ export interface ConstructorBinding<out T, in out Metadata extends interfaces.Me
 	metadata: Metadata;
 	module: interfaces.ContainerModule;
 	ctr: interfaces.Constructor<T>;
+	context: Context;
 }
 
 export interface StaticBinding<out T, in out Metadata extends interfaces.MetadataObject> {

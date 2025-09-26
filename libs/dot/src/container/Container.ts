@@ -40,6 +40,7 @@ export class Container implements interfaces.Container {
 	public constructor(config?: Partial<interfaces.ContainerConfiguration>) {
 		this.config = Object.freeze({
 			autobindClasses: false,
+			contexts: [],
 			defaultScope: 'transient',
 			logLevel: 'debug',
 			logger: { debug: noop, info: noop, trace: noop, warn: noop },
@@ -47,6 +48,10 @@ export class Container implements interfaces.Container {
 		});
 		this.#log = this.config.logger[this.config.logLevel].bind(this.config.logger);
 		this.#warn = this.config.logger.warn.bind(this.config.logger);
+	}
+
+	private get contexts(): Context[] {
+		return [Context.global, ...(this.config.contexts as Context[])];
 	}
 
 	/**
@@ -215,11 +220,13 @@ export class Container implements interfaces.Container {
 	};
 
 	readonly #generateAutoBinding = <T, Metadata extends interfaces.MetadataObject>(
+		context: Context,
 		ctr: interfaces.Constructor<T>,
 		token: Token<T>,
 	): ConstructorBinding<T, Metadata> => ({
 		type: 'constructor',
 		ctr,
+		context,
 		id: ctr,
 		token,
 		scope: this.config.defaultScope,
@@ -261,12 +268,18 @@ export class Container implements interfaces.Container {
 			&& typeof id === 'function'
 			&& !(this.config.parent?.has(id) ?? false)
 		) {
-			const binding = this.#generateAutoBinding<T, Metadata>(id, token);
+			for (const c of this.contexts) {
+				if (!c.has(id)) {
+					continue;
+				}
 
-			// Save this binding to make sure that caches work for future attempts to get this class.
-			this.#bindings.push(binding);
+				const binding = this.#generateAutoBinding<T, Metadata>(c, id, token);
 
-			return [binding];
+				// Save this binding to make sure that caches work for future attempts to get this class.
+				this.#bindings.push(binding);
+
+				return [binding];
+			}
 		}
 
 		return [];
@@ -309,7 +322,7 @@ export class Container implements interfaces.Container {
 				}
 				case 'constructor': {
 					const args
-						= getArgsForParameterInjections(Context.global.getConstructorParameterInjections(binding.ctr));
+						= getArgsForParameterInjections(binding.context.getConstructorParameterInjections(binding.ctr));
 
 					Container.#currentRequest = request;
 					try {
@@ -372,7 +385,9 @@ export class Container implements interfaces.Container {
 	public readonly has: interfaces.IsBoundFunction = (id) => {
 		const token = tokenForIdentifier(id);
 		const local = this.#bindings.find((b) => b.token.identifier === token.identifier) != null;
-		return local || (this.config.parent?.has(id) ?? false) || (typeof id === 'function' && this.config.autobindClasses);
+		const inParent = (this.config.parent?.has(id) ?? false);
+		const canAutobind = typeof id === 'function' && this.config.autobindClasses && this.contexts.find((c) => c.has(id)) != null;
+		return local || inParent || canAutobind;
 	};
 
 	readonly #validateInjections = (
@@ -409,7 +424,7 @@ export class Container implements interfaces.Container {
 					continue;
 				}
 				case 'constructor': {
-					this.#validateInjections(binding, Context.global.getInjections(binding.ctr));
+					this.#validateInjections(binding, Context.all.getInjections(binding.ctr));
 					continue;
 				}
 
@@ -420,13 +435,14 @@ export class Container implements interfaces.Container {
 		}
 
 		if (this.config.autobindClasses && validateAutobindings) {
-			const registry = Context.global.registry;
-			registry.forEach((injections, id) => {
-				this.#validateInjections(
-					this.#generateAutoBinding(id, tokenForIdentifier(id)),
-					injections,
-				);
-			});
+			for (const context of this.contexts) {
+				context.registry.forEach((injections, id) => {
+					this.#validateInjections(
+						this.#generateAutoBinding(context, id, tokenForIdentifier(id)),
+						injections,
+					);
+				});
+			}
 		}
 
 		this.config.parent?.validate(validateAutobindings);

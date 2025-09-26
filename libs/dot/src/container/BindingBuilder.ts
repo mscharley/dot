@@ -8,6 +8,7 @@ import type * as interfaces from '../interfaces/index.js';
 import type { Binding, ConstructorBinding, DynamicBinding, FactoryBinding, StaticBinding } from '../models/Binding.js';
 import { BindingError, InvalidOperationError } from '../Error.js';
 import type { Container } from './Container.js';
+import { Context } from './Context.js';
 import type { Injection } from '../models/Injection.js';
 import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
 import { isConstructor } from '../util/isConstructor.js';
@@ -157,6 +158,7 @@ export class ClassBindingBuilder<T extends object, Metadata extends interfaces.M
 			metadata: this.metadata ?? ({} as Metadata),
 			module: this.module,
 			ctr,
+			context: Context.all,
 		};
 		this.finaliseBinding(binding);
 	};
@@ -177,6 +179,7 @@ export class ClassBindingBuilder<T extends object, Metadata extends interfaces.M
 			metadata: this.metadata ?? ({} as Metadata),
 			module: this.module,
 			ctr: this.id,
+			context: Context.all,
 		};
 		this.finaliseBinding(binding);
 	};

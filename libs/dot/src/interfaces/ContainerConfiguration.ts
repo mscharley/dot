@@ -6,6 +6,7 @@
 
 import type { Logger, LoggerLevel } from './Logger.js';
 import type { Container } from './Container.js';
+import type { Context } from './Context.js';
 import type { ScopeOptions } from './ScopeOptions.js';
 
 /**
@@ -23,6 +24,11 @@ export interface ContainerConfiguration {
 	 * injected. Otherwise this is the same as calling `bind(MyClass).toSelf()` on all classes.
 	 */
 	readonly autobindClasses: boolean;
+
+	/**
+	 * Contexts to search for autobound classes inside, other than the default global context
+	 */
+	readonly contexts: Context[];
 
 	/**
 	 * The default scope for all bindings in this container (default: `"transient"`)
