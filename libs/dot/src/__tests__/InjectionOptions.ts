@@ -4,12 +4,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import { createContainer, inject, injectable, Token } from '../index.js';
 import { describe, expect, it } from '@jest/globals';
-import { Container } from '../container/Container.js';
-import type { ErrorCode } from '../Error.js';
-import { inject } from '../decorators/inject.js';
-import { injectable } from '../decorators/injectable.js';
-import { Token } from '../Token.js';
+import type { ErrorCode } from '../index.js';
 
 const strToken = new Token<string>('string');
 
@@ -23,7 +20,7 @@ describe('injection options', () => {
 				public id?: string;
 			}
 
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => bind(token).to(Token1));
 
 			await expect(c.get(token)).resolves.toMatchObject({ id: undefined });
@@ -39,7 +36,7 @@ describe('injection options', () => {
 				public id!: string[];
 			}
 
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => bind(token).to(Token1));
 
 			await expect(c.get(token)).rejects.toMatchObject({
@@ -61,7 +58,7 @@ describe('injection options', () => {
 				public id!: string[];
 			}
 
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => bind(token).to(Token1));
 
 			await expect(c.get(token)).resolves.toMatchObject({ id: [] });
@@ -75,7 +72,7 @@ describe('injection options', () => {
 				public id!: string[];
 			}
 
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => {
 				bind(token).to(Token1);
 				bind(strToken).toConstantValue('Hello');
@@ -92,7 +89,7 @@ describe('injection options', () => {
 				public id!: string[];
 			}
 
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => {
 				bind(token).to(Token1);
 				bind(strToken).toConstantValue('Hello');
@@ -110,7 +107,7 @@ describe('injection options', () => {
 				public id!: string;
 			}
 
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => {
 				bind(token).to(Token1);
 				bind(strToken).toConstantValue('Hello');

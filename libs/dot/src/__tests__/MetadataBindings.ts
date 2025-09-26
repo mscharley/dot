@@ -5,15 +5,11 @@
  */
 
 /* eslint-disable jest/no-conditional-in-test */
-import type * as interfaces from '../interfaces/index.js';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { createContainer, injectable, MetadataToken, named, NamedToken, withOptions } from '../index.js';
 import { IsInterface, isString } from 'generic-type-guard';
-import { MetadataToken, NamedToken } from '../Token.js';
-import { Container } from '../container/Container.js';
 import type { GuardedType } from 'generic-type-guard';
-import { injectable } from '../decorators/injectable.js';
-import { named } from '../decorators/named.js';
-import { withOptions } from '../decorators/withOptions.js';
+import type { interfaces } from '../index.js';
 
 const isMetadata = new IsInterface().withProperties({ name: isString, type: isString }).get();
 // eslint-disable-next-line @typescript-eslint/no-type-alias
@@ -26,7 +22,7 @@ describe('metadata bindings', () => {
 		const token = new MetadataToken<string, Metadata>('MetadataTest', isMetadata);
 
 		beforeEach(() => {
-			c = new Container({ autobindClasses: true, defaultScope: 'transient' });
+			c = createContainer({ autobindClasses: true, defaultScope: 'transient' });
 			c.load((bind) => {
 				bind(token).withMetadata({ name: 'hello', type: 'greeter' }).toConstantValue('Hello');
 				bind(token).withMetadata({ name: 'goodbye', type: 'greeter' }).toConstantValue('Goodbye');
@@ -81,7 +77,7 @@ describe('metadata bindings', () => {
 		const token = new NamedToken<string>('name');
 
 		beforeEach(() => {
-			c = new Container({ autobindClasses: true, defaultScope: 'transient' });
+			c = createContainer({ autobindClasses: true, defaultScope: 'transient' });
 			c.load((bind) => bind(token).withMetadata({ name: 'hello' }).toConstantValue('Hello'));
 		});
 
@@ -109,7 +105,7 @@ describe('metadata bindings', () => {
 		const token = new MetadataToken<string, Metadata>('factory', isMetadata);
 
 		beforeEach(() => {
-			c = new Container({ defaultScope: 'transient' });
+			c = createContainer({ defaultScope: 'transient' });
 		});
 
 		it('provides metadata to the factory function', async () => {
@@ -196,7 +192,7 @@ describe('metadata bindings', () => {
 		const token = new MetadataToken<string, OptionalMetadata>('optionalMetadata', isOptionalMetadata);
 
 		beforeEach(() => {
-			c = new Container({ defaultScope: 'transient' });
+			c = createContainer({ defaultScope: 'transient' });
 		});
 
 		it('requires metadata for metadata tokens', async () => {

@@ -6,11 +6,9 @@
 
 /* eslint-disable @typescript-eslint/require-await */
 
+import { createContainer, injectable, Token } from '../index.js';
 import { describe, expect, it } from '@jest/globals';
-import { Container } from '../container/Container.js';
-import type { ErrorCode } from '../Error.js';
-import { injectable } from '../decorators/injectable.js';
-import { Token } from '../Token.js';
+import type { ErrorCode } from '../index.js';
 
 const token = new Token<{ id: number }>('error-handling');
 @injectable()
@@ -25,7 +23,7 @@ class Test {
 describe('exception handling', () => {
 	describe('should allow errors from client code to be accessible to client code', () => {
 		it('class constructor', async () => {
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => bind(token).to(Test));
 
 			await expect(c.get(token)).rejects.toMatchObject({
@@ -38,7 +36,7 @@ describe('exception handling', () => {
 		});
 
 		it('dynamic value', async () => {
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) =>
 				bind(token)
 					.inTransientScope()
@@ -57,7 +55,7 @@ describe('exception handling', () => {
 		});
 
 		it('async dynamic value', async () => {
-			const c = new Container();
+			const c = createContainer();
 
 			c.load((bind) =>
 				bind(token)
@@ -79,7 +77,7 @@ describe('exception handling', () => {
 
 	describe('resolution errors should include a path to where the error happened', () => {
 		it('should return a simple error', async () => {
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => bind(token).to(Test));
 
 			await expect(c.get(token)).rejects.toMatchObject({
@@ -92,7 +90,7 @@ describe('exception handling', () => {
 		});
 
 		it('nested requests should include the full tree of errors', async () => {
-			const c = new Container();
+			const c = createContainer();
 			const nameToken = new Token<string>('name');
 			@injectable(nameToken)
 			class Greeter {

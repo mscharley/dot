@@ -4,11 +4,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import type * as interfaces from '../interfaces/index.js';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
-import { Container } from '../container/Container.js';
-import type { ErrorCode } from '../Error.js';
-import { Token } from '../Token.js';
+import { createContainer, Token } from '../index.js';
+import type { ErrorCode, interfaces } from '../index.js';
 
 const token = new Token<string>('str');
 
@@ -18,7 +16,7 @@ describe('child containers', () => {
 	const warn = jest.fn<interfaces.LoggerFn>();
 
 	beforeEach(() => {
-		container = new Container({
+		container = createContainer({
 			logger: {
 				warn: warn as unknown as interfaces.LoggerFn,
 				debug: log as unknown as interfaces.LoggerFn,

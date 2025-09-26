@@ -4,12 +4,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import type * as interfaces from '../interfaces/index.js';
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { Container } from '../container/Container.js';
-import { injectable } from '../decorators/injectable.js';
-import { Token } from '../Token.js';
-import { withOptions } from '../decorators/withOptions.js';
+import { createContainer, injectable, Token, withOptions } from '../index.js';
+import type { interfaces } from '../index.js';
 
 const token = new Token<string>('str');
 
@@ -17,7 +14,7 @@ describe('request options', () => {
 	let c: interfaces.Container;
 
 	beforeEach(() => {
-		c = new Container();
+		c = createContainer();
 	});
 
 	it('is optional', async () => {

@@ -4,9 +4,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import { createContainer, injectable } from '../index.js';
 import { describe, expect, it } from '@jest/globals';
-import { Container } from '../container/Container.js';
-import { injectable } from '../decorators/injectable.js';
 
 @injectable()
 class Name {
@@ -24,20 +23,20 @@ class Greeter {
 
 describe('autobinding', () => {
 	it('allows for autobinding classes', async () => {
-		const c = new Container({ autobindClasses: true });
+		const c = createContainer({ autobindClasses: true });
 
 		await expect(c.get(Greeter)).resolves.toBeInstanceOf(Greeter);
 	});
 
 	it('dynamic bindings work with autobinding', async () => {
-		const c = new Container({ autobindClasses: true });
+		const c = createContainer({ autobindClasses: true });
 		c.load((bind) => bind(Greeter).toDynamicValue([Name], (name) => new Greeter(name)));
 
 		await expect(c.get(Greeter)).resolves.toBeInstanceOf(Greeter);
 	});
 
 	it('works correctly with caches', async () => {
-		const c = new Container({ autobindClasses: true, defaultScope: 'singleton' });
+		const c = createContainer({ autobindClasses: true, defaultScope: 'singleton' });
 
 		const g1 = await c.get(Greeter);
 		const g2 = await c.get(Greeter);
@@ -45,7 +44,7 @@ describe('autobinding', () => {
 	});
 
 	it('will prefer to load something from a parent container', async () => {
-		const c = new Container();
+		const c = createContainer();
 		c.load((bind) => bind(Greeter).toConstantValue(new Greeter({ name: 'John' })));
 
 		const child = c.createChild({ autobindClasses: true });
@@ -53,7 +52,7 @@ describe('autobinding', () => {
 	});
 
 	it('respects the default scope of a container', async () => {
-		const container = new Container({ autobindClasses: true, defaultScope: 'singleton' });
+		const container = createContainer({ autobindClasses: true, defaultScope: 'singleton' });
 
 		@injectable()
 		class Test {

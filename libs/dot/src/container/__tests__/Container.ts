@@ -25,4 +25,13 @@ describe('container', () => {
 			expect(() => c.resolve<unknown>(id, request, [])).toThrow('Unable to find a value to inject');
 		});
 	});
+
+	describe('#resolvePropertyInjection', () => {
+		const token = new Token<{ id: number }>('test');
+		it('fails if attempting a resolution outside a request', () => {
+			expect(() => Container.resolvePropertyInjection(token, [])).toThrowErrorMatchingInlineSnapshot(
+				'"Unable to resolve token as no container is currently making a request: Token<Symbol(test)>"',
+			);
+		});
+	});
 });
