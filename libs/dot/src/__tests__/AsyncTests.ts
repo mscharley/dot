@@ -4,10 +4,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import { createContainer, inject, injectable } from '../index.js';
 import { describe, expect, it, jest } from '@jest/globals';
-import { Container } from '../container/Container.js';
-import { inject } from '../decorators/inject.js';
-import { injectable } from '../decorators/injectable.js';
 
 @injectable()
 class Name {
@@ -32,7 +30,7 @@ class GreeterProp {
 describe('async tests', () => {
 	describe('singleton scope', () => {
 		it('works correctly with caches', async () => {
-			const c = new Container({ autobindClasses: true, defaultScope: 'singleton' });
+			const c = createContainer({ autobindClasses: true, defaultScope: 'singleton' });
 
 			const [g1, g2] = await Promise.all([c.get(Greeter), c.get(Greeter)]);
 			expect(g1).toBe(g2);
@@ -41,7 +39,7 @@ describe('async tests', () => {
 
 	describe('request scope', () => {
 		it('works correctly with caches', async () => {
-			const c = new Container({ autobindClasses: true, defaultScope: 'request' });
+			const c = createContainer({ autobindClasses: true, defaultScope: 'request' });
 
 			const [g1, g2] = await Promise.all([c.get(GreeterProp), c.get(GreeterProp)]);
 			expect(g1).not.toBe(g2);
@@ -50,7 +48,7 @@ describe('async tests', () => {
 	});
 
 	it('releases correctly if errors occur', async () => {
-		const c = new Container({ autobindClasses: true, defaultScope: 'singleton' });
+		const c = createContainer({ autobindClasses: true, defaultScope: 'singleton' });
 		const factory = jest.fn<() => Greeter>();
 		c.load((bind) => bind(Greeter).toDynamicValue([], factory));
 

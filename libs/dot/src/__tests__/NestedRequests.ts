@@ -4,11 +4,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import { createContainer, inject, injectable, Token } from '../index.js';
 import { describe, expect, it } from '@jest/globals';
-import { Container } from '../container/Container.js';
-import { inject } from '../decorators/inject.js';
-import { injectable } from '../decorators/injectable.js';
-import { Token } from '../Token.js';
 
 const numberToken = new Token<number>('nested.number');
 const stringToken = new Token<string>('nested.string');
@@ -21,7 +18,7 @@ const classToken = new Token<TestClass>('nested.class');
 
 describe('nested requests', () => {
 	it('can handle nested requests without loosing track', async () => {
-		const container = new Container();
+		const container = createContainer();
 		container.load((bind) => {
 			bind(numberToken).toConstantValue(10);
 			bind(stringToken).inTransientScope().toDynamicValue([numberToken], (n) => n.toFixed(2));

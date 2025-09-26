@@ -5,12 +5,9 @@
  */
 
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { Container } from '../container/Container.js';
-import type { ErrorCode } from '../Error.js';
-import { injectable } from '../decorators/injectable.js';
-import { Token } from '../Token.js';
+import { createContainer, injectable, Token, unmanaged } from '../index.js';
+import type { ErrorCode, interfaces } from '../index.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
-import { unmanaged } from '../decorators/unmanaged.js';
 
 const nameToken = new Token<string>('name');
 const greetingToken = new Token<string>('greeting');
@@ -34,10 +31,10 @@ class UnmanagedTest {
 }
 
 describe('constructor injection', () => {
-	let c: Container;
+	let c: interfaces.Container;
 
 	beforeEach(() => {
-		c = new Container();
+		c = createContainer();
 		c.load((bind) => {
 			bind(Test).toSelf();
 			bind(UnmanagedTest).toSelf();

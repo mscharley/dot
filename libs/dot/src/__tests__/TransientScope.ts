@@ -4,12 +4,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import type * as interfaces from '../interfaces/index.js';
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { Container } from '../container/Container.js';
-import { inject } from '../decorators/inject.js';
-import { injectable } from '../decorators/injectable.js';
-import { Token } from '../Token.js';
+import { createContainer, inject, injectable, Token } from '../index.js';
+import type { interfaces } from '../index.js';
 
 const LeafToken = new Token<Leaf>('leaf');
 @injectable()
@@ -29,7 +26,7 @@ describe('transient scope', () => {
 	let c: interfaces.Container;
 
 	beforeEach(() => {
-		c = new Container({ defaultScope: 'transient' });
+		c = createContainer({ defaultScope: 'transient' });
 		c.load((bind) => {
 			bind(LeafToken).inTransientScope().to(Leaf);
 			bind(NodeToken).to(Node);
@@ -37,7 +34,7 @@ describe('transient scope', () => {
 	});
 
 	it('default scope is transient', async () => {
-		const c2 = new Container();
+		const c2 = createContainer();
 		c2.load((bind) => {
 			bind(LeafToken).to(Leaf);
 			bind(NodeToken).to(Node);

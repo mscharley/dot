@@ -4,24 +4,17 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import type * as interfaces from '../interfaces/index.js';
+import { createContainer, injectable, Token, unmanaged, withOptions } from '../index.js';
 import { describe, expect, it, jest } from '@jest/globals';
+import type { ErrorCode, interfaces, TokenType } from '../index.js';
 import { ImportTest, ImportTestDependency } from '../__utils__/ImportTest.js';
-import { Container } from '../container/Container.js';
-import type { ErrorCode } from '../Error.js';
-import { injectable } from '../decorators/injectable.js';
-import type { LoggerFn } from '../interfaces/Logger.js';
 import { noop } from '../util/noop.js';
-import { Token } from '../Token.js';
-import type { TokenType } from '../Token.js';
-import { unmanaged } from '../decorators/unmanaged.js';
-import { withOptions } from '../decorators/withOptions.js';
 
 const token = new Token<{ id: number }>('test');
 
 describe('bindings', () => {
 	it('enforces finalising bindings', async () => {
-		const c = new Container();
+		const c = createContainer();
 		c.load((bind) => {
 			bind(token);
 			bind(new Token('foo'));
@@ -34,7 +27,7 @@ describe('bindings', () => {
 	});
 
 	it('throws an error if no binding is found for a token', async () => {
-		const c = new Container();
+		const c = createContainer();
 
 		await expect(async () => c.get(token)).rejects.toMatchObject({
 			cause: {
@@ -47,17 +40,11 @@ describe('bindings', () => {
 		});
 	});
 
-	it('fails if attempting a resolution outside a request', () => {
-		expect(() => Container.resolvePropertyInjection(token, [])).toThrowErrorMatchingInlineSnapshot(
-			'"Unable to resolve token as no container is currently making a request: Token<Symbol(test)>"',
-		);
-	});
-
 	describe('bind()', () => {
 		describe('toConstantValue()', () => {
 			it('can\'t be scoped', () => {
 				expect.assertions(0);
-				const c = new Container();
+				const c = createContainer();
 				c.load((bind) => {
 					/* eslint-disable @typescript-eslint/no-unused-expressions */
 					// @ts-expect-error This error is the actual test
@@ -67,7 +54,7 @@ describe('bindings', () => {
 			});
 
 			it('acts like singleton scope', async () => {
-				const c = new Container();
+				const c = createContainer();
 				const result = c.load((bind) => bind(token).toConstantValue({ id: 10 }));
 				expect(result).not.toBeInstanceOf(Promise);
 				const resolved = await c.get(token);
@@ -76,7 +63,7 @@ describe('bindings', () => {
 			});
 
 			it('can handle async bindings', async () => {
-				const c = new Container();
+				const c = createContainer();
 				const result = c.load(async (bind) => bind(token).toConstantValue(Promise.resolve({ id: 10 })));
 				expect(result).toBeInstanceOf(Promise);
 				await result;
@@ -84,7 +71,7 @@ describe('bindings', () => {
 			});
 
 			it('supports binding proxies', async () => {
-				const c = new Container();
+				const c = createContainer();
 				c.load((bind) => {
 					bind(token).toConstantValue(new Proxy({ id: 10 }, {}) as never);
 				});
@@ -94,7 +81,7 @@ describe('bindings', () => {
 
 		describe('toDynamicValue()', () => {
 			it('transient scope will always run the function', async () => {
-				const c = new Container();
+				const c = createContainer();
 				const fn = jest.fn<() => TokenType<typeof token>>().mockImplementation(() => ({ id: 10 }));
 				c.load((bind) => bind(token).inTransientScope().toDynamicValue([], fn));
 
@@ -103,7 +90,7 @@ describe('bindings', () => {
 			});
 
 			it('singleton scope will only run the function once', async () => {
-				const c = new Container();
+				const c = createContainer();
 				const fn = jest.fn<() => TokenType<typeof token>>().mockImplementation(() => ({ id: 10 }));
 				c.load((bind) => bind(token).inSingletonScope().toDynamicValue([], fn));
 
@@ -114,7 +101,7 @@ describe('bindings', () => {
 			});
 
 			it('can handle async errors', async () => {
-				const c = new Container();
+				const c = createContainer();
 				const subrequest = new Token<string>('subrequest');
 				c.load((bind) => {
 					bind(token)
@@ -133,9 +120,9 @@ describe('bindings', () => {
 			});
 
 			it('doesn\'t print warnings if used with any kind of explicit scope', () => {
-				const warn = jest.fn<LoggerFn>();
-				const c = new Container({
-					logger: { warn: warn as unknown as LoggerFn, debug: noop, info: noop, trace: noop },
+				const warn = jest.fn<interfaces.LoggerFn>();
+				const c = createContainer({
+					logger: { warn: warn as unknown as interfaces.LoggerFn, debug: noop, info: noop, trace: noop },
 				});
 
 				c.load((bind) => {
@@ -154,9 +141,9 @@ describe('bindings', () => {
 			});
 
 			it('prints a warning if used without an explicit scope', async () => {
-				const warn = jest.fn<LoggerFn>();
-				const c = new Container({
-					logger: { warn: warn as unknown as LoggerFn, debug: noop, info: noop, trace: noop },
+				const warn = jest.fn<interfaces.LoggerFn>();
+				const c = createContainer({
+					logger: { warn: warn as unknown as interfaces.LoggerFn, debug: noop, info: noop, trace: noop },
 				});
 				c.load((bind) => bind(token).toDynamicValue([], () => ({ id: 10 })));
 
@@ -172,7 +159,7 @@ describe('bindings', () => {
 			});
 
 			it('works properly for multiple dependencies', async () => {
-				const c = new Container();
+				const c = createContainer();
 				const token2 = new Token<{ name: string }>('token2');
 				const output = new Token<{ greeting: string }>('greeting');
 
@@ -190,7 +177,7 @@ describe('bindings', () => {
 			});
 
 			it('supports binding proxies', async () => {
-				const c = new Container();
+				const c = createContainer();
 				c.load((bind) => {
 					bind(token).toDynamicValue([], () => new Proxy({ id: 10 }, {}) as never);
 				});
@@ -200,7 +187,7 @@ describe('bindings', () => {
 
 		describe('toFactory()', () => {
 			it('transient scope will always run the function', async () => {
-				const c = new Container();
+				const c = createContainer();
 				const fn = jest.fn(() => (): TokenType<typeof token> => ({ id: 10 }));
 				c.load((bind) => bind(token).inTransientScope().toFactory([], fn));
 
@@ -209,7 +196,7 @@ describe('bindings', () => {
 			});
 
 			it('singleton scope will only run the function once', async () => {
-				const c = new Container();
+				const c = createContainer();
 				const fn = jest.fn(() => (): TokenType<typeof token> => ({ id: 10 }));
 				c.load((bind) => bind(token).inSingletonScope().toFactory([], fn));
 
@@ -220,7 +207,7 @@ describe('bindings', () => {
 			});
 
 			it('can create a child container', async () => {
-				const c = new Container();
+				const c = createContainer();
 				const childFactory = new Token<() => interfaces.Container>('childFactory');
 				const testToken = new Token<string>('test-child');
 
@@ -245,9 +232,9 @@ describe('bindings', () => {
 			});
 
 			it('doesn\'t print warnings if used with any kind of explicit scope', () => {
-				const warn = jest.fn<LoggerFn>();
-				const c = new Container({
-					logger: { warn: warn as unknown as LoggerFn, debug: noop, info: noop, trace: noop },
+				const warn = jest.fn<interfaces.LoggerFn>();
+				const c = createContainer({
+					logger: { warn: warn as unknown as interfaces.LoggerFn, debug: noop, info: noop, trace: noop },
 				});
 
 				c.load((bind) => {
@@ -266,9 +253,9 @@ describe('bindings', () => {
 			});
 
 			it('prints a warning if used without an explicit scope', async () => {
-				const warn = jest.fn<LoggerFn>();
-				const c = new Container({
-					logger: { warn: warn as unknown as LoggerFn, debug: noop, info: noop, trace: noop },
+				const warn = jest.fn<interfaces.LoggerFn>();
+				const c = createContainer({
+					logger: { warn: warn as unknown as interfaces.LoggerFn, debug: noop, info: noop, trace: noop },
 				});
 				// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 				c.load((bind) => bind(token).toFactory([], () => () => ({
@@ -287,7 +274,7 @@ describe('bindings', () => {
 			});
 
 			it('works properly for multiple dependencies', async () => {
-				const c = new Container();
+				const c = createContainer();
 				const token2 = new Token<{ name: string }>('token2');
 				const output = new Token<{ greeting: string }>('greeting');
 
@@ -305,7 +292,7 @@ describe('bindings', () => {
 			});
 
 			it('supports binding proxies', async () => {
-				const c = new Container();
+				const c = createContainer();
 				c.load((bind) => {
 					bind(token).toFactory([], () => (): TokenType<typeof token> => new Proxy({ id: 10 }, {}) as never);
 				});
@@ -320,7 +307,7 @@ describe('bindings', () => {
 					public id = 10;
 				}
 
-				const c = new Container();
+				const c = createContainer();
 				c.load((bind) => bind(token).inSingletonScope().to(Test));
 
 				const resolved = await c.get(token);
@@ -332,7 +319,7 @@ describe('bindings', () => {
 
 	describe('has()', () => {
 		it('can check if a token has been bound', () => {
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => bind(new Token<undefined>('random.token')).toConstantValue(undefined));
 			expect(c.has(token)).toBe(false);
 			c.load((bind) => bind(token).toConstantValue({ id: 10 }));
@@ -340,14 +327,14 @@ describe('bindings', () => {
 		});
 
 		it('can check if a class is autobound', () => {
-			const c = new Container({ autobindClasses: true });
+			const c = createContainer({ autobindClasses: true });
 			expect(c.has(ImportTest)).toBe(true);
 		});
 	});
 
 	describe('unbind()', () => {
 		it('can unbind a token that has been bound', () => {
-			const c = new Container();
+			const c = createContainer();
 			const t = new Token<undefined>('random.token');
 			c.load((bind) => {
 				bind(t).toConstantValue(undefined);
@@ -360,7 +347,7 @@ describe('bindings', () => {
 		});
 
 		it('throws an error if the token has not been bound', () => {
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => bind(new Token<undefined>('random.token')).toConstantValue(undefined));
 			expect(() => c.unbind(token)).toThrowErrorMatchingInlineSnapshot(
 				'"Unable to unbind token because it is not bound: Symbol(test)"',
@@ -370,7 +357,7 @@ describe('bindings', () => {
 
 	describe('rebind()', () => {
 		it('is unbind then bind', async () => {
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind, _unbind, _isBound, rebind) => {
 				bind(token).toConstantValue({ id: 10 });
 				rebind(token).toConstantValue({ id: 20 });
@@ -380,7 +367,7 @@ describe('bindings', () => {
 		});
 
 		it('can rebind tokens from other modules', async () => {
-			const c = new Container();
+			const c = createContainer();
 
 			c.load((bind) => {
 				bind(token).toConstantValue({ id: 10 });
@@ -395,7 +382,7 @@ describe('bindings', () => {
 
 	describe('load()', () => {
 		it('can bind tokens via a module', async () => {
-			const c = new Container();
+			const c = createContainer();
 			const value = { id: 10 };
 			c.load((bind) => {
 				bind(token).toConstantValue(value);
@@ -405,7 +392,7 @@ describe('bindings', () => {
 		});
 
 		it('returns the correct types for sync and async loads', async () => {
-			const c = new Container();
+			const c = createContainer();
 			const ambiguous = (async () => {
 				/* no op */
 			}) as interfaces.ContainerModule;
@@ -426,7 +413,7 @@ describe('bindings', () => {
 
 	describe('constructor service identifier', () => {
 		it('can use a class as a service identifier', async () => {
-			const c = new Container();
+			const c = createContainer();
 
 			c.load((bind) => {
 				bind(ImportTestDependency).toConstantValue('Hello world!');
@@ -439,19 +426,19 @@ describe('bindings', () => {
 
 	describe('validate()', () => {
 		it('succeeds for an empty container', () => {
-			const c = new Container();
+			const c = createContainer();
 			expect(() => c.validate()).not.toThrow();
 		});
 
 		it('succeeds for a constant value', () => {
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => bind(token).toConstantValue({ id: 10 }));
 
 			expect(() => c.validate()).not.toThrow();
 		});
 
 		it('succeeds for a dynamic value', () => {
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => {
 				bind(token).toConstantValue({ id: 10 });
 				bind(ImportTestDependency).toDynamicValue([token], ({ id }) => id.toString());
@@ -466,7 +453,7 @@ describe('bindings', () => {
 				public constructor(public id: { id: number }) {}
 			}
 
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => {
 				bind(token).toConstantValue({ id: 10 });
 				bind(Test).toSelf();
@@ -476,7 +463,7 @@ describe('bindings', () => {
 		});
 
 		it('succeeds for unbound optional dependencies', () => {
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => bind(ImportTestDependency).toDynamicValue([withOptions(token, { optional: true })], (v) =>
 				// eslint-disable-next-line jest/no-conditional-in-test
 				(v?.id ?? 20).toString(),
@@ -486,7 +473,7 @@ describe('bindings', () => {
 		});
 
 		it('fails for a dynamic value with a missing dependency', () => {
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => bind(ImportTestDependency).toDynamicValue([token], ({ id }) => id.toString()));
 
 			expect(() => c.validate()).toThrow('Unbound dependency: Token<Symbol(dep)> => Token<Symbol(test)>');
@@ -498,7 +485,7 @@ describe('bindings', () => {
 				public constructor(public id: { id: number }) {}
 			}
 
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => bind(Test).toSelf());
 
 			expect(() => c.validate()).toThrow('Unbound dependency: Constructor<Test> => Token<Symbol(test)>');
@@ -510,7 +497,7 @@ describe('bindings', () => {
 				public constructor(public value: string) {}
 			}
 
-			const c = new Container();
+			const c = createContainer();
 			c.load((bind) => bind(Test).toSelf());
 
 			expect(() => c.validate()).not.toThrow();

@@ -5,11 +5,9 @@
  */
 
 import { beforeEach, describe, expect, it } from '@jest/globals';
-import { Container } from '../container/Container.js';
-import { inject } from '../decorators/inject.js';
-import { injectable } from '../decorators/injectable.js';
+import { createContainer, inject, injectable, Token } from '../index.js';
+import type { interfaces } from '../index.js';
 import { tc39 } from '../__utils__/DecoratorTypes.js';
-import { Token } from '../Token.js';
 
 const prop = new Token<string>('bar');
 
@@ -29,10 +27,10 @@ class Foo {
 const foo = new Token<Foo>('foo');
 
 describe('property access', () => {
-	let c: Container;
+	let c: interfaces.Container;
 
 	beforeEach(() => {
-		c = new Container();
+		c = createContainer();
 		c.load((bind) => {
 			bind(prop).toConstantValue('Hello world!');
 			bind(foo).to(Foo);

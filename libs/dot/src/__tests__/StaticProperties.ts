@@ -4,9 +4,8 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import { createContainer, injectable } from '../index.js';
 import { describe, expect, it } from '@jest/globals';
-import { Container } from '../container/Container.js';
-import { injectable } from '../index.js';
 
 @injectable()
 class Test {
@@ -19,7 +18,7 @@ class Test {
 
 describe('static properties', () => {
 	it('can be accessed without @injectable interfering', async () => {
-		const c = new Container();
+		const c = createContainer();
 		c.load((bind) => bind(Test).toSelf());
 		expect(Test.value).toBe('Hello, world!');
 		await expect(c.get(Test).then((_) => _.check())).resolves.toBe('Hello, world!');

@@ -4,12 +4,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import { createContainer, inject, injectable, Token } from '../index.js';
 import { describe, expect, it } from '@jest/globals';
-import { Container } from '../container/Container.js';
-import type { ErrorCode } from '../Error.js';
-import { inject } from '../decorators/inject.js';
-import { injectable } from '../decorators/injectable.js';
-import { Token } from '../Token.js';
+import type { ErrorCode } from '../index.js';
 
 const t1 = new Token<{ id: number }>('t1');
 const t2 = new Token<{ name: string }>('t2');
@@ -29,7 +26,7 @@ describe('circular dependencies', () => {
 			public name = 'world';
 		}
 
-		const c = new Container();
+		const c = createContainer();
 		c.load((bind) => {
 			bind(t1).to(Id);
 			bind(t2).to(Name);
@@ -43,7 +40,7 @@ describe('circular dependencies', () => {
 	});
 
 	it('throws an error for recursion across dynamic bindings', async () => {
-		const c = new Container();
+		const c = createContainer();
 
 		c.load((bind) => {
 			bind(t1)
@@ -82,7 +79,7 @@ describe('circular dependencies', () => {
 			public name = 'world';
 		}
 
-		const c = new Container();
+		const c = createContainer();
 		c.load((bind) => {
 			bind(t1).to(Id);
 			bind(t2).to(Name);

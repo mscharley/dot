@@ -4,12 +4,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+import { createContainer, inject, injectable, Token } from '../index.js';
 import { describe, expect, it } from '@jest/globals';
-import { Container } from '../container/Container.js';
-import type { ErrorCode } from '../Error.js';
-import { inject } from '../decorators/inject.js';
-import { injectable } from '../decorators/injectable.js';
-import { Token } from '../Token.js';
+import type { ErrorCode } from '../index.js';
 
 const leaf = new Token<Leaf>('leaf');
 const node = new Token<Node>('node');
@@ -33,7 +30,7 @@ class Service {
 
 describe('invalid decorator', () => {
 	it('fails to build a service', async () => {
-		const c = new Container();
+		const c = createContainer();
 		c.load((bind) => {
 			bind(leaf).to(Leaf);
 			bind(node).to(Node);
@@ -47,7 +44,7 @@ describe('invalid decorator', () => {
 	});
 
 	it('fails to build a node', async () => {
-		const c = new Container();
+		const c = createContainer();
 		c.load((bind) => {
 			bind(leaf).to(Leaf);
 			bind(node).to(Node);
@@ -62,7 +59,7 @@ describe('invalid decorator', () => {
 	it('fails to construct a service without @injectable', async () => {
 		class Test {}
 
-		const c = new Container();
+		const c = createContainer();
 
 		c.load((bind) => bind(Test).toSelf());
 		await expect(c.get(Test)).rejects.toMatchObject({
@@ -80,7 +77,7 @@ describe('invalid decorator', () => {
 	it('allows user provided values for a service without @injectable', async () => {
 		class Test {}
 
-		const c = new Container();
+		const c = createContainer();
 
 		c.load((bind) => bind(Test).toConstantValue(new Test()));
 		await expect(c.get(Test)).resolves.toBeInstanceOf(Test);
