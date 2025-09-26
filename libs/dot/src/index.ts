@@ -90,6 +90,7 @@
 
 import type * as interfaces from './interfaces/index.js';
 import { Container } from './container/Container.js';
+import { Context } from './container/Context.js';
 
 /**
  * Create a new empty container
@@ -104,15 +105,23 @@ import { Container } from './container/Container.js';
  */
 export const createContainer: interfaces.ContainerFactory = (config) => new Container(config);
 
+/**
+ * Create a new autobinding context
+ *
+ * @public
+ */
+export const createContext = (name: string): interfaces.Context => new Context(name);
+
 export type { interfaces };
 
 export type { AnyToken } from './Token.js';
-export type { ClassDecorator } from './decorators/injectable.js';
-export type { ClassFieldDecorator, InjectDecoratorFactory } from './decorators/inject.js';
+export type { ClassDecorator, ClassFieldDecorator } from './decorators/decorators.js';
+export type { InjectDecoratorFactory } from './decorators/inject.js';
 export type { TokenType } from './Token.js';
 
-export { inject } from './decorators/inject.js';
+export { inContext } from './decorators/inContext.js';
 export { injectable } from './decorators/injectable.js';
+export { inject } from './decorators/inject.js';
 export { stringifyIdentifier } from './util/stringifyIdentifier.js';
 export { MetadataToken, NamedToken, Token } from './Token.js';
 export { isToken, isMetadataToken } from './util/isToken.js';

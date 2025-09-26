@@ -5,23 +5,12 @@
  */
 
 import type * as interfaces from '../interfaces/index.js';
+import { type ClassDecorator, MetadataContext } from './decorators.js';
 import { Container } from '../container/Container.js';
 import { Context } from '../container/Context.js';
 import type { Injection } from '../models/Injection.js';
 import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
-
-/**
- * Typesafe definition of a class decorator
- *
- * @public
- */
-export interface ClassDecorator<T, Args extends unknown[]> {
-	// TC39 definition
-	<Ctr extends interfaces.Constructor<T, Args>>(target: Ctr, context: ClassDecoratorContext<Ctr>): undefined;
-	// experimental decorators definition
-	<Ctr extends interfaces.Constructor<T, Args>>(target: Ctr, context?: undefined): Ctr | undefined;
-}
 
 const _injections: Array<Injection<unknown, interfaces.MetadataObject>> = [];
 export const addInjection = <T>(injection: Injection<T, interfaces.MetadataObject>): void => {
@@ -30,14 +19,24 @@ export const addInjection = <T>(injection: Injection<T, interfaces.MetadataObjec
 
 const _configureInjectable = <T extends object, Tokens extends Array<interfaces.InjectionIdentifier<unknown>>>(
 	klass: interfaces.Constructor<T, interfaces.ArgsForInjectionIdentifiers<Tokens>>,
+	contexts: Context[],
 	constructorTokens: Tokens,
 ): void => {
-	Context.global.ensureRegistration(klass);
+	Context.all.ensureRegistration(klass);
+	for (const c of contexts) {
+		c.ensureRegistration(klass);
+	}
 	_injections.splice(0).forEach((injection) => {
-		Context.global.registerInjection(klass, injection);
+		Context.all.registerInjection(klass, injection);
+		for (const c of contexts) {
+			c.registerInjection(klass, injection);
+		}
 	});
 	constructorTokens.forEach((t, index) => {
-		Context.global.registerInjection(klass, injectionFromIdentifier(t, index));
+		Context.all.registerInjection(klass, injectionFromIdentifier(t, index));
+		for (const c of contexts) {
+			c.registerInjection(klass, injectionFromIdentifier(t, index));
+		}
 	});
 };
 
@@ -76,25 +75,30 @@ export const injectable = <T extends object, Tokens extends Array<interfaces.Inj
 		/* c8 ignore start */
 		if (context == null) {
 			// experimental
+			// eslint-disable-next-line @stylistic/max-len
+			const contexts = (target as unknown as Record<typeof MetadataContext, undefined | Context[]>)[MetadataContext] ?? [Context.global];
+			// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
+			delete (target as any)[MetadataContext];
 			const klass = ((): typeof target =>
-			// @ts-expect-error - TypeScript doesn't like this construct when using the generic interface types.
+				// @ts-expect-error - TypeScript doesn't like this construct when using the generic interface types.
 				class extends target {
 					public constructor(...args: interfaces.ArgsForInjectionIdentifiers<Tokens>) {
 						super(...(args as never));
-						Context.global.getPropertyInjections(klass).forEach(({ name, id }) => {
+						contexts[0]?.getPropertyInjections(klass).forEach(({ name, id }) => {
 							const token = tokenForIdentifier(id);
 							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
 							(this as any)[name] = Container.resolvePropertyInjection(token, [token]);
 						});
 					}
 				})();
-			_configureInjectable(klass, constructorTokens);
+			_configureInjectable(klass, contexts, constructorTokens);
 
 			return klass;
 			/* c8 ignore end */
 		} else {
 			// tc39
-			_configureInjectable(target, constructorTokens);
+			const contexts = (context.metadata?.[MetadataContext] as Context[] | undefined) ?? [Context.global];
+			_configureInjectable(target, contexts, constructorTokens);
 
 			return undefined;
 		}

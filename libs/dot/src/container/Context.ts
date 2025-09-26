@@ -14,8 +14,11 @@ import type {
 import { InvalidOperationError } from '../Error.js';
 import { stringifyIdentifier } from '../util/stringifyIdentifier.js';
 
-export class Context {
-	public static readonly global = new Context();
+export class Context implements interfaces.Context {
+	public constructor(public readonly name: string) {}
+
+	public static readonly all = new Context('AllContexts');
+	public static readonly global = new Context('Global');
 
 	readonly #registry
 		= new Map<interfaces.Constructor<unknown, unknown[]>, Array<Injection<unknown, interfaces.MetadataObject>>>();
@@ -26,6 +29,14 @@ export class Context {
 	> {
 		return this.#registry;
 	}
+
+	public get classesRegistered(): number {
+		return this.#registry.size;
+	}
+
+	public has = <T>(klass: interfaces.Constructor<T>): boolean => {
+		return this.#registry.has(klass);
+	};
 
 	public ensureRegistration = <T>(klass: interfaces.Constructor<T>): void => {
 		this.#registry.set(klass, this.#registry.get(klass) ?? []);
@@ -81,4 +92,15 @@ export class Context {
 				i.type === 'constructorParameter' || i.type === 'unmanagedConstructorParameter',
 		);
 	};
+
+	public toString(): string {
+		return `Context<${this.name}>`;
+	}
+
+	public toJSON(): object {
+		return {
+			name: this.name,
+			classesRegistered: this.classesRegistered,
+		};
+	}
 }
