@@ -1,5 +1,19 @@
 # @mscharley/dot
 
+## 2.2.0
+
+### Minor Changes
+
+- 8795394: Add support for contextual autobinding to better support container validation
+
+### Patch Changes
+
+- e8d2317: fix(deps): update dependency typescript to v5.9.2
+
+  Signed-off-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+
+- ebe537a: Container validation now throws an AggregateError with all validation failures
+
 ## 2.1.2
 
 ### Patch Changes
