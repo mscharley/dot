@@ -94,7 +94,7 @@ export class Context implements interfaces.Context {
 	};
 
 	public toString(): string {
-		return `Context<${this.name}>`;
+		return `Context<${this.name}:${this.classesRegistered}>`;
 	}
 
 	public toJSON(): object {
