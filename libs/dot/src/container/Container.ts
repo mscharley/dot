@@ -393,26 +393,37 @@ export class Container implements interfaces.Container {
 	readonly #validateInjections = (
 		binding: Binding<unknown, interfaces.MetadataObject>,
 		injections: Array<Injection<unknown, interfaces.MetadataObject>>,
-	): void => {
-		for (const i of injections) {
+		context?: Context,
+	): Error[] => {
+		return injections.flatMap((i) => {
 			if (
 				// Optional dependencies are always valid
 				i.options.optional
 				// Unmanaged injections are always valid since they contain the static value to use
 				|| i.type === 'unmanagedConstructorParameter'
 			) {
-				continue;
+				return [];
 			}
 
 			if (!this.has(i.id)) {
-				throw new InvalidOperationError(
-					`Unbound dependency: ${stringifyIdentifier(binding.id)} => ${stringifyIdentifier(i.id)}`,
-				);
+				if (context != null) {
+					return [new InvalidOperationError(
+						`Unbound dependency (context: ${context.toString()}): ${stringifyIdentifier(binding.id)} => ${stringifyIdentifier(i.id)}`,
+					)];
+				} else {
+					return [new InvalidOperationError(
+						`Unbound dependency: ${stringifyIdentifier(binding.id)} => ${stringifyIdentifier(i.id)}`,
+					)];
+				}
 			}
-		}
+
+			return [];
+		});
 	};
 
 	public readonly validate: interfaces.Container['validate'] = (validateAutobindings = true): void => {
+		const errors: Error[] = [];
+
 		for (const binding of this.#bindings) {
 			switch (binding.type) {
 				case 'static':
@@ -420,11 +431,11 @@ export class Container implements interfaces.Container {
 					continue;
 				case 'dynamic':
 				case 'factory': {
-					this.#validateInjections(binding, binding.injections);
+					errors.push(...this.#validateInjections(binding, binding.injections));
 					continue;
 				}
 				case 'constructor': {
-					this.#validateInjections(binding, Context.all.getInjections(binding.ctr));
+					errors.push(...this.#validateInjections(binding, Context.all.getInjections(binding.ctr)));
 					continue;
 				}
 
@@ -437,12 +448,17 @@ export class Container implements interfaces.Container {
 		if (this.config.autobindClasses && validateAutobindings) {
 			for (const context of this.contexts) {
 				context.registry.forEach((injections, id) => {
-					this.#validateInjections(
+					errors.push(...this.#validateInjections(
 						this.#generateAutoBinding(context, id, tokenForIdentifier(id)),
 						injections,
-					);
+						context,
+					));
 				});
 			}
+		}
+
+		if (errors.length > 0) {
+			throw new AggregateError(errors);
 		}
 
 		this.config.parent?.validate(validateAutobindings);
