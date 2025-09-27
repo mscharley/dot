@@ -131,8 +131,6 @@ interface ContainerModuleMeta {
     url: string;
 }
 
-// Warning: (ae-missing-release-tag) "Context" is part of the package's API, but it is missing a release tag (@alpha, @beta, @public, or @internal)
-//
 // @public
 interface Context {
     // (undocumented)
@@ -174,9 +172,7 @@ type Fn<out T, in Args extends unknown[] = any> = (...args: Args) => T;
 // @public
 type ImplicitScopeBindingOptions = 'toConstantValue';
 
-// Warning: (ae-missing-release-tag) "inContext" is part of the package's API, but it is missing a release tag (@alpha, @beta, @public, or @internal)
-//
-// @public (undocumented)
+// @public
 export const inContext: (context: interfaces.Context) => ClassDecorator_2<any, any>;
 
 // @public

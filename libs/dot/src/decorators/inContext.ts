@@ -8,6 +8,34 @@
 import type * as interfaces from '../interfaces/index.js';
 import { type ClassDecorator, MetadataContext } from './decorators.js';
 
+/**
+ * Adds the autobinding of this class into a specific context
+ *
+ * @remarks
+ *
+ * It is possible to list multiple contexts by using the decorator multiple times.
+ *
+ * @example
+ *
+ * ```typescript
+ * const myContext = createContext("MyContext");
+ *
+ * @injectable()
+ * class GlobalClass {}
+ *
+ * @injectable()
+ * @inContext(myContext)
+ * class Test {}
+ *
+ * const container = createContainer({ autobindClasses: true });
+ * container.get(Test) // This will fail, Test is not bound in the global context as it has an explicit context
+ * const childContainer = container.createChild({ autobindClasses: true, contexts: [myContext] });
+ * childContainer.get(Test) // This will succeed, as the context for the autobinding is available to this container.
+ * childContainer.get(GlobalClass) // This will also succeed, all containers always have access to the global context.
+ * ```
+ *
+ * @public
+ */
 export const inContext
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	= (context: interfaces.Context): ClassDecorator<any, any> =>

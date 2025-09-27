@@ -8,6 +8,8 @@ import type { Constructor } from './Functions.js';
 
 /**
  * A context for autobindings to limit which hierarchical containers can use this binding
+ *
+ * @public
  */
 export interface Context {
 	readonly name: string;
