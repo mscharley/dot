@@ -32,6 +32,29 @@ describe('registry', () => {
 		container.load((bind) => bind(strToken).toConstantValue('hello world'));
 	});
 
+	describe('meta functions', () => {
+		const context = new Context('meta-test');
+		context.ensureRegistration(TestClass);
+
+		describe('classesRegistered', () => {
+			it('returns the number of autobound classes registered', () => {
+				expect(context.classesRegistered).toBe(1);
+			});
+		});
+
+		describe('toString', () => {
+			it('returns a simple representation of the context', () => {
+				expect(context.toString()).toBe('Context<meta-test:1>');
+			});
+		});
+
+		describe('toJSON', () => {
+			it('returns a simple representation of the context', () => {
+				expect(context.toJSON()).toMatchObject({ name: 'meta-test', classesRegistered: 1 });
+			});
+		});
+	});
+
 	describe('registerInjection', () => {
 		it('succeeds for an unseen class', () => {
 			class Unseen {}
