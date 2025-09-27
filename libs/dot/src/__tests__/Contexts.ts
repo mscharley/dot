@@ -76,7 +76,7 @@ describe('autobinding contexts', () => {
 		expect(c.has(Test)).toBe(false);
 	});
 
-	it('passes strict validation', () => {
+	it('passes strict validation', async () => {
 		const c = createContainer({ autobindClasses: false });
 		expect(c.validate(true)).toBeUndefined();
 
@@ -84,6 +84,14 @@ describe('autobinding contexts', () => {
 		expect(child1.validate(true)).toBeUndefined();
 
 		const child2 = c.createChild({ autobindClasses: true, contexts: [orphanedContext] });
-		expect(() => child2.validate(true)).toThrow('Unbound dependency: Constructor<OrphanedWrapper> => Constructor<Test>');
+		// eslint-disable-next-line @typescript-eslint/require-await
+		await expect((async (): Promise<void> => child2.validate(true))()).rejects.toMatchObject({
+			errors: [
+				{ message: 'Unbound dependency (context: Context<OrphanedContext:1>): Constructor<OrphanedWrapper> => Constructor<Test>' },
+			],
+		});
+
+		const child3 = c.createChild({ autobindClasses: true, contexts: [context, orphanedContext] });
+		expect(child3.validate(true)).toBeUndefined();
 	});
 });

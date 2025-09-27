@@ -476,10 +476,20 @@ describe('bindings', () => {
 			const c = createContainer();
 			c.load((bind) => bind(ImportTestDependency).toDynamicValue([token], ({ id }) => id.toString()));
 
-			expect(() => c.validate()).toThrow('Unbound dependency: Token<Symbol(dep)> => Token<Symbol(test)>');
+			try {
+				c.validate(true);
+				throw new Error('Expected failure');
+			} catch (e) {
+				// eslint-disable-next-line jest/no-conditional-expect
+				expect(e).toMatchObject({
+					errors: [
+						{ message: 'Unbound dependency: Token<Symbol(dep)> => Token<Symbol(test)>' },
+					],
+				});
+			}
 		});
 
-		it('fails for a constructor with a missing dependency', () => {
+		it('fails for a constructor with a missing dependency', async () => {
 			@injectable(token)
 			class Test {
 				public constructor(public id: { id: number }) {}
@@ -488,7 +498,12 @@ describe('bindings', () => {
 			const c = createContainer();
 			c.load((bind) => bind(Test).toSelf());
 
-			expect(() => c.validate()).toThrow('Unbound dependency: Constructor<Test> => Token<Symbol(test)>');
+			// eslint-disable-next-line @typescript-eslint/require-await
+			await expect((async (): Promise<void> => c.validate(true))()).rejects.toMatchObject({
+				errors: [
+					{ message: 'Unbound dependency: Constructor<Test> => Token<Symbol(test)>' },
+				],
+			});
 		});
 
 		it('succeeds for unmanaged dependencies', () => {

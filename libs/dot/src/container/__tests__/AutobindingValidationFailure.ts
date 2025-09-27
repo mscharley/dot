@@ -26,8 +26,10 @@ describe('autobindingValidationFailure', () => {
 
 		// eslint-disable-next-line @typescript-eslint/require-await
 		await expect((async (): Promise<void> => c.validate())()).rejects.toMatchObject({
-			code: 'INVALID_OPERATION',
-			message: 'Unbound dependency: Constructor<HelloWorld> => Token<Symbol(failing-token)>',
+			errors: [{
+				code: 'INVALID_OPERATION',
+				message: 'Unbound dependency (context: Context<Global:1>): Constructor<HelloWorld> => Token<Symbol(failing-token)>',
+			}],
 		});
 	});
 });
