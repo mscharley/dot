@@ -16,6 +16,7 @@
 			"dependsOn": ["^test"]
 		},
 		"stryker": {
+			"inputs": ["stryker.conf.json"],
 			"dependsOn": ["test"]
 		}
 	}

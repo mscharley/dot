@@ -26,11 +26,11 @@
 			"inputs": ["src/**"]
 		},
 		"test:jest:experimental": {
-			"inputs": ["src/**"]
+			"inputs": ["src/**", "jest.config.js"]
 		},
 		"test:jest:tc39": {
 			"dependsOn": ["test:jest:experimental"],
-			"inputs": ["src/**"]
+			"inputs": ["src/**", "jest.config.js"]
 		}
 	}
 }

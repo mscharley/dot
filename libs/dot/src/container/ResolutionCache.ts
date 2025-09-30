@@ -8,11 +8,10 @@ import type * as interfaces from '../interfaces/index.js';
 import type { Binding } from '../models/Binding.js';
 import { Mutex } from 'async-mutex';
 import type { MutexInterface } from 'async-mutex';
-import type { Token } from '../Token.js';
 
 export class ResolutionCache {
-	readonly #mutexes = new Map<Binding<unknown, interfaces.MetadataObject>, Mutex>();
-	readonly #cache = new Map<Binding<unknown, interfaces.MetadataObject>, unknown>();
+	readonly #mutexes = new WeakMap<Binding<unknown, interfaces.MetadataObject>, Mutex>();
+	readonly #cache = new WeakMap<Binding<unknown, interfaces.MetadataObject>, unknown>();
 
 	public readonly lock
 		= async (key: Binding<unknown, interfaces.MetadataObject>): Promise<MutexInterface.Releaser> => {
@@ -32,14 +31,4 @@ export class ResolutionCache {
 
 	public readonly delete
 		= this.#cache.delete.bind(this.#cache) as <T>(binding: Binding<T, interfaces.MetadataObject>) => boolean;
-
-	public readonly flushToken = <T>(token: Token<T>): void => {
-		const keys = [...this.#cache.keys()];
-		for (const key of keys) {
-			if (key.token.identifier === token.identifier) {
-				this.#mutexes.delete(key);
-				this.#cache.delete(key);
-			}
-		}
-	};
 }
