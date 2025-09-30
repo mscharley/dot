@@ -75,6 +75,7 @@ export const injectable = <T extends object, Tokens extends Array<interfaces.Inj
 ): ClassDecorator<T, interfaces.ArgsForInjectionIdentifiers<Tokens>> =>
 	((target, context) => {
 		/* c8 ignore start */
+		// Stryker disable all
 		if (context == null) {
 			// experimental
 			// eslint-disable-next-line @stylistic/max-len
@@ -97,6 +98,7 @@ export const injectable = <T extends object, Tokens extends Array<interfaces.Inj
 			_configureInjectable(klass, contexts, constructorTokens);
 
 			return klass;
+			// Stryker restore all
 			/* c8 ignore end */
 		} else {
 			// tc39
