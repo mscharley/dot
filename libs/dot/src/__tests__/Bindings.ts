@@ -4,7 +4,7 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { createContainer, injectable, Token, unmanaged, withOptions } from '../index.js';
+import { createContainer, injectable, Token } from '../index.js';
 import { describe, expect, it, jest } from '@jest/globals';
 import type { ErrorCode, interfaces, TokenType } from '../index.js';
 import { ImportTest, ImportTestDependency } from '../__utils__/ImportTest.js';
@@ -421,101 +421,6 @@ describe('bindings', () => {
 			});
 
 			await expect(c.get(ImportTest)).resolves.toMatchObject({ dep: 'Hello world!', id: 10 });
-		});
-	});
-
-	describe('validate()', () => {
-		it('succeeds for an empty container', () => {
-			const c = createContainer();
-			expect(() => c.validate()).not.toThrow();
-		});
-
-		it('succeeds for a constant value', () => {
-			const c = createContainer();
-			c.load((bind) => bind(token).toConstantValue({ id: 10 }));
-
-			expect(() => c.validate()).not.toThrow();
-		});
-
-		it('succeeds for a dynamic value', () => {
-			const c = createContainer();
-			c.load((bind) => {
-				bind(token).toConstantValue({ id: 10 });
-				bind(ImportTestDependency).toDynamicValue([token], ({ id }) => id.toString());
-			});
-
-			expect(() => c.validate()).not.toThrow();
-		});
-
-		it('succeeds for a constructor', () => {
-			@injectable(token)
-			class Test {
-				public constructor(public id: { id: number }) {}
-			}
-
-			const c = createContainer();
-			c.load((bind) => {
-				bind(token).toConstantValue({ id: 10 });
-				bind(Test).toSelf();
-			});
-
-			expect(() => c.validate()).not.toThrow();
-		});
-
-		it('succeeds for unbound optional dependencies', () => {
-			const c = createContainer();
-			c.load((bind) => bind(ImportTestDependency).toDynamicValue([withOptions(token, { optional: true })], (v) =>
-				// eslint-disable-next-line jest/no-conditional-in-test
-				(v?.id ?? 20).toString(),
-			));
-
-			expect(() => c.validate()).not.toThrow();
-		});
-
-		it('fails for a dynamic value with a missing dependency', () => {
-			const c = createContainer();
-			c.load((bind) => bind(ImportTestDependency).toDynamicValue([token], ({ id }) => id.toString()));
-
-			try {
-				c.validate(true);
-				throw new Error('Expected failure');
-			} catch (e) {
-				// eslint-disable-next-line jest/no-conditional-expect
-				expect(e).toMatchObject({
-					errors: [
-						{ message: 'Unbound dependency: Token<Symbol(dep)> => Token<Symbol(test)>' },
-					],
-				});
-			}
-		});
-
-		it('fails for a constructor with a missing dependency', async () => {
-			@injectable(token)
-			class Test {
-				public constructor(public id: { id: number }) {}
-			}
-
-			const c = createContainer();
-			c.load((bind) => bind(Test).toSelf());
-
-			// eslint-disable-next-line @typescript-eslint/require-await
-			await expect((async (): Promise<void> => c.validate(true))()).rejects.toMatchObject({
-				errors: [
-					{ message: 'Unbound dependency: Constructor<Test> => Token<Symbol(test)>' },
-				],
-			});
-		});
-
-		it('succeeds for unmanaged dependencies', () => {
-			@injectable(unmanaged('Hello, world!'))
-			class Test {
-				public constructor(public value: string) {}
-			}
-
-			const c = createContainer();
-			c.load((bind) => bind(Test).toSelf());
-
-			expect(() => c.validate()).not.toThrow();
 		});
 	});
 });

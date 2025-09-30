@@ -119,7 +119,7 @@ export type { ClassDecorator, ClassFieldDecorator } from './decorators/decorator
 export type { InjectDecoratorFactory } from './decorators/inject.js';
 export type { TokenType } from './Token.js';
 
-export { inContext } from './decorators/inContext.js';
+export { inContext, inNoContext, inGlobalContext } from './decorators/inContext.js';
 export { injectable } from './decorators/injectable.js';
 export { inject } from './decorators/inject.js';
 export { stringifyIdentifier } from './util/stringifyIdentifier.js';

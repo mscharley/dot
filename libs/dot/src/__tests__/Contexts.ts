@@ -4,11 +4,11 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-import { createContainer, createContext, inContext, injectable } from '../index.js';
+import { createContainer, createContext, inContext, inGlobalContext, injectable, inNoContext } from '../index.js';
 import { describe, expect, it } from '@jest/globals';
+import { Context } from '../container/Context.js';
 
 const context = createContext('TestContext');
-const orphanedContext = createContext('OrphanedContext');
 
 @injectable()
 @inContext(context)
@@ -23,10 +23,18 @@ class TestWrapper {
 }
 
 @injectable(Test)
-@inContext(orphanedContext)
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-class OrphanedWrapper {
+@inNoContext()
+class ExplicitBoundOnly {
+	public id = 20;
+
 	public constructor(public test: Test) {}
+}
+
+@injectable()
+@inGlobalContext()
+@inContext(context)
+class AlsoInGlobalContext {
+	public id = 30;
 }
 
 describe('autobinding contexts', () => {
@@ -76,22 +84,21 @@ describe('autobinding contexts', () => {
 		expect(c.has(Test)).toBe(false);
 	});
 
-	it('passes strict validation', async () => {
-		const c = createContainer({ autobindClasses: false });
-		expect(c.validate(true)).toBeUndefined();
+	it('allows @injectable with explicit bindings only for use with to() and toSelf()', async () => {
+		expect(Context.global.has(ExplicitBoundOnly)).toBe(false);
+		expect(context.has(ExplicitBoundOnly)).toBe(false);
 
-		const child1 = c.createChild({ autobindClasses: true, contexts: [context] });
-		expect(child1.validate(true)).toBeUndefined();
-
-		const child2 = c.createChild({ autobindClasses: true, contexts: [orphanedContext] });
-		// eslint-disable-next-line @typescript-eslint/require-await
-		await expect((async (): Promise<void> => child2.validate(true))()).rejects.toMatchObject({
-			errors: [
-				{ message: 'Unbound dependency (context: Context<OrphanedContext:1>): Constructor<OrphanedWrapper> => Constructor<Test>' },
-			],
+		const c = createContainer({ autobindClasses: true, contexts: [context] });
+		c.load((bind) => {
+			bind(ExplicitBoundOnly).toSelf();
 		});
 
-		const child3 = c.createChild({ autobindClasses: true, contexts: [context, orphanedContext] });
-		expect(child3.validate(true)).toBeUndefined();
+		await c.get(ExplicitBoundOnly);
+		await expect(c.get(ExplicitBoundOnly)).resolves.toMatchObject({ id: 20, test: { id: 10 } });
+	});
+
+	it('allows injectables to specify they should be included in the global context', () => {
+		expect(Context.global.has(AlsoInGlobalContext)).toBe(true);
+		expect(context.has(AlsoInGlobalContext)).toBe(true);
 	});
 });

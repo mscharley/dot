@@ -176,6 +176,9 @@ type ImplicitScopeBindingOptions = 'toConstantValue';
 export const inContext: (context: interfaces.Context) => ClassDecorator_2<any, any>;
 
 // @public
+export const inGlobalContext: () => ClassDecorator_2<any, any>;
+
+// @public
 export const inject: InjectDecoratorFactory;
 
 // @public
@@ -232,6 +235,9 @@ interface InjectOptions<Metadata extends MetadataObject> {
     multiple: boolean;
     optional: boolean;
 }
+
+// @public
+export const inNoContext: () => ClassDecorator_2<any, any>;
 
 declare namespace interfaces {
     export {
