@@ -100,6 +100,30 @@ describe('bindings', () => {
 				expect(fn.mock.calls).toHaveLength(1);
 			});
 
+			it('rebinding will flush the singleton cache', async () => {
+				const c = createContainer();
+				const token2 = new Token<{ message: string }>('token2');
+				c.load((bind) => bind(token2).inSingletonScope().toDynamicValue([], () => ({ message: 'Hello world!' })));
+				const fn = jest.fn<() => TokenType<typeof token>>().mockImplementation(() => ({ id: 10 }));
+				const module: interfaces.SyncContainerModule = (bind) => {
+					bind(token).inSingletonScope().toDynamicValue([], fn);
+				};
+
+				c.load(module);
+				const first = await c.get(token);
+				expect(first).toBe(await c.get(token));
+				const v2 = await c.get(token2);
+				expect(v2).toBe(await c.get(token2));
+
+				c.unbind(token);
+				c.load(module);
+
+				const second = await c.get(token);
+				expect(second).not.toBe(first);
+				expect(second).toBe(await c.get(token));
+				expect(v2).toBe(await c.get(token2));
+			});
+
 			it('can handle async errors', async () => {
 				const c = createContainer();
 				const subrequest = new Token<string>('subrequest');
