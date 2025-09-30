@@ -7,6 +7,7 @@
 /* eslint-disable @stylistic/max-len */
 import type * as interfaces from '../interfaces/index.js';
 import { type ClassDecorator, MetadataContext } from './decorators.js';
+import { Context } from '../container/Context.js';
 
 /**
  * Adds the autobinding of this class into a specific context
@@ -59,3 +60,46 @@ export const inContext
 				return undefined;
 			}
 		};
+
+/**
+ * Always include this injectable in the global context
+ *
+ * @remarks
+ *
+ * This effectively disables contexts for this injectable as the global context is always available in all
+ * containers, but is included for completeness.
+ *
+ * @public
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const inGlobalContext = (): ClassDecorator<any, any> => inContext(Context.global);
+
+/**
+ * Don't include this injectable in any contexts, including the global one
+ *
+ * @remarks
+ *
+ * This is useful for things you want to explicitly bind using `toSelf()` or `to()` which both require an
+ * `@injectable` decorator in order to specify the dependency list for the binding.
+ *
+ * @public
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const inNoContext = (): ClassDecorator<any, any> => (target, ctx) => {
+	/* c8 ignore start */
+	if (ctx == null) {
+		// experimental
+		(target as unknown as Record<typeof MetadataContext, undefined | interfaces.Context[]>)[MetadataContext] ??= [];
+
+		return target;
+		/* c8 ignore end */
+	} else {
+		// tc39
+		if (ctx.metadata == null) {
+			throw new Error('Your JavaScript runtime doesn\'t support decorator metadata');
+		}
+		ctx.metadata[MetadataContext] ??= [];
+
+		return undefined;
+	}
+};
