@@ -4,10 +4,13 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-/* eslint-disable @stylistic/max-len */
 import type * as interfaces from '../interfaces/index.js';
 import { type ClassDecorator, MetadataContext } from './decorators.js';
 import { Context } from '../container/Context.js';
+import { InvalidOperationError } from '../Error.js';
+
+// eslint-disable-next-line @typescript-eslint/no-type-alias
+type Metadata = Record<typeof MetadataContext, undefined | interfaces.Context[] | symbol>;
 
 /**
  * Adds the autobinding of this class into a specific context
@@ -44,8 +47,11 @@ export const inContext
 			/* c8 ignore start */
 			if (ctx == null) {
 				// experimental
-				(target as unknown as Record<typeof MetadataContext, undefined | interfaces.Context[]>)[MetadataContext] ??= [];
-				(target as unknown as Record<typeof MetadataContext, interfaces.Context[]>)[MetadataContext].push(context);
+				const meta = (target as unknown as Metadata)[MetadataContext] ??= [];
+				if (!Array.isArray(meta)) {
+					throw new InvalidOperationError('@inContext should be specified after @injectable');
+				}
+				meta.push(context);
 
 				return target;
 				/* c8 ignore end */
@@ -54,8 +60,11 @@ export const inContext
 				if (ctx.metadata == null) {
 					throw new Error('Your JavaScript runtime doesn\'t support decorator metadata');
 				}
-				ctx.metadata[MetadataContext] ??= [];
-				(ctx.metadata as Record<typeof MetadataContext, interfaces.Context[]>)[MetadataContext].push(context);
+				const meta: interfaces.Context[] | symbol = (ctx.metadata as Metadata)[MetadataContext] ??= [];
+				if (!Array.isArray(meta)) {
+					throw new InvalidOperationError('@inContext should be specified after @injectable');
+				}
+				meta.push(context);
 
 				return undefined;
 			}
@@ -89,7 +98,10 @@ export const inNoContext = (): ClassDecorator<any, any> => (target, ctx) => {
 	/* c8 ignore start */
 	if (ctx == null) {
 		// experimental
-		(target as unknown as Record<typeof MetadataContext, undefined | interfaces.Context[]>)[MetadataContext] ??= [];
+		const meta = (target as unknown as Metadata)[MetadataContext] ??= [];
+		if (!Array.isArray(meta)) {
+			throw new InvalidOperationError('@inContext should be specified after @injectable');
+		}
 
 		return target;
 		/* c8 ignore end */
@@ -98,7 +110,10 @@ export const inNoContext = (): ClassDecorator<any, any> => (target, ctx) => {
 		if (ctx.metadata == null) {
 			throw new Error('Your JavaScript runtime doesn\'t support decorator metadata');
 		}
-		ctx.metadata[MetadataContext] ??= [];
+		const meta: interfaces.Context[] | symbol = (ctx.metadata as Metadata)[MetadataContext] ??= [];
+		if (!Array.isArray(meta)) {
+			throw new InvalidOperationError('@inContext should be specified after @injectable');
+		}
 
 		return undefined;
 	}
