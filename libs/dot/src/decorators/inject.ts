@@ -69,6 +69,7 @@ export const inject: InjectDecoratorFactory = <T>(
 
 	return ((target, context) => {
 		/* c8 ignore start */
+		// Stryker disable all
 		if (target != null) {
 			// experimental
 			addInjection({
@@ -79,6 +80,7 @@ export const inject: InjectDecoratorFactory = <T>(
 			});
 
 			return undefined;
+			// Stryker restore all
 			/* c8 ignore end */
 		} else {
 			// tc39

@@ -44,6 +44,7 @@ export const inContext
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	= (context: interfaces.Context): ClassDecorator<any, any> =>
 		(target, ctx) => {
+			// Stryker disable all
 			/* c8 ignore start */
 			if (ctx == null) {
 				// experimental
@@ -54,6 +55,7 @@ export const inContext
 				meta.push(context);
 
 				return target;
+				// Stryker restore all
 				/* c8 ignore end */
 			} else {
 				// tc39
@@ -96,6 +98,7 @@ export const inGlobalContext = (): ClassDecorator<any, any> => inContext(Context
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const inNoContext = (): ClassDecorator<any, any> => (target, ctx) => {
 	/* c8 ignore start */
+	// Stryker disable all
 	if (ctx == null) {
 		// experimental
 		const meta = (target as unknown as Metadata)[MetadataContext] ??= [];
@@ -104,6 +107,7 @@ export const inNoContext = (): ClassDecorator<any, any> => (target, ctx) => {
 		}
 
 		return target;
+		// Stryker restore all
 		/* c8 ignore end */
 	} else {
 		// tc39
