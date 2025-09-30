@@ -1,5 +1,12 @@
 # @mscharley/dot
 
+## 2.2.1
+
+### Patch Changes
+
+- 69c9b55: Add an error if the decorators are specified in the wrong order
+- c0b2e21: Add extra decorators for `@inNoContext()` and `@inGlobalContext()` to control how an injectable interacts with the global context by default
+
 ## 2.2.0
 
 ### Minor Changes
