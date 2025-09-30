@@ -158,5 +158,14 @@ describe('container validations', () => {
 			const child = c.createChild({ autobindClasses: true, contexts: [context, orphanedContext] });
 			expect(child.validate(true)).toBeUndefined();
 		});
+
+		it('produces a boot-time error if the decorators are used in the wrong order', async () => {
+			await expect((async (): Promise<void> => {
+				@inNoContext()
+				@injectable()
+				// eslint-disable-next-line @typescript-eslint/no-unused-vars
+				class OutOfOrderTest {}
+			})()).rejects.toMatchObject({ message: '@inContext should be specified after @injectable' });
+		});
 	});
 });

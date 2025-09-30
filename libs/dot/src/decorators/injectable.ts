@@ -12,6 +12,8 @@ import type { Injection } from '../models/Injection.js';
 import { injectionFromIdentifier } from '../util/injectionFromIdentifier.js';
 import { tokenForIdentifier } from '../util/tokenForIdentifier.js';
 
+export const injectableProcessed = Symbol('DOT.injectableProcessed');
+
 const _injections: Array<Injection<unknown, interfaces.MetadataObject>> = [];
 export const addInjection = <T>(injection: Injection<T, interfaces.MetadataObject>): void => {
 	_injections.push(injection);
@@ -91,6 +93,7 @@ export const injectable = <T extends object, Tokens extends Array<interfaces.Inj
 						});
 					}
 				})();
+			(klass as unknown as Record<typeof MetadataContext, symbol>)[MetadataContext] = injectableProcessed;
 			_configureInjectable(klass, contexts, constructorTokens);
 
 			return klass;
@@ -98,6 +101,11 @@ export const injectable = <T extends object, Tokens extends Array<interfaces.Inj
 		} else {
 			// tc39
 			const contexts = (context.metadata?.[MetadataContext] as Context[] | undefined) ?? [Context.global];
+			// This will throw an error with any of the context decorators if this invariant is not met.
+			if (context.metadata != null) {
+				context.metadata[MetadataContext] = injectableProcessed;
+			}
+
 			_configureInjectable(target, contexts, constructorTokens);
 
 			return undefined;
