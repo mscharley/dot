@@ -1,5 +1,13 @@
 # @mscharley/dot
 
+## 2.2.3
+
+### Patch Changes
+
+- 64dd401: Handle some edge cases with stringifying identifiers better. This means that you will always be able to see a named class in constructor identifiers, if possible
+- a6b0770: Add better logging for which module validation failures are triggered from
+- 65ce24a: Add an option to exclude the global context from a container
+
 ## 2.2.2
 
 ### Patch Changes
