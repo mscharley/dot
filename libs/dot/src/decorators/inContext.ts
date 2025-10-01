@@ -5,12 +5,10 @@
  */
 
 import type * as interfaces from '../interfaces/index.js';
-import { type ClassDecorator, MetadataContext } from './decorators.js';
+import { type ClassDecorator } from './decorators.js';
 import { Context } from '../container/Context.js';
+import { getContextsFromMetadata } from './metadata.js';
 import { InvalidOperationError } from '../Error.js';
-
-// eslint-disable-next-line @typescript-eslint/no-type-alias
-type Metadata = Record<typeof MetadataContext, undefined | interfaces.Context[] | symbol>;
 
 /**
  * Adds the autobinding of this class into a specific context
@@ -48,11 +46,11 @@ export const inContext
 			/* c8 ignore start */
 			if (ctx == null) {
 				// experimental
-				const meta = (target as unknown as Metadata)[MetadataContext] ??= [];
+				const meta = getContextsFromMetadata(target as unknown as DecoratorMetadataObject, target);
 				if (!Array.isArray(meta)) {
 					throw new InvalidOperationError('@inContext should be specified after @injectable');
 				}
-				meta.push(context);
+				meta.push(context as Context);
 
 				return target;
 				// Stryker restore all
@@ -62,11 +60,12 @@ export const inContext
 				if (ctx.metadata == null) {
 					throw new Error('Your JavaScript runtime doesn\'t support decorator metadata');
 				}
-				const meta: interfaces.Context[] | symbol = (ctx.metadata as Metadata)[MetadataContext] ??= [];
+
+				const meta = getContextsFromMetadata(ctx.metadata, target);
 				if (!Array.isArray(meta)) {
 					throw new InvalidOperationError('@inContext should be specified after @injectable');
 				}
-				meta.push(context);
+				meta.push(context as Context);
 
 				return undefined;
 			}
@@ -101,7 +100,7 @@ export const inNoContext = (): ClassDecorator<any, any> => (target, ctx) => {
 	// Stryker disable all
 	if (ctx == null) {
 		// experimental
-		const meta = (target as unknown as Metadata)[MetadataContext] ??= [];
+		const meta = getContextsFromMetadata(target as unknown as DecoratorMetadataObject, target);
 		if (!Array.isArray(meta)) {
 			throw new InvalidOperationError('@inContext should be specified after @injectable');
 		}
@@ -114,7 +113,7 @@ export const inNoContext = (): ClassDecorator<any, any> => (target, ctx) => {
 		if (ctx.metadata == null) {
 			throw new Error('Your JavaScript runtime doesn\'t support decorator metadata');
 		}
-		const meta: interfaces.Context[] | symbol = (ctx.metadata as Metadata)[MetadataContext] ??= [];
+		const meta = getContextsFromMetadata(ctx.metadata, target);
 		if (!Array.isArray(meta)) {
 			throw new InvalidOperationError('@inContext should be specified after @injectable');
 		}

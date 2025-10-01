@@ -5,7 +5,8 @@
  */
 
 import type * as interfaces from '../interfaces/index.js';
-import { type ClassDecorator, MetadataContext } from './decorators.js';
+import { getContextsFromMetadata, setContextsProcessed } from './metadata.js';
+import { type ClassDecorator } from './decorators.js';
 import { Container } from '../container/Container.js';
 import { Context } from '../container/Context.js';
 import type { Injection } from '../models/Injection.js';
@@ -78,23 +79,24 @@ export const injectable = <T extends object, Tokens extends Array<interfaces.Inj
 		// Stryker disable all
 		if (context == null) {
 			// experimental
-			// eslint-disable-next-line @stylistic/max-len
-			const contexts = (target as unknown as Record<typeof MetadataContext, undefined | Context[]>)[MetadataContext] ?? [Context.global];
-			// eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access
-			delete (target as any)[MetadataContext];
+			const metadata = target as unknown as DecoratorMetadataObject;
+			const contexts = getContextsFromMetadata(metadata, target, [Context.global]);
+			if (!Array.isArray(contexts)) {
+				throw new Error('Internal error handling context metadata, please report this issue');
+			}
 			const klass = ((): typeof target =>
 				// @ts-expect-error - TypeScript doesn't like this construct when using the generic interface types.
 				class extends target {
 					public constructor(...args: interfaces.ArgsForInjectionIdentifiers<Tokens>) {
 						super(...(args as never));
-						contexts[0]?.getPropertyInjections(klass).forEach(({ name, id }) => {
+						(contexts as Context[])[0]?.getPropertyInjections(klass).forEach(({ name, id }) => {
 							const token = tokenForIdentifier(id);
 							// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
 							(this as any)[name] = Container.resolvePropertyInjection(token, [token]);
 						});
 					}
 				})();
-			(klass as unknown as Record<typeof MetadataContext, symbol>)[MetadataContext] = injectableProcessed;
+			setContextsProcessed(klass as unknown as DecoratorMetadataObject, klass);
 			_configureInjectable(klass, contexts, constructorTokens);
 
 			return klass;
@@ -102,13 +104,16 @@ export const injectable = <T extends object, Tokens extends Array<interfaces.Inj
 			/* c8 ignore end */
 		} else {
 			// tc39
-			const contexts = (context.metadata?.[MetadataContext] as Context[] | undefined) ?? [Context.global];
-			// This will throw an error with any of the context decorators if this invariant is not met.
-			if (context.metadata != null) {
-				context.metadata[MetadataContext] = injectableProcessed;
+			if (context.metadata == null) {
+				_configureInjectable(target, [], constructorTokens);
+			} else {
+				const contexts = getContextsFromMetadata(context.metadata, target, [Context.global]);
+				if (!Array.isArray(contexts)) {
+					throw new Error('Internal error handling context metadata, please report this issue');
+				}
+				_configureInjectable(target, contexts, constructorTokens);
+				setContextsProcessed(context.metadata, target);
 			}
-
-			_configureInjectable(target, contexts, constructorTokens);
 
 			return undefined;
 		}

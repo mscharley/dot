@@ -37,7 +37,19 @@ class AlsoInGlobalContext {
 	public id = 30;
 }
 
+@injectable()
+@inContext(context)
+class SubclassTest extends Test {
+	public name = 'subclass';
+}
+
 describe('autobinding contexts', () => {
+	it('can handle subclasses of autobound classes', async () => {
+		const c = createContainer({ autobindClasses: true, contexts: [context] });
+
+		await expect(c.get(SubclassTest)).resolves.toMatchObject({ id: 10, name: 'subclass' });
+	});
+
 	it('can\'t autobind classes outside their context', async () => {
 		const c = createContainer({ autobindClasses: true, contexts: [] });
 
