@@ -415,8 +415,9 @@ export class Container implements interfaces.Container {
 						`Unbound dependency (context: ${context.toString()}): ${stringifyIdentifier(binding.id)} => ${stringifyIdentifier(i.id)}`,
 					)];
 				} else {
+					const bindingNote = binding.module === autoboundContainerModule ? '(autobound)' : binding.module.name === '' ? `(bound in anonymous module)` : `(bound in ${binding.module.name})`;
 					return [new InvalidOperationError(
-						`Unbound dependency: ${stringifyIdentifier(binding.id)} => ${stringifyIdentifier(i.id)}`,
+						`Unbound dependency ${bindingNote}: ${stringifyIdentifier(binding.id)} => ${stringifyIdentifier(i.id)}`,
 					)];
 				}
 			}
