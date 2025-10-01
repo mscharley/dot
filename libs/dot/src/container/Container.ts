@@ -42,6 +42,7 @@ export class Container implements interfaces.Container {
 			autobindClasses: false,
 			contexts: [],
 			defaultScope: 'transient',
+			excludeGlobalContext: false,
 			logLevel: 'debug',
 			logger: { debug: noop, info: noop, trace: noop, warn: noop },
 			...config,
@@ -51,7 +52,11 @@ export class Container implements interfaces.Container {
 	}
 
 	private get contexts(): Context[] {
-		return [Context.global, ...(this.config.contexts as Context[])];
+		if (this.config.excludeGlobalContext) {
+			return this.config.contexts as Context[];
+		} else {
+			return [Context.global, ...(this.config.contexts as Context[])];
+		}
 	}
 
 	/**

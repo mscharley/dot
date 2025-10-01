@@ -43,6 +43,11 @@ class SubclassTest extends Test {
 	public name = 'subclass';
 }
 
+@injectable()
+class GlobalOnly {
+	public id = 40;
+}
+
 describe('autobinding contexts', () => {
 	it('can handle subclasses of autobound classes', async () => {
 		const c = createContainer({ autobindClasses: true, contexts: [context] });
@@ -112,5 +117,12 @@ describe('autobinding contexts', () => {
 	it('allows injectables to specify they should be included in the global context', () => {
 		expect(Context.global.has(AlsoInGlobalContext)).toBe(true);
 		expect(context.has(AlsoInGlobalContext)).toBe(true);
+	});
+
+	it('can exclude the global context from a container', async () => {
+		const c = createContainer({ autobindClasses: true, contexts: [context], excludeGlobalContext: true });
+
+		await expect(c.get(AlsoInGlobalContext)).resolves.toMatchObject({ id: 30 });
+		await expect(c.get(GlobalOnly)).rejects.toThrow('Unable to resolve token');
 	});
 });

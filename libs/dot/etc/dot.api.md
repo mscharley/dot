@@ -111,6 +111,7 @@ interface ContainerConfiguration {
     readonly autobindClasses: boolean;
     readonly contexts: Context[];
     readonly defaultScope: ScopeOptions;
+    readonly excludeGlobalContext: boolean;
     readonly logger: Logger;
     readonly logLevel: LoggerLevel;
     // @internal

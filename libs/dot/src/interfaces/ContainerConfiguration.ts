@@ -31,6 +31,11 @@ export interface ContainerConfiguration {
 	readonly contexts: Context[];
 
 	/**
+	 * Whether to exclude the global context when searching for classes to autobind (default: `false`)
+	 */
+	readonly excludeGlobalContext: boolean;
+
+	/**
 	 * The default scope for all bindings in this container (default: `"transient"`)
 	 */
 	readonly defaultScope: ScopeOptions;
