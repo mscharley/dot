@@ -5,7 +5,7 @@
  */
 
 import type * as interfaces from '../interfaces/index.js';
-import { getContextsFromMetadata, setContextsProcessed } from './metadata.js';
+import { getContextsFromMetadata, IsInjectableSubclass, setContextsProcessed } from './metadata.js';
 import { type ClassDecorator } from './decorators.js';
 import { Container } from '../container/Container.js';
 import { Context } from '../container/Context.js';
@@ -87,6 +87,8 @@ export const injectable = <T extends object, Tokens extends Array<interfaces.Inj
 			const klass = ((): typeof target =>
 				// @ts-expect-error - TypeScript doesn't like this construct when using the generic interface types.
 				class extends target {
+					public static [IsInjectableSubclass] = true;
+
 					public constructor(...args: interfaces.ArgsForInjectionIdentifiers<Tokens>) {
 						super(...(args as never));
 						(contexts as Context[])[0]?.getPropertyInjections(klass).forEach(({ name, id }) => {

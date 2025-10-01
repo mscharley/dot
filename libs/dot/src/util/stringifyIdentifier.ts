@@ -5,6 +5,7 @@
  */
 
 import type * as interfaces from '../interfaces/index.js';
+import { IsInjectableSubclass } from '../decorators/metadata.js';
 import { isToken } from './isToken.js';
 
 /**
@@ -16,10 +17,19 @@ export const stringifyIdentifier = <T>(id: interfaces.ServiceIdentifier<T>): str
 	if (isToken(id)) {
 		return `Token<${id.identifier.toString()}>`;
 	} else {
-		// Stryker disable all: Stryker only tests TC39, but this construct operates differently on experimental
-		return `Constructor<${
-			id.name !== '' ? id.name : (Object.getPrototypeOf(id) as interfaces.Constructor<unknown>).name
-		}>`;
-		// Stryker enable all
+		let count = 0;
+		let proto = id as interfaces.Constructor<unknown> | null;
+		while (proto != null && (proto.name === '' || proto.name === '_class')) {
+			if (!Object.prototype.hasOwnProperty.call(proto, IsInjectableSubclass)) {
+				count += 1;
+			}
+			proto = Object.getPrototypeOf(proto) as typeof proto;
+		}
+
+		if (proto?.name == null) {
+			return 'Constructor<Anonymous>';
+		} else {
+			return `Constructor<${'Anonymous extends '.repeat(count)}${proto.name}>`;
+		}
 	}
 };
