@@ -6,6 +6,8 @@
 
 import type { Context } from '../container/Context.js';
 
+export const IsInjectableSubclass = Symbol('DOT.IsInjectableSubclass');
+
 export const MetadataContextKey = Symbol('DOT.Metadata.Context');
 export const MetadataContextProcessed = Symbol('DOT.Metadata.Context.Processed');
 export type Metadata = Context[] | typeof MetadataContextProcessed;
