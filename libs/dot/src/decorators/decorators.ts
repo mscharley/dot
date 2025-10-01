@@ -30,5 +30,3 @@ export interface ClassFieldDecorator<T extends object, Property> {
 	// experimental decorators definition
 	(target: T, propertyName: string | symbol): undefined;
 }
-
-export const MetadataContext = Symbol('DOT.Metadata.Context');
