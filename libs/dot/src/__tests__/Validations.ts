@@ -8,6 +8,7 @@
 
 import { createContainer, createContext, inContext, injectable, inNoContext, Token, unmanaged, withOptions } from '../index.js';
 import { describe, expect, it } from '@jest/globals';
+import type { interfaces } from '../index.js';
 
 const token = new Token<{ id: number }>('test');
 const dependency = new Token<string>('dep');
@@ -86,11 +87,13 @@ describe('container validations', () => {
 
 	it('fails for a dynamic value with a missing dependency', async () => {
 		const c = createContainer();
-		c.load((bind) => bind(dependency).toDynamicValue([token], ({ id }) => id.toString()));
+		const DynamicModule: interfaces.SyncContainerModule = (bind) =>
+			bind(dependency).toDynamicValue([token], ({ id }) => id.toString());
+		c.load(DynamicModule);
 
 		await expect((async (): Promise<void> => c.validate(true))()).rejects.toMatchObject({
 			errors: [
-				{ message: 'Unbound dependency: Token<Symbol(dep)> => Token<Symbol(test)>' },
+				{ message: 'Unbound dependency (bound in DynamicModule): Token<Symbol(dep)> => Token<Symbol(test)>' },
 			],
 		});
 	});
@@ -107,7 +110,7 @@ describe('container validations', () => {
 
 		await expect((async (): Promise<void> => c.validate(true))()).rejects.toMatchObject({
 			errors: [
-				{ message: 'Unbound dependency: Constructor<LocalTest> => Token<Symbol(test)>' },
+				{ message: 'Unbound dependency (bound in anonymous module): Constructor<LocalTest> => Token<Symbol(test)>' },
 			],
 		});
 	});
@@ -134,10 +137,11 @@ describe('container validations', () => {
 		it('handles contexts with explicit -> autobound bindings', async () => {
 			const c = createContainer({ autobindClasses: false });
 			const child = c.createChild({ autobindClasses: true, contexts: [context] });
-			child.load((bind) => {
+			const ExplicitModule: interfaces.SyncContainerModule = (bind) => {
 				// Add an explicit binding to something autobound.
 				bind(ExplicitBoundOnly).toSelf();
-			});
+			};
+			child.load(ExplicitModule);
 			expect(child.validate(true)).toBeUndefined();
 		});
 
