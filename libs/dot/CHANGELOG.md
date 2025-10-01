@@ -1,5 +1,11 @@
 # @mscharley/dot
 
+## 2.2.2
+
+### Patch Changes
+
+- 83e6c23: Fixed a bug with injectable() when used in class hierarchies
+
 ## 2.2.1
 
 ### Patch Changes
