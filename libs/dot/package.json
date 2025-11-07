@@ -74,7 +74,7 @@
 		"@swc/jest": "0.2.39",
 		"@types/node": "22.18.13",
 		"acorn": "8.15.0",
-		"esbuild": "0.25.11",
+		"esbuild": "0.25.12",
 		"generic-type-guard": "5.1.0",
 		"jest": "30.2.0",
 		"ts-node": "10.9.2",
