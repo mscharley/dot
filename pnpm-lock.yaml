@@ -74,8 +74,8 @@ importers:
         specifier: 30.2.0
         version: 30.2.0
       '@microsoft/api-extractor':
-        specifier: 7.57.5
-        version: 7.57.5(@types/node@22.19.11)
+        specifier: 7.57.6
+        version: 7.57.6(@types/node@22.19.11)
       '@mscharley/eslint-config':
         specifier: 4.2.19
         version: 4.2.19(@typescript-eslint/eslint-plugin@8.44.1(@typescript-eslint/parser@8.44.1(eslint@9.36.0)(typescript@5.9.3))(eslint@9.36.0)(typescript@5.9.3))(@typescript-eslint/parser@8.44.1(eslint@9.36.0)(typescript@5.9.3))(jest@30.2.0(@types/node@22.19.11)(ts-node@10.9.2(@swc/core@1.7.35)(@types/node@22.19.11)(typescript@5.9.3)))(typescript@5.9.3)
@@ -917,15 +917,15 @@ packages:
   '@manypkg/get-packages@1.1.3':
     resolution: {integrity: sha512-fo+QhuU3qE/2TQMQmbVMqaQ6EWbMhi4ABWP+O4AM1NqPBuy0OrApV5LO6BrrgnhtAHS2NH6RrVk9OL181tTi8A==}
 
-  '@microsoft/api-extractor-model@7.33.3':
-    resolution: {integrity: sha512-EMwfPbyt0bAxPEOf2skhaURyNayxSDinjyInOuZJleG1Zb4YmDrKpNP9XRI01jfJCT1OKdUyEIuX5GYHi11y2A==}
+  '@microsoft/api-extractor-model@7.33.4':
+    resolution: {integrity: sha512-u1LTaNTikZAQ9uK6KG1Ms7nvNedsnODnspq/gH2dcyETWvH4hVNGNDvRAEutH66kAmxA4/necElqGNs1FggC8w==}
 
-  '@microsoft/api-extractor@7.57.5':
-    resolution: {integrity: sha512-QwbB6UgdB+ASXA2kdhuOfBOkVdE4PO+rETfBhbIakE3eTSd3gwUvL8PBf4YVRJUq1aBWYP8lkp7PzUShvh2ODw==}
+  '@microsoft/api-extractor@7.57.6':
+    resolution: {integrity: sha512-0rFv/D8Grzw1Mjs2+8NGUR+o4h9LVm5zKRtMeWnpdB5IMJF4TeHCL1zR5LMCIudkOvyvjbhMG5Wjs0B5nqsrRQ==}
     hasBin: true
 
-  '@microsoft/tsdoc-config@0.18.0':
-    resolution: {integrity: sha512-8N/vClYyfOH+l4fLkkr9+myAoR6M7akc8ntBJ4DJdWH2b09uVfr71+LTMpNyG19fNqWDg8KEDZhx5wxuqHyGjw==}
+  '@microsoft/tsdoc-config@0.18.1':
+    resolution: {integrity: sha512-9brPoVdfN9k9g0dcWkFeA7IH9bbcttzDJlXvkf8b2OBzd5MueR1V2wkKBL0abn0otvmkHJC6aapBOTJDDeMCZg==}
 
   '@microsoft/tsdoc@0.15.1':
     resolution: {integrity: sha512-4aErSrCR/On/e5G2hDP0wjooqDdauzEbIq8hIkIe5pXV0rtWJZvdCEKL0ykZxex+IxIwBp0eGeV48hQN07dXtw==}
@@ -1618,9 +1618,6 @@ packages:
 
   ajv@6.12.6:
     resolution: {integrity: sha512-j3fVLgvTo527anyYyJOGTYJbG+vnnQYvE0m5mmkc1TK+nxAppkCLMIL0aZ4dblVCNoGShhm+kzE4ZUykBoMg4g==}
-
-  ajv@8.12.0:
-    resolution: {integrity: sha512-sRu1kpcO9yLtYxBKvqfTeh9KzZEwO3STyX1HT+4CaDzC6HpTGYhIhPIzj9XuKU7KYDwnaeh5hcOwjy1QuJzBPA==}
 
   ajv@8.13.0:
     resolution: {integrity: sha512-PRA911Blj99jR5RMeTunVbNXMF6Lp4vZXnk5GQjcnUWUTsrXtekg/pnmFFI2u/I36Y/2bITGS30GZCXei6uNkA==}
@@ -4842,19 +4839,19 @@ snapshots:
       globby: 11.1.0
       read-yaml-file: 1.1.0
 
-  '@microsoft/api-extractor-model@7.33.3(@types/node@22.19.11)':
+  '@microsoft/api-extractor-model@7.33.4(@types/node@22.19.11)':
     dependencies:
       '@microsoft/tsdoc': 0.16.0
-      '@microsoft/tsdoc-config': 0.18.0
+      '@microsoft/tsdoc-config': 0.18.1
       '@rushstack/node-core-library': 5.20.3(@types/node@22.19.11)
     transitivePeerDependencies:
       - '@types/node'
 
-  '@microsoft/api-extractor@7.57.5(@types/node@22.19.11)':
+  '@microsoft/api-extractor@7.57.6(@types/node@22.19.11)':
     dependencies:
-      '@microsoft/api-extractor-model': 7.33.3(@types/node@22.19.11)
+      '@microsoft/api-extractor-model': 7.33.4(@types/node@22.19.11)
       '@microsoft/tsdoc': 0.16.0
-      '@microsoft/tsdoc-config': 0.18.0
+      '@microsoft/tsdoc-config': 0.18.1
       '@rushstack/node-core-library': 5.20.3(@types/node@22.19.11)
       '@rushstack/rig-package': 0.7.2
       '@rushstack/terminal': 0.22.3(@types/node@22.19.11)
@@ -4869,10 +4866,10 @@ snapshots:
     transitivePeerDependencies:
       - '@types/node'
 
-  '@microsoft/tsdoc-config@0.18.0':
+  '@microsoft/tsdoc-config@0.18.1':
     dependencies:
       '@microsoft/tsdoc': 0.16.0
-      ajv: 8.12.0
+      ajv: 8.18.0
       jju: 1.4.0
       resolve: 1.22.8
 
@@ -4882,7 +4879,7 @@ snapshots:
 
   '@mscharley/api-documenter-hugo@1.0.6(@types/node@22.19.11)':
     dependencies:
-      '@microsoft/api-extractor-model': 7.33.3(@types/node@22.19.11)
+      '@microsoft/api-extractor-model': 7.33.4(@types/node@22.19.11)
       '@microsoft/tsdoc': 0.15.1
       '@rushstack/node-core-library': 4.3.0(@types/node@22.19.11)
       '@rushstack/terminal': 0.13.4(@types/node@22.19.11)
@@ -4899,7 +4896,7 @@ snapshots:
       '@types/eslint': 9.6.1
       eslint: 9.36.0
       eslint-import-resolver-typescript: 4.4.4(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0)(typescript@5.6.2))(eslint@9.36.0))(eslint@9.36.0)
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0)(typescript@5.6.2))(eslint-import-resolver-typescript@4.4.4(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0)(typescript@5.6.2))(eslint@9.36.0))(eslint@9.36.0))(eslint@9.36.0)
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0)(typescript@5.6.2))(eslint-import-resolver-typescript@4.4.4)(eslint@9.36.0)
       eslint-plugin-jest: 29.0.1(@typescript-eslint/eslint-plugin@8.44.1(@typescript-eslint/parser@8.44.1(eslint@9.36.0)(typescript@5.6.2))(eslint@9.36.0)(typescript@5.6.2))(eslint@9.36.0)(jest@30.2.0(@types/node@22.19.11))(typescript@5.6.2)
       eslint-plugin-n: 17.23.1(eslint@9.36.0)(typescript@5.6.2)
       eslint-plugin-notice: 1.0.0(eslint@9.36.0)
@@ -5676,13 +5673,6 @@ snapshots:
       json-schema-traverse: 0.4.1
       uri-js: 4.4.1
 
-  ajv@8.12.0:
-    dependencies:
-      fast-deep-equal: 3.1.3
-      json-schema-traverse: 1.0.0
-      require-from-string: 2.0.2
-      uri-js: 4.4.1
-
   ajv@8.13.0:
     dependencies:
       fast-deep-equal: 3.1.3
@@ -6277,7 +6267,7 @@ snapshots:
       tinyglobby: 0.2.14
       unrs-resolver: 1.9.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0)(typescript@5.6.2))(eslint-import-resolver-typescript@4.4.4(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0)(typescript@5.6.2))(eslint@9.36.0))(eslint@9.36.0))(eslint@9.36.0)
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0)(typescript@5.6.2))(eslint-import-resolver-typescript@4.4.4)(eslint@9.36.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -6325,7 +6315,7 @@ snapshots:
       eslint: 9.36.0
       eslint-compat-utils: 0.5.1(eslint@9.36.0)
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0)(typescript@5.6.2))(eslint-import-resolver-typescript@4.4.4(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0)(typescript@5.6.2))(eslint@9.36.0))(eslint@9.36.0))(eslint@9.36.0):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.44.1(eslint@9.36.0)(typescript@5.6.2))(eslint-import-resolver-typescript@4.4.4)(eslint@9.36.0):
     dependencies:
       '@rtsao/scc': 1.1.0
       array-includes: 3.1.9
