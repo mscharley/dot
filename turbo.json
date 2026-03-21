@@ -2,7 +2,6 @@
 	"$schema": "https://turbo.build/schema.json",
 	"globalPassThroughEnv": ["ASDF_*", "NODE_*", "PNPM_*"],
 	"globalDependencies": ["package.json", "pnpm-lock.yaml"],
-	"daemon": false,
 	"tasks": {
 		"clean": {
 			"cache": false

@@ -36,4 +36,6 @@ osEnv = [
 	'(?i)^((HTTPS?|NO)_PROXY|PATH(EXT)?|APPDATA|TE?MP|TERM)$',
 	# Allow ASDF variables as well
 	'^ASDF_',
+	# Allow HOME as needed in newer updates
+	'HOME',
 ]
