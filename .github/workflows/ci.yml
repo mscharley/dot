@@ -11,7 +11,7 @@ on:
 
 jobs:
   node:
-    uses: mscharley/.github/.github/workflows/node-ci.yml@main
+    uses: mscharley/.github/.github/workflows/node-ci.yml@64a755d02d9fa9ab9f4d0e134c8379c57f2c32fe # main
     permissions: {}
     strategy:
       matrix:
@@ -21,5 +21,5 @@ jobs:
       node-version: ${{ matrix.node-version }}
 
   stryker:
-    uses: mscharley/.github/.github/workflows/stryker.yml@main
+    uses: mscharley/.github/.github/workflows/stryker.yml@64a755d02d9fa9ab9f4d0e134c8379c57f2c32fe # main
     permissions: {}
