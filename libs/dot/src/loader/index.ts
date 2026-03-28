@@ -42,7 +42,7 @@ const variableDeclaratorEntries = (url: string) => (d: VariableDeclarator): Cont
 
 		case 'ArrayPattern':
 			return d.id.elements
-				.flatMap((prop) => (prop != null && prop.type === 'Identifier') ? [{ url, name: prop.name }] : []);
+				.flatMap((prop) => (prop?.type === 'Identifier') ? [{ url, name: prop.name }] : []);
 
 		case 'RestElement':
 		case 'MemberExpression':
