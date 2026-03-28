@@ -66,8 +66,10 @@
 	"devDependencies": {
 		"@jest/globals": "30.3.0",
 		"@microsoft/api-extractor": "7.57.7",
+		"@eslint/js": "catalog:lint",
 		"@mscharley/eslint-config": "4.2.22",
 		"@mscharley/prettier-config": "3.1.8",
+		"@stylistic/eslint-plugin": "catalog:lint",
 		"@stryker-mutator/core": "9.6.0",
 		"@stryker-mutator/jest-runner": "9.6.0",
 		"@stryker-mutator/typescript-checker": "9.6.0",
@@ -75,9 +77,20 @@
 		"@types/node": "24.12.0",
 		"acorn": "8.16.0",
 		"esbuild": "0.27.4",
+		"eslint": "catalog:lint",
+		"eslint-import-resolver-typescript": "catalog:lint",
+		"eslint-plugin-import": "catalog:lint",
+		"eslint-plugin-jest": "catalog:lint",
+		"eslint-plugin-n": "catalog:lint",
+		"eslint-plugin-notice": "catalog:lint",
+		"eslint-plugin-react": "catalog:lint",
+		"eslint-plugin-react-hooks": "catalog:lint",
 		"generic-type-guard": "5.1.0",
 		"jest": "30.3.0",
+		"prettier": "catalog:lint",
+		"prettier-plugin-toml": "catalog:lint",
 		"ts-node": "10.9.2",
-		"typescript": "5.9.3"
+		"typescript": "5.9.3",
+		"typescript-eslint": "catalog:lint"
 	}
 }
