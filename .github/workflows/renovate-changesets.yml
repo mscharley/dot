@@ -6,7 +6,7 @@ on:
 
 jobs:
   update:
-    uses: mscharley/.github/.github/workflows/renovate-changesets.yml@64a755d02d9fa9ab9f4d0e134c8379c57f2c32fe # main
+    uses: mscharley/.github/.github/workflows/renovate-changesets.yml@3ea5efb827af3ad6391fa1a055197cea50931c25 # main
     permissions: {}
     secrets:
       token: ${{ secrets.DEPENDENCY_UPDATE_GITHUB_TOKEN }}
