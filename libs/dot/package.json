@@ -65,7 +65,7 @@
 	},
 	"devDependencies": {
 		"@jest/globals": "30.3.0",
-		"@microsoft/api-extractor": "7.58.1",
+		"@microsoft/api-extractor": "7.58.2",
 		"@eslint/js": "catalog:lint",
 		"@mscharley/eslint-config": "4.2.22",
 		"@mscharley/prettier-config": "3.1.8",
