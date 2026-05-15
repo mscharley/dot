@@ -64,7 +64,7 @@
 		"tslib": "*"
 	},
 	"devDependencies": {
-		"@jest/globals": "30.3.0",
+		"@jest/globals": "30.4.1",
 		"@microsoft/api-extractor": "7.58.7",
 		"@eslint/js": "catalog:lint",
 		"@mscharley/eslint-config": "4.2.22",
@@ -86,7 +86,7 @@
 		"eslint-plugin-react": "catalog:lint",
 		"eslint-plugin-react-hooks": "catalog:lint",
 		"generic-type-guard": "5.1.0",
-		"jest": "30.3.0",
+		"jest": "30.4.2",
 		"prettier": "catalog:lint",
 		"prettier-plugin-toml": "catalog:lint",
 		"ts-node": "10.9.2",
