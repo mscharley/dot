@@ -76,7 +76,7 @@
 		"@swc/jest": "0.2.39",
 		"@types/node": "24.13.3",
 		"acorn": "8.17.0",
-		"esbuild": "0.28.1",
+		"esbuild": "0.28.2",
 		"eslint": "catalog:lint",
 		"eslint-import-resolver-typescript": "catalog:lint",
 		"eslint-plugin-import": "catalog:lint",
