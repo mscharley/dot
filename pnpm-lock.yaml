@@ -66,8 +66,8 @@ importers:
         specifier: workspace:*
         version: link:../libs/dot
       autoprefixer:
-        specifier: 10.5.3
-        version: 10.5.3(postcss@8.5.23)
+        specifier: 10.5.4
+        version: 10.5.4(postcss@8.5.23)
       postcss:
         specifier: 8.5.23
         version: 8.5.23
@@ -1844,8 +1844,8 @@ packages:
   async-mutex@0.5.0:
     resolution: {integrity: sha512-1A94B18jkJ3DYq284ohPxoXbfTA5HsQ7/Mf4DEhcyLx3Bz27Rh59iScbB6EPiP+B+joue6YCxcMXSbFC1tZKwA==}
 
-  autoprefixer@10.5.3:
-    resolution: {integrity: sha512-bJRzflk8GgE4JX+iZNEwz9f9p460NCHnU7bd+CZ9vIjIlZuTkt6F3WSl2oNO8StZBFx17nLEsiQ6H2wcZiY7nA==}
+  autoprefixer@10.5.4:
+    resolution: {integrity: sha512-MaU0U/za7N3r6brxD4YB/l4NSrFzLPlANv6wEuQVaIPlD3L4W9rFcQPbL/EilY9BHhHvhfcz3gInDLrEtWT4EA==}
     engines: {node: ^10 || ^12 || >=14}
     hasBin: true
     peerDependencies:
@@ -5956,7 +5956,7 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  autoprefixer@10.5.3(postcss@8.5.23):
+  autoprefixer@10.5.4(postcss@8.5.23):
     dependencies:
       browserslist: 4.28.6
       caniuse-lite: 1.0.30001806
