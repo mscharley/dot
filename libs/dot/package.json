@@ -75,7 +75,7 @@
 		"@stryker-mutator/typescript-checker": "9.6.1",
 		"@swc/jest": "0.2.39",
 		"@types/node": "24.13.3",
-		"acorn": "8.17.0",
+		"acorn": "8.18.0",
 		"esbuild": "0.28.2",
 		"eslint": "catalog:lint",
 		"eslint-import-resolver-typescript": "catalog:lint",
