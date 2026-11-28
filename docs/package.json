@@ -10,6 +10,6 @@
 		"@mscharley/api-documenter-hugo": "1.0.6",
 		"autoprefixer": "10.7.0",
 		"postcss": "8.5.33",
-		"postcss-cli": "11.0.1"
+		"postcss-cli": "12.0.0"
 	}
 }
